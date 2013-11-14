@@ -3,16 +3,17 @@ package utils.pactas;
 import com.ning.http.client.Realm;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
+import play.Play;
 import play.libs.F;
 import play.libs.Json;
 import play.libs.WS;
 
 public class Pactas {
 
-    protected static String API_URL = "https://sandbox.pactas.com/api/v1/";
-    private static String AUTH_URL = "https://sandbox.pactas.com/oauth/token/";
-    private static String CLIENT_ID = "523075921d8dd007f822edaa";
-    private static String CLIENT_SECRET = "332324095c5c665bd4bc680eb98739e1";
+    protected static String API_URL = Play.application().configuration().getString("pactas.api");
+    private static String AUTH_URL = Play.application().configuration().getString("pactas.auth");
+    private static String CLIENT_ID = Play.application().configuration().getString("pactas.clientId");
+    private static String CLIENT_SECRET = Play.application().configuration().getString("pactas.clientSecret");
 
     protected String access_token;
     protected JsonNode response;
