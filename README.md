@@ -12,12 +12,7 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 - Install [Play 2.1.1](http://www.playframework.com/documentation/2.1.1/Installing).
 - [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-donut project from GitHub.
 - Run `play run` command in root project directory.
-- Open your browser and point it to `http://localhost:9000`
-- Inside Play command line, type `run` for running the store or `test` for testing it.
-- Install your favourite IDE (preferably IntelliJ, Eclipse or Netbeans).
-- Generate configuration files for your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.0.x/IDE).
-
-> This app is a [Play Framework](http://www.playframework.com/documentation/2.1.1/Home) app and uses the [SPHERE Play SDK](http://sphere.io/dev/play-sdk.html).
+- Open your browser and point it to [http://localhost:9000](http://localhost:9000).
  
 ### Configure it
 
@@ -48,6 +43,15 @@ More information about doing payments with PAYMILL at http://www.paymill.com.
 - Run `git push heroku master` to push the project to Heroku and deploy it.
 - Run `heroku open` to open your deployed website in a browser.
 
-More information about deploying a Play application to Heroku [here](http://www.playframework.com/documentation/2.1.1/ProductionHeroku).
+> More information about deploying a Play application to Heroku [here](http://www.playframework.com/documentation/2.1.1/ProductionHeroku).
+
+### Develop it
+
+- Install your favourite IDE (preferably IntelliJ, Eclipse or Netbeans).
+- Generate configuration files for your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.0.x/IDE).
+- Run `play` command in root project directory.
+- Inside Play Shell, type `clean test` for compiling and testing it.
+
+> This app is a [Play Framework](http://www.playframework.com/documentation/2.1.1/Home) app and uses the [SPHERE Play SDK](http://sphere.io/dev/play-sdk.html).
 
 Have fun!
