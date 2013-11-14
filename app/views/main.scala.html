@@ -1,0 +1,67 @@
+@(title: String, bodyClass: String = "", scripts: Html = Html(""), styles: Html = Html(""))(header: Html)(content: Html)(footer: Html)(implicit lang: Lang)
+
+<!DOCTYPE html>
+<html lang="@lang.code">
+
+    <head>
+        <link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
+
+        <title>@title</title>
+
+        <meta content="text/html"/>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="language" content="@lang.code">
+        <meta name="description" content="Here is a description of the shop that will be shown as a search result."/>
+        <meta name="keywords" content="donuts, subscription, weekly"/>
+        <meta name="author" content="commercetools"/>
+
+        <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/responsive.css")">
+        @styles
+
+        <script type="text/javascript">
+            // Google Analytics
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-44507267-1', 'iwantdonuts.com');
+            ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body class="@bodyClass">
+        <a href="https://github.com/commercetools/sphere-donut"><img style="position: fixed; top: 0; right: 0; border: 0; z-index: 200;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+        <div class="top-banner">Sorry, but this is not a real <strong>donut</strong> store. This is a <u>free template</u> for subscription ecommerce sites and it's built on top of the APIs of <a href="http://sphere.io" target="_blank">SPHERE.IO</a>, <a href="http://www.pactas.com/" target="_blank">Pactas</a> and <a href="https://www.paymill.com" target="_blank">Paymill</a>.</div>
+
+        <div id="container">
+            <header>
+                @header
+            </header>
+
+            <div id="content">
+                @helper.messages()
+                @content
+            </div>
+
+            <footer>
+                @footer
+            </footer>
+        </div>
+
+
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/lib-form.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/product.js")"></script>
+
+        @scripts
+    </body>
+
+</html>

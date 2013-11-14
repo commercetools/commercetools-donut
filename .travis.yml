@@ -1,0 +1,18 @@
+language: scala
+scala:
+- 2.10.0
+before_script:
+- ./adjust_config.sh
+- ./create_version_info.sh
+script:
+- sbt test
+env:
+  global:
+  - secure: B5saAN3wfghLIX2AVDQGDL9rfTqW40rf+/jNAPnYohJdzICylqy8Gp2p8e/buYVWlF9YzmBCixEYbkvZgwpEgpPbZCf8Ht06c9VHWOOAUHhFXiG1u5jDTS88/jdEHT+/hcY0DukBdx6cbkAyHFlvx7tEffHi6oQFyLAV+77/02g=
+  - secure: arUpbokVezudwuaQmpQWLJycNh/lMkY6deOtjcShXolVsGG5S9EzewqkJRzTZo2buv0i5Vy8AQ7XwQNnD+8uKcyfqf43/Bq5l396Id+noJdrKzfgVzHc1PUae/VRxQy8h2RZXYaqlqVpf1wfhLwEGGCG7ASti1DopL8i677Yqo0=
+  - secure: HpZyZTGGf2NdrBFwbsO5aTzjyAr5E/IMO61AZmjrLIolQbRXmyhPoFh5qtOvTpmUjTLK5WZVuOfsIla5EbXT63puN8ls60ef+O0kde/qy8I+PVughlIJb9FU64MVhZRccaZeEUERzRmsi7HvViWMy+SMn4L0Idmu5/yBfm2sBT0=
+  - secure: CC+fPoor7nmrIld6nQkjXTVFvv4liqJmZcmj0LG15bLsFhSmKNp8nNrwRBcR0EefQnMNX2wzR0uoq0iu2KUrM0D4UFC0nfpNrlNaUoK4sRnSFCHVTfMZb+ckxltytHHVSJj1OxcQNlo4rsNUuCcq+OqAEcBTVOARl41KQ4oB8ZI=
+deploy:
+  provider: heroku
+  api_key:
+    secure: ZCGUm7nS6a3N6nDHk6SLkVvw4KNVCqdO9w9jWKvGOrvYoMipN3LWtTY0+fmVIpXAlhtMeJijxKkvh2fU7M1o7aStlg2ERPEUiuRLGeRXn4ACD0dQ7nYuUGGu4Dd2R5A5Qi/rUDO+gvo7JqNNbMJG53Avanl9PonCfjXuooZGE3I=

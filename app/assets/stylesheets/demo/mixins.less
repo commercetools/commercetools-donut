@@ -1,0 +1,42 @@
+.box-shadow(@style, @color) {
+    box-shadow:         @style @color;
+    -webkit-box-shadow: @style @color;
+    -moz-box-shadow:    @style @color;
+}
+
+.transition(@property, @duration) {
+    transition:         @property @duration;
+    -webkit-transition: @property @duration;
+}
+
+.zoom(@scale) {
+    zoom:               @scale;         /* IE, Chrome and Safari */
+
+    -moz-transform:     scale(@scale);  /* Firefox */
+    -moz-transform-origin: 0 0;
+
+    -o-transform:       scale(@scale);  /* Opera */
+    -o-transform-origin: 0 0;
+}
+
+.variant-small {
+    .variant-body {
+        width: 320px; height: 318px;
+        img { max-width: 65%; }
+        .stamp { background-size: 320px auto; }
+        .name { font-size: 2.4em; }
+        .price { font-size: 1.8em; }
+    }
+    .description { font-size: 1.2em; }
+}
+
+.variant-smallest {
+    .variant-body {
+        width: 256px; height: 254px;
+        img { max-width: 65%; }
+        .stamp { background-size: 256px auto; }
+        .name { font-size: 2em; }
+        .price { font-size: 1.6em; }
+    }
+    .description { font-size: 1.2em; }
+}

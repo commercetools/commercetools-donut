@@ -1,0 +1,99 @@
+@(cart: Cart, product: Product)
+
+@main("I want donuts!", "product"){
+
+}{
+<form id="product-form" action="@routes.Application.submitProduct" method="post">
+    <section id="product-header">
+        <div class="space">
+            <div class="inner">
+                <div class="body">
+                    <img id="image-header" alt="I want donuts!" src="@routes.Assets.at("images/header.png")"/>
+                    <img class="separator" src="@routes.Assets.at("images/separator-grey.png")" alt="-" />
+                    <h2>THE GREATEST DONUT SHOP EVER</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="product-box">
+        <div class="space">
+            <div class="inner">
+                <div class="head">
+                    <img class="separator" src="@routes.Assets.at("images/separator-black.png")" alt="-" />
+                    <h2>CHOOSE YOUR <span class="highlight">taaasty</span> PASSION</h2>
+                </div>
+                <div class="body clearfix">
+                    <div class="variant-boxes">
+                        <div class="variant-boxes-inner">
+                            @for(variant <- product.getVariants.asList) {
+                            <div class="variant-box">
+                                <label>
+                                    <input type="radio" name="variantId" id="product-variantId-@variant.getId" required
+                                           value="@variant.getId" @if(getVariant(cart) == variant.getId){checked} />
+                                    <div class="checked"><img src="@routes.Assets.at("images/checked.png")" ></div>
+                                    @helper.variant(variant)
+                                    <div class="add-to-cart">
+                                        <div class="button" style="@getAddToCartImage(variant)"></div>
+                                        <span class="add">ADD THIS ONE!</span>
+                                        <span class="added">ADDED</span>
+                                    </div>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="product-often">
+        <div class="space">
+            <div class="inner">
+                <div class="head">
+                    <img class="separator" src="@routes.Assets.at("images/separator-white.png")" alt="-" />
+                    <h2>CHOOSE HOW OFTEN</h2>
+                </div>
+                <div class="body clearfix">
+                    <div class="often-boxes">
+                        <div class="often-boxes-inner">
+                            <div class="often-box">
+                                <label>
+                                    <input type="radio" name="howOften" id="product-howOften-4" value="4" required
+                                        @if(getOften(cart) == 4){checked}>
+                                    <div class="text"><span class="check"></span> Once a week</div>
+                                </label>
+                            </div>
+                            <div class="often-box">
+                                <label>
+                                    <input type="radio" name="howOften" id="product-howOften-2" value="2" required
+                                        @if(getOften(cart) == 2){checked}>
+                                    <div class="text"><span class="check"></span> Every two weeks</div>
+                                </label>
+                            </div>
+                            <div class="often-box">
+                                <label>
+                                    <input type="radio" name="howOften" id="product-howOften-1" value="1" required
+                                        @if(getOften(cart) == 1){checked}>
+                                    <div class="text"><span class="check"></span> Once a month</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="go-to-cart" class="button-disabled">
+                        <button type="submit" disabled><span>VIEW CART AND CONFIRM THIS PARADISE</span></button>
+                        <div data-toggle="tooltip" data-placement="top"
+                         data-original-title="Please select your desired donut box and how often you want it"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</form>
+}{
+
+
+}

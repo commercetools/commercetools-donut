@@ -1,0 +1,79 @@
+@import "demo/colors";
+@import "demo/mixins";
+@import "demo/product";
+@import "demo/order";
+
+body {
+    background: @background;
+    font-family: 'Oswald', sans-serif; font-size: 100%; color: @brown;
+
+    &.product {
+      .top-banner { border-bottom: 1px solid #18b1a8; }
+    }
+    &.order {
+      .top-banner { border-bottom: 1px solid #822635; }
+    }
+}
+
+label { font-size: 100%; }
+
+/* FONTS */
+
+h1 { font-family: 'Pacifico', cursive; font-size: 3.1em; font-weight: 300; padding-bottom: 3%; }
+h2 { font-size: 4em; padding-top: 1%; margin: 0; line-height: 100%; }
+h3 { font-size: 1.4em; letter-spacing: 1px; }
+h4 { font-size: 1.4em; text-transform:uppercase; }
+h1, h3 { border-bottom: 1px solid @black; text-align: left; }
+
+.pacifico { font-family: 'Pacifico', cursive; line-height: 170%; padding-right: 4px; }
+.highlight { .pacifico; line-height: 50%; }
+
+/* COMMON */
+
+.top-banner { padding: 10px; text-align: center; background-color: #f3f1d6; position: fixed; width: 100%; z-index: 199; }
+
+#container { text-align: center; padding-top: 40px; }
+form { margin: 0; }
+
+.variant { padding: 0 4% 4%; }
+.variant-body {
+    position: relative; width: 400px; height: 400px;
+    color: @white;
+    img { position: relative; top: 30%; z-index: 50; display: block; margin: 0 auto; }
+    .stamp {
+        position: absolute; width: 100%; height: 100%;
+        background: transparent url('../images/stamp.png') no-repeat 0 0; background-size: 400px auto;
+    }
+    .name, .price { position: absolute; width: 100%; z-index: 100; }
+    .name {
+        top: 18%;
+        font-family: 'Pacifico', cursive; font-size: 3em; text-shadow: 1px 1px 5px @grey;
+    }
+    .price {
+        top: 82%;
+        font-size: 2.2em; font-weight: 700; text-align: center;
+    }
+}
+.description {
+    float: left;
+    font-weight: 700; font-size: 1.5em; line-height: 190%;
+    border-top: 1px solid @black; border-bottom: 1px solid @black;
+    .stress { background-color: @green; padding: 0 2px; }
+}
+
+.button-disabled {
+    position: relative; margin: 0 auto;
+    [data-toggle=tooltip] {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    }
+}
+
+button[type=submit] {
+    width: 723px; height: 190px;
+    background: url('../images/button.png') no-repeat 0 0; border: 0;
+    font-family: 'Oswald', sans-serif; font-size: 2.2em; font-weight: 700; color: @white; text-shadow: 2px 2px 2px @grey;
+    &:hover { background-position: 0 -204px; }
+    &[disabled] { opacity: 0.7; }
+}
+
+#clear-order { color: @red-dark; }

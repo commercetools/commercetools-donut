@@ -1,0 +1,2 @@
+Placeholder for version.txt.
+Should be filled in during the build process.

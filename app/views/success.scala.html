@@ -1,0 +1,15 @@
+@(successful: Boolean, text: String)
+
+@main("I want donuts!", "success"){
+
+}{
+
+<section id="order-result">
+    <h1>@if(successful) {<img src="@routes.Assets.at("images/checked.png")"/> All right!} else {Oops...!}</h1>
+    <h4>@text</h4>
+</section>
+
+}{
+
+
+}

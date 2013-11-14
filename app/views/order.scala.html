@@ -1,0 +1,50 @@
+@(cart: Cart, item: LineItem, frequency: Int)
+
+@scripts = {
+    <script type="text/javascript">
+        $('iframe').load(function(){
+            $("#iframeLoader").remove();
+        }).show();
+    </script>
+}
+@main("I want donuts!", "order", scripts){
+
+}{
+    <div class="top"></div>
+    <section id="order-cart">
+        <div class="space">
+            <div class="inner">
+                <div class="head">
+                    <h1>Order details</h1>
+                </div>
+                <div class="body">
+                    <div class="variant-smallest">
+                        @helper.variant(cart.getLineItems.get(0).getVariant)
+                    </div>
+                    <div class="often">How often: <span class="value">@getFrequencyName(frequency)</span></div>
+                    <div class="total">Total price: <span class="value">@getPrice(cart.getTotalPrice)</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="order-purchase">
+        <div class="space">
+            <div class="inner">
+                <div class="head">
+                    <h3>YOUR INFORMATION</h3>
+                </div>
+                <div class="body">
+                    <iframe id="pactas-iframe" scrolling="no" width="100%" height="400px" style="display:none;"
+                            src="https://sandbox.pactas.com/signup-iframe/@getPactasID(item, frequency)?language=en"></iframe>
+                    <div id="iframeLoader" style="width:100%; height:400px; margin:auto; text-align:center;"><img src="@routes.Assets.at("images/loader.gif")"></div>
+                    <a id="back-button" href="@routes.Application.showProduct#product-box">[Or modify order]</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="bottom"></div>
+    <a id="clear-order" href="@routes.Application.clearOrder">Clear order</a>
+}{
+
+}

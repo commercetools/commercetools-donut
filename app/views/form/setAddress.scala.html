@@ -1,0 +1,38 @@
+@(addressForm: Form[SetAddress])
+
+<div class="form">
+    <div class="form-inline">
+        <div class="control-group">
+            <label for="shipping-address-firstName" class="control-label">Name <span class="required">*</span></label>
+            <div class="controls">
+                <label for="shipping-address-firstName">First Name</label>
+                <input type="text" name="firstName" id="shipping-address-firstName" placeholder="First Name" required
+                       class="form-control" value="@addressForm.field("firstName").value" />
+                <label for="shipping-address-lastName" class="sr-only">Last Name</label>
+                <input type="text" name="lastName" id="shipping-address-lastName" placeholder="Last Name" required
+                       class="form-control" value="@addressForm.field("lastName").value"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-inline">
+        <div class="control-group">
+            <label for="shipping-address-street">Address <span class="required">*</span></label>
+            <input type="text" name="street" id="shipping-address-street" placeholder="Street Address" required
+                   class="form-control" value="@addressForm.field("street").value"/>
+        </div>
+
+        <div class="control-group">
+            <label for="shipping-address-postalCode">Postal Code <span class="required">*</span></label>
+            <input type="text" name="postalCode" id="shipping-address-postalCode" placeholder="Postal Code" required
+                   class="form-control" value="@addressForm.field("postalCode").value"/>
+        </div>
+
+        <div class="control-group">
+            <label for="shipping-address-city">City <span class="required">*</span></label>
+            <input type="text" name="city" id="shipping-address-city" placeholder="City" required
+                   class="form-control" value="@addressForm.field("city").value"/>
+        </div>
+    </div>
+    <input type="hidden" name="country" value="DE"/>
+</div>

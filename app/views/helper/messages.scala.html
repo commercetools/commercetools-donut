@@ -1,0 +1,23 @@
+@if(flash.containsKey("error")) {
+<div class="alert alert-error">
+    @flash.get("error")
+</div>
+}
+
+@if(flash.containsKey("warning")) {
+<div class="alert alert-alert">
+    @flash.get("warning")
+</div>
+}
+
+@if(flash.containsKey("success")) {
+<div class="alert alert-success">
+    @flash.get("success")
+</div>
+}
+
+@if(flash.containsKey("info")) {
+<div class="alert alert-info">
+    @flash.get("info")
+</div>
+}

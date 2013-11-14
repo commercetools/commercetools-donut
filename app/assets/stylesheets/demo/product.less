@@ -1,0 +1,112 @@
+body.product {
+    background-color: @yellow;
+    padding: 0;
+
+    section > .space > .inner {
+        padding-top: 6%; padding-bottom: 6%;
+        &> .head, &> .body {
+            width: 1024px; margin: 0 auto;
+        }
+        &> .head { padding-bottom: 3%; }
+    }
+
+    #product-header {
+        background: @green url("../images/background-green.jpg") repeat top left;
+        .space {
+            background: transparent url("../images/border-top.png") repeat-x bottom left;
+            .inner {
+                padding-bottom: 7%;
+                background: transparent url("../images/border-green.jpg") repeat-x top left;
+                .body { padding-bottom: 22px; }
+            }
+        }
+
+        .inner {
+            #image-header { margin-bottom: 2%; cursor: pointer; }
+            h2 { color: @white; text-shadow: 0px 2px @grey-dark; }
+        }
+    }
+
+    #product-box {
+        .inner {
+            h2 span.highlight { color: @green; font-size: 1.3em; }
+
+            .variant-boxes .variant-box:nth-child(odd) { float: left; }
+            .variant-boxes .variant-box:nth-child(even) { float: right; }
+            .variant-box {
+                position: relative; padding: 7% 1% 0;
+                .checked { display: none; position: absolute; top: 20%; right: 18%; z-index: 75; }
+                .add-to-cart {
+                    position: relative; float: right; width: 215px; height: 50px;
+                    color: @white; font-weight: 700; font-size: 1.3em; line-height: 230%; text-shadow: 1px 1px 5px @grey;
+                    .button {
+                        position: absolute; width: 100%; height: 100%;
+                        background: transparent url('../images/button-small.png') no-repeat 0 0;
+                    }
+                    .add, .added { position: relative; z-index: 100; }
+                    .added { display: none; }
+                }
+                input[type=radio] {
+                    display: none;
+                    &:checked {
+                        ~.variant .stamp { background-position: 0 -395px; }
+                        ~.checked { display: block; }
+                        ~.add-to-cart {
+                            .button { background-position: 0 -53px; }
+                            .add { display: none; }
+                            .added { display: block; }
+                        }
+                    }
+                }
+                &:hover {
+                    .stamp { background-position: 0 -395px; }
+                    .add-to-cart .button { background-position: 0 -53px; }
+                }
+            }
+        }
+    }
+
+    #product-often {
+        background: @red;
+        margin-bottom: 5%;
+
+        .space {
+            h2 { color: @white; }
+            background: transparent url("../images/border-bottom.png") repeat-x top left;
+            .inner {
+                background: transparent url("../images/border-top.png") repeat-x bottom left;
+                .head { padding-top: 22px; }
+                .body { padding-bottom: 22px; }
+            }
+        }
+
+        .inner {
+            .often-boxes { padding: 3% 0 10%; }
+            .often-box {
+                display: inline-block; padding-right: 3.5%;
+                &:last-child { padding-right: 0; }
+                label {
+                    .text {
+                        text-align: left; white-space: nowrap;
+                        .pacifico; font-size: 2.8em; color: @white; opacity: 0.5;
+                        .check {
+                            float: left; width: 35px; height: 40px; margin: 20px 15px 0 0;
+                            background: transparent url('../images/dot.png') no-repeat top left;
+                        }
+                    }
+                    input[type=radio] {
+                        display: none;
+                        &:checked {
+                            ~.text {
+                                opacity: 1.5;
+                                .check { background-position: 0 -40px; }
+                            }
+                        }
+                    }
+                    &:hover .text { opacity: 1.5; }
+                }
+            }
+        }
+    }
+
+}
