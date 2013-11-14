@@ -4,7 +4,7 @@ SPHERE.IO Donut Store
 This is not a real **donut** store. This is a _free template_ for subscription ecommerce sites and it's built on top of the APIs of [SPHERE.IO](http://sphere.io), [Pactas](http://www.pactas.com) and [Paymill](https://www.paymill.com).
 
 ## Live demo
-Visit a live demo of SPHERE-DONUT store at http://wwww.iwantdonuts.com.
+Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdonuts.com).
 
 ## Getting started [![Build Status](https://secure.travis-ci.org/commercetools/sphere-donut.png?branch=master)](http://travis-ci.org/commercetools/sphere-donut)
 
