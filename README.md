@@ -20,20 +20,20 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 - Point to [SPHERE Login](https://admin.sphere.io/login) or register a new account with [SPHERE Signup](https://admin.sphere.io/signup).
 - Go to Developers  -> API Clients to retrieve your project data.
 ![API Backend](https://raw.github.com/commercetools/sphere-donut/master/public/images/mc_api.png)
-- To change to your SPHERE.IO project, modify `sphere.project`, `sphere.clientId` and `sphere.clientSecret` in `conf/application.conf`
+- To use your SPHERE.IO project, modify `sphere.project`, `sphere.clientId` and `sphere.clientSecret` in `conf/application.conf`
 
 More about the ecommerce PaaS SPHERE.IO at http://sphere.io.
 
 #### Pactas keys
 - Go to your Pactas backend to retrieve your client data
-- To change to your Pactas account, modify `client ID` and `client secret` into in `app/utils/pactas/Pactas.java`
+- To use your Pactas account, modify `pactas.clientId` and `pactas.clientSecret` in `conf/application.conf`
 
 More about recurring billing with Pactas at http://www.pactas.com.
 
 #### PAYMILL keys
 - [Register at PAYMILL](https://app.paymill.com/en-gb/auth/register) to get the (test) API keys. 
 - Go to PAYMILL Cockpit -> My account -> Settings -> API keys to retrieve your keys
-- To change to your PAYMILL account, enter your `public key` in `app/views/main.scala.html` (line ~52)
+- To use your PAYMILL account, enter your `public key` in your Pactas account.
 
 More information about doing payments with PAYMILL at http://www.paymill.com.
  
