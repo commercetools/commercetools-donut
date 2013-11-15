@@ -9,7 +9,7 @@ import play.libs.WS;
 
 public class Customer extends Pactas {
 
-    public Customer(String id) {
+    private Customer(String id) {
         if (id != null) {
             authenticate();
             String url = API_URL + "/customers/" + id;
@@ -25,21 +25,27 @@ public class Customer extends Pactas {
             } catch (Exception e) {
                 play.Logger.error("Error on requesting customer");
             }
-            checkResponse();
         }
+    }
+
+    public static Customer get(String id) {
+        Customer customer = new Customer(id);
+        if (customer.isResponseValid()) return customer;
+        return null;
     }
 
     public Address getAddress() {
         Address address = null;
-        if (response.has("Address")) {
+        if (response != null && hasNode(response, "Address")) {
             JsonNode node = response.get("Address");
+            if (!hasNode(node, "Country")) return null;
             address = new Address(CountryCode.valueOf(node.get("Country").getTextValue()));
-            address.setStreetName(node.get("AddressLine1").getTextValue());
-            address.setStreetNumber(node.get("AddressLine2").getTextValue());
-            address.setPostalCode(node.get("PostalCode").getTextValue());
-            address.setCity(node.get("City").getTextValue());
-            address.setFirstName(response.get("FirstName").getTextValue());
-            address.setLastName(response.get("LastName").getTextValue());
+            if (hasNode(response, "FirstName")) address.setFirstName(response.get("FirstName").getTextValue());
+            if (hasNode(response, "LastName")) address.setLastName(response.get("LastName").getTextValue());
+            if (hasNode(node, "AddressLine1")) address.setStreetName(node.get("AddressLine1").getTextValue());
+            if (hasNode(node, "AddressLine2")) address.setStreetNumber(node.get("AddressLine2").getTextValue());
+            if (hasNode(node, "PostalCode")) address.setPostalCode(node.get("PostalCode").getTextValue());
+            if (hasNode(node, "City")) address.setCity(node.get("City").getTextValue());
         }
         return address;
     }

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Contract extends Pactas {
 
-    public Contract(String id) {
+    private Contract(String id) {
         if (id != null) {
             authenticate();
             String url = API_URL + "/contracts/" + id;
@@ -27,13 +27,18 @@ public class Contract extends Pactas {
             } catch (Exception e) {
                 play.Logger.error("Error on requesting invoice");
             }
-            checkResponse();
         }
+    }
+
+    public static Contract get(String id) {
+        Contract contract = new Contract(id);
+        if (contract.isResponseValid()) return contract;
+        return null;
     }
 
     public Variant getVariant() {
         Variant variant = null;
-        if (response.has("Phases")) {
+        if (response != null && hasNode(response, "Phases")) {
             List<JsonNode> nodes = response.get("Phases").findValues("PlanVariantId");
             if (!nodes.isEmpty()) {
                 variant = Util.getVariant(nodes.get(0).getTextValue());
@@ -43,7 +48,7 @@ public class Contract extends Pactas {
     }
 
     public String getCustomerId() {
-        if (response.has("CustomerId")) {
+        if (response != null && hasNode(response, "CustomerId")) {
             return response.get("CustomerId").getTextValue();
         }
         return null;

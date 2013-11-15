@@ -24,12 +24,15 @@ public class Pactas {
             ObjectNode body = Json.newObject();
             body.put("grant_type", "client_credentials");
             // Send request
+            play.Logger.debug("Sending auth request to " + AUTH_URL);
+            play.Logger.debug("With credentials " + CLIENT_ID + ":" + CLIENT_SECRET);
             F.Promise<WS.Response> promise = WS.url(AUTH_URL)
                     .setContentType("application/x-www-form-urlencoded")
                     .setAuth(CLIENT_ID, CLIENT_SECRET, Realm.AuthScheme.BASIC)
                     .post(body);
 
             // Read request
+            play.Logger.debug("Auth response received from Pactas");
             JsonNode res = Json.parse(promise.get().getBody());
             access_token = res.get("access_token").getTextValue();
             play.Logger.debug("Received access token " + access_token);
@@ -38,9 +41,23 @@ public class Pactas {
         }
     }
 
-    public void checkResponse() {
+    public boolean isResponseValid() {
+        if (response == null) {
+            play.Logger.error("Empty response from Pactas");
+            return false;
+        }
         if (response.has("message")) {
             play.Logger.error("PACTAS: " + response.get("message").getTextValue());
+            return false;
         }
+        return true;
+    }
+
+    public boolean hasNode(JsonNode node, String name) {
+        if (!node.has(name)) {
+            play.Logger.error("Not found attribute " + name);
+            return false;
+        }
+        return true;
     }
 }

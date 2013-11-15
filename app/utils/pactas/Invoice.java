@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Invoice extends Pactas {
 
-    public Invoice(String id) {
+    private Invoice(String id) {
         if (id != null) {
             authenticate();
             String url = API_URL + "/invoices/" + id;
@@ -25,18 +25,22 @@ public class Invoice extends Pactas {
                         .get();
 
                 // Read request
-                System.out.println(promise.get().getBody());
                 response = Json.parse(promise.get().getBody());
             } catch (Exception e) {
                 play.Logger.error("Error on requesting contract");
             }
-            checkResponse();
         }
+    }
+
+    public static Invoice get(String id) {
+        Invoice invoice = new Invoice(id);
+        if (invoice.isResponseValid()) return invoice;
+        return null;
     }
 
     public Variant getVariant() {
         Variant variant = null;
-        if (response.has("ItemList")) {
+        if (response != null && hasNode(response, "ItemList")) {
             List<JsonNode> nodes = response.get("ItemList").findValues("ProductId");
             if (!nodes.isEmpty()) {
                 variant = Util.getVariant(nodes.get(0).getTextValue());
@@ -47,13 +51,14 @@ public class Invoice extends Pactas {
 
     public Address getAddress() {
         Address address = null;
-        if (response.has("RecipientAddress")) {
+        if (response != null && hasNode(response, "RecipientAddress")) {
             JsonNode node = response.get("RecipientAddress");
+            if (!hasNode(node, "Country")) return null;
             address = new Address(CountryCode.valueOf(node.get("Country").getTextValue()));
-            address.setStreetName(node.get("AddressLine1").getTextValue());
-            address.setStreetNumber(node.get("AddressLine2").getTextValue());
-            address.setPostalCode(node.get("PostalCode").getTextValue());
-            address.setCity(node.get("City").getTextValue());
+            if (hasNode(node, "AddressLine1")) address.setStreetName(node.get("AddressLine1").getTextValue());
+            if (hasNode(node, "AddressLine2")) address.setStreetNumber(node.get("AddressLine2").getTextValue());
+            if (hasNode(node, "PostalCode")) address.setPostalCode(node.get("PostalCode").getTextValue());
+            if (hasNode(node, "City")) address.setCity(node.get("City").getTextValue());
         }
         return address;
     }
