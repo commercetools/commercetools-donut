@@ -18,5 +18,7 @@ GET     /order/success                                      controllers.Applicat
 GET     /order/failure                                      controllers.Application.failure()
 POST    /order/execute                                      controllers.Application.executeSubscription()
 
+#GET     /test/:contract                                     controllers.Application.subscribe(contract: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                       controllers.Assets.at(path="/public", file)

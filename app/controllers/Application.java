@@ -101,15 +101,37 @@ public class Application extends ShopController {
             }
         }
 
-        // Get additional information from Pactas
-        Contract contract = new Contract(contractId);
-        Customer customer = new Customer(contract.getCustomerId());
+        return subscribe(contractId);
+    }
 
-        // Set cart with subscription data
-        sphere().currentCart().addLineItem(Util.getProduct().getId(), contract.getVariant().getId(), 1);
-        sphere().currentCart().setShippingAddress(customer.getAddress());
+    public static Result subscribe(String contractId) {
+        // Case contract does not exist in Pactas backend
+        Contract contract = Contract.get(contractId);
+        if (contract == null) {
+            return badRequest("Given contract ID is not valid");
+        }
 
-        // Create order
+        // Case customer does not exist in Pactas backend
+        Customer customer = Customer.get(contract.getCustomerId());
+        if (customer == null) {
+            return badRequest("Customer does not exist");
+        }
+
+        // Case variant from Pactas does not exist in Sphere backend
+        Variant variant = contract.getVariant();
+        if (variant == null) {
+            return badRequest("Requested variant does not exist");
+        }
+        sphere().currentCart().addLineItem(Util.getProduct().getId(), variant.getId(), 1);
+
+        // Case postal address from Pactas is invalid
+        Address address = customer.getAddress();
+        if (address == null) {
+            return badRequest("Given postal address is invalid");
+        }
+        sphere().currentCart().setShippingAddress(address);
+
+        // Case order can be created
         String cartSnapshot = sphere().currentCart().createCartSnapshotId();
         while (!Util.isValidCartSnapshot(cartSnapshot)) { }
         sphere().currentCart().createOrder(cartSnapshot, PaymentState.Paid);
