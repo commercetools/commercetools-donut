@@ -18,7 +18,7 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 
 #### SPHERE.IO data
 - Point to [SPHERE Login](https://admin.sphere.io/login) or register a new account with [SPHERE Signup](https://admin.sphere.io/signup).
-- Go to Developers  -> API Clients to retrieve your project data.
+- Go to `Developers -> API Clients` to retrieve your project data.
 ![API Backend](https://raw.github.com/commercetools/sphere-donut/master/public/images/mc_api.png)
 - To use your SPHERE.IO project, modify `sphere.project`, `sphere.clientId` and `sphere.clientSecret` in `conf/application.conf`.
 
