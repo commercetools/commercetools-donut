@@ -9,8 +9,8 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 ## Getting started [![Build Status](https://secure.travis-ci.org/commercetools/sphere-donut.png?branch=master)](http://travis-ci.org/commercetools/sphere-donut)
 
 ### Set it up
-- Install [Play 2.1.1](http://www.playframework.com/documentation/2.1.1/Installing).
-- [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-donut project from GitHub.
+- Install [Play 2.1.5](http://www.playframework.com/documentation/2.1.x/Installing).
+- [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-donut project from GitHub. or download it as [zip file](https://github.com/commercetools/sphere-donut/archive/master.zip).
 - Run `play run` command in root project directory.
 - Open your browser and point it to [http://localhost:9000](http://localhost:9000).
  
@@ -22,7 +22,7 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 ![API Backend](https://raw.github.com/commercetools/sphere-donut/master/public/images/mc_api.png)
 - To use your SPHERE.IO project, modify `sphere.project`, `sphere.clientId` and `sphere.clientSecret` in `conf/application.conf`.
 
-More about the ecommerce PaaS SPHERE.IO at http://sphere.io.
+More about the ecommerce PaaS SPHERE.IO at http://sphere.io[http://sphere.io](http://sphere.io).
 
 #### Pactas keys
 - [Login to the Pactas sandbox](https://sandbox.pactas.com) or [create a new Pactas sandbox account](https://sandbox.pactas.com/#/signup).
@@ -46,15 +46,15 @@ More information about doing payments with PAYMILL at http://www.paymill.com.
 - Run `git push heroku master` to push the project to Heroku and deploy it.
 - Run `heroku open` to open your deployed website in a browser.
 
-> More information about deploying a Play application to Heroku [here](http://www.playframework.com/documentation/2.1.1/ProductionHeroku).
+> More information about deploying a Play application to Heroku [here](http://www.playframework.com/documentation/2.1.x/ProductionHeroku).
 
 ### Develop it
 
 - Install your favourite IDE (preferably IntelliJ, Eclipse or Netbeans).
-- Generate configuration files for your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.0.x/IDE).
+- Generate configuration files for your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.1.x/IDE).
 - Run `play` command in root project directory.
 - Inside Play Shell, type `clean test` for compiling and testing it.
 
-> This app is a [Play Framework](http://www.playframework.com/documentation/2.1.1/Home) app and uses the [SPHERE Play SDK](http://sphere.io/dev/play-sdk.html).
+> This app is a [Play Framework](http://www.playframework.com/documentation/2.1.x/Home) app and uses the [SPHERE Play SDK](http://sphere.io/dev/play-sdk.html).
 
 Have fun!
