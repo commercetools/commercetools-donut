@@ -29,11 +29,11 @@ object ApplicationBuild extends Build {
 
     object Libs {
         val appDependencies = Seq(
-            "io.sphere"             %%  "sphere-play-sdk"   %   "0.42.0",
-            "org.jsoup"             %   "jsoup"             %   "1.7.1"
+          "io.sphere" %% "sphere-play-sdk" % "0.51.0",
+          "org.jsoup" % "jsoup" % "1.7.1"
         )
         val testDependencies = Seq(
-            "org.mockito"   %   "mockito-all"       %       "1.9.5"     %   "test"
+            "org.mockito" % "mockito-all" % "1.9.5" % "test"
         )
     }
 }
