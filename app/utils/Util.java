@@ -33,8 +33,12 @@ public class Util {
             cart = Sphere.getInstance().currentCart().removeLineItem(item.getId());
         }
         // Remove frequency value
+        try {
         if (Sphere.getInstance().customObjects().get("cart-frequency", cart.getId()).fetch().isPresent()) {
             Sphere.getInstance().customObjects().delete("cart-frequency", cart.getId()).execute();
+        }
+        } catch(Exception e) {
+            // For some reason is still failing, see later.
         }
     }
 }
