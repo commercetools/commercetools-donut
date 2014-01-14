@@ -4,7 +4,7 @@
     <div class="variant-body">
         <div class="stamp" style="@getProductStampImage(variant)"></div>
         <div class="name">@variant.getString("box")</div>
-        <img src="@variant.getFeaturedImage.getSize(ImageSize.LARGE).getUrl" alt="@variant.getString("box")" />
+        <img src="@variant.getFeaturedImage.getSize(ImageSize.MEDIUM).getUrl" alt="@variant.getString("box")" />
         <div class="price">@getPrice(variant.getPrice.getValue)</div>
     </div>
 </div>

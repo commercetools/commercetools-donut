@@ -58,7 +58,7 @@ public class ViewHelper {
 
     public static String getAddToCartImage(Variant variant) {
         if (variant.getImages().size() > 2) {
-            return "background-image: url('"+ variant.getImages().get(2).getSize(ImageSize.ORIGINAL).getUrl() +"')";
+            return "background-image: url('"+ variant.getImages().get(2).getSize(ImageSize.MEDIUM).getUrl() +"')";
         }
         return "";
     }
