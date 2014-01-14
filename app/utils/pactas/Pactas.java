@@ -32,7 +32,7 @@ public class Pactas {
                     .post(body);
 
             // Read request
-            play.Logger.debug("Auth response received from Pactas");
+            play.Logger.debug("Auth response received from Pactas: " + promise.get().getBody());
             JsonNode res = Json.parse(promise.get().getBody());
             access_token = res.get("access_token").getTextValue();
             play.Logger.debug("Received access token " + access_token);
