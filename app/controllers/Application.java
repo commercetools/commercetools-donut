@@ -132,9 +132,7 @@ public class Application extends ShopController {
         sphere().currentCart().setShippingAddress(address);
 
         // Case order can be created
-        String cartSnapshot = sphere().currentCart().createCartSnapshotId();
-        while (!Util.isValidCartSnapshot(cartSnapshot)) { }
-        sphere().currentCart().createOrder(cartSnapshot, PaymentState.Paid);
+        sphere().currentCart().createOrder(PaymentState.Paid);
 
         return ok("Order created!");
     }

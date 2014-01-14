@@ -33,19 +33,8 @@ public class Util {
             cart = Sphere.getInstance().currentCart().removeLineItem(item.getId());
         }
         // Remove frequency value
-        try {
-            if (Sphere.getInstance().customObjects().get("cart-frequency", cart.getId()).fetch().isPresent()) {
-                Sphere.getInstance().customObjects().delete("cart-frequency", cart.getId()).execute();
-            }
-        } catch (Exception e) {}
-    }
-
-    public static boolean isValidCartSnapshot(String cartSnapshot) {
-        try {
-            Sphere.getInstance().currentCart().isSafeToCreateOrder(cartSnapshot);
-        } catch (Exception e) {
-            return false;
+        if (Sphere.getInstance().customObjects().get("cart-frequency", cart.getId()).fetch().isPresent()) {
+            Sphere.getInstance().customObjects().delete("cart-frequency", cart.getId()).execute();
         }
-        return true;
     }
 }
