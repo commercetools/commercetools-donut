@@ -2,8 +2,8 @@ language: scala
 scala:
 - 2.10.0
 before_script:
-- ./adjust_config.sh
-- ./create_version_info.sh
+- "./adjust_config.sh"
+- "./create_version_info.sh"
 script:
 - sbt test
 env:
@@ -15,4 +15,7 @@ env:
 deploy:
   provider: heroku
   api_key:
-    secure: VArEXrt9DBeh12bhlxOAF8P++AB+n1AqOTjeN6iRXXyjlGRZxKwuqpKfQeLO5YF59sEf0C96U9RbLfW8RgZLCd+fPOjyp8xJGIyAcQ0HokZoTqRKdB07ixDEu3ZQLEG2V48kWDD2wsqhTCmoMM0PEaMQUgWFWj1SkkfeJkQgf/U=
+    secure: ZKkGHArzu61yMHryDFN3+dYyZ6+9uWbErX2kMmjwBwUuwbP8fMegqVPgQsrFbvkw+hN8bboBmFR6earlQLKu7bPB7HdeRfKW6vTbZTks9bar5i07r3dMva5TQfOuD9zUeiMVe7K9Z6awH24fnHO5k/Zfdn+Fbf1WLvPGxVm/zfQ=
+  app: sphere-donut
+  on:
+    repo: commercetools/sphere-donut
