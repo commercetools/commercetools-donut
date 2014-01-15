@@ -29,7 +29,7 @@ public class Pactas {
             F.Promise<WS.Response> promise = WS.url(AUTH_URL)
                     .setContentType("application/x-www-form-urlencoded")
                     .setAuth(CLIENT_ID, CLIENT_SECRET, Realm.AuthScheme.BASIC)
-                    .post(body);
+                    .post(Json.stringify(body));
 
             // Read request
             play.Logger.debug("Auth response received from Pactas: " + promise.get().getBody());
