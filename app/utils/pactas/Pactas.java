@@ -21,15 +21,13 @@ public class Pactas {
     public void authenticate() {
         if (access_token != null) return;
         try {
-            ObjectNode body = Json.newObject();
-            body.put("grant_type", "client_credentials");
             // Send request
             play.Logger.debug("Sending auth request to " + AUTH_URL);
             play.Logger.debug("With credentials " + CLIENT_ID + ":" + CLIENT_SECRET);
             F.Promise<WS.Response> promise = WS.url(AUTH_URL)
                     .setContentType("application/x-www-form-urlencoded")
                     .setAuth(CLIENT_ID, CLIENT_SECRET, Realm.AuthScheme.BASIC)
-                    .post(Json.stringify(body));
+                    .post("grant_type=client_credentials");
 
             // Read request
             play.Logger.debug("Auth response received from Pactas: " + promise.get().getBody());
