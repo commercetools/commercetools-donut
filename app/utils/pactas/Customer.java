@@ -11,13 +11,12 @@ public class Customer extends Pactas {
 
     private Customer(String id) {
         if (id != null) {
-            authenticate();
             String url = API_URL + "/customers/" + id;
             try {
                 // Send request
                 F.Promise<WS.Response> promise = WS.url(url)
                         .setContentType("application/x-www-form-urlencoded")
-                        .setQueryParameter("access_token", access_token)
+                        .setQueryParameter("access_token", Authorization.access_token)
                         .get();
 
                 // Read request

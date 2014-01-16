@@ -18,6 +18,7 @@ object ApplicationBuild extends Build {
             lessEntryPoints <<= baseDirectory(customLessEntryPoints),
             libraryDependencies ++= Libs.appDependencies,
             libraryDependencies ++= Libs.testDependencies,
+            javacOptions ++= Seq("-deprecation", "-source", "1.6", "-target", "1.6"),
             templatesImport ++= Seq(
                 "utils.ViewHelper._",
                 "forms._",
