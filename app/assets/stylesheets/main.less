@@ -24,6 +24,7 @@ h2 { font-size: 4em; padding-top: 1%; margin: 0; line-height: 100%; }
 h3 { font-size: 1.4em; letter-spacing: 1px; }
 h4 { font-size: 1.4em; text-transform:uppercase; }
 h1, h3 { border-bottom: 1px solid @black; text-align: left; }
+a, a:hover, a:visited { color: @brown; font-weight: 300; }
 
 .pacifico { font-family: 'Pacifico', cursive; line-height: 170%; padding-right: 4px; }
 .highlight { .pacifico; line-height: 50%; }
@@ -69,6 +70,25 @@ form { margin: 0; }
     position: relative; margin: 0 auto;
     [data-toggle=tooltip] {
         position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    }
+}
+
+.form {
+    label {
+        font-size: 1.05em;
+    }
+
+    input {
+        padding: 6px 14px;
+        border: 0; .border-radius(0); .box-shadow(1px 2px, #d7caaa);
+        font-size: 1.1em; font-family: 'Oswald', sans-serif; font-weight: 400;
+        color: #5D2001;
+    }
+
+    select {
+        padding: 6px 14px;
+        border: 1px solid #d7caaa; background: #FFFFFF;
+        font-size: 1.1em; font-family: 'Oswald', sans-serif; font-weight: 400; color: #5D2001;
     }
 }
 

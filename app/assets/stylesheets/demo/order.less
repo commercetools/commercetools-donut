@@ -46,8 +46,38 @@ body.order {
         }
     }
 
-    iframe {
-        border: 0; width: 100%; height: 320px; overflow: hidden;
+    #order-shipping, #order-billing {
+        text-align: left;
+        label { display: block; text-align: left; font-weight: 300; }
+        .control-group { display: inline-block; margin-right: 19px; }
+        .form-inline {
+            margin-top: 3%;
+            &:first-child { margin-top: 0; }
+        }
+
+        #first-name { width: 220px; }
+        #last-name { width: 250px; }
+        #address { width: 220px; }
+        #address-city { width: 130px; }
+        #address-postal-code { width: 70px; }
+        #transaction-form-name { width: 250px; }
+        #transaction-form-number { width: 250px; }
+        #transaction-form-month { width: 70px; }
+        #transaction-form-year { width: 70px; }
+        #transaction-form-cvc { width: 120px; }
+    }
+
+    #order-purchase {
+        padding: 5% 0;
+        button[type=submit] {
+            .zoom(0.4);
+            float: left;
+            font-size: 60px;
+        }
+        .button-back {
+            padding-top: 3%;
+            font-size: 1.1em;
+        }
     }
 }
 

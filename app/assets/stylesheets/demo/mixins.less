@@ -1,7 +1,13 @@
 .box-shadow(@style, @color) {
-    box-shadow:         @style @color;
     -webkit-box-shadow: @style @color;
     -moz-box-shadow:    @style @color;
+    box-shadow:         @style @color;
+}
+
+.border-radius(@value) {
+    -webkit-border-radius: @value;
+    -moz-border-radius: @value;
+    border-radius: @value;
 }
 
 .transition(@property, @duration) {
