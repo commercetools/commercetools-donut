@@ -55,6 +55,7 @@
                     <div class="body">
                         <div id="form-billing-method" class="show">
                             @form.setPayment()
+                            <h5 id="error-message"></h5>
                         </div>
                     </div>
                 </div>
@@ -74,6 +75,7 @@
             </div>
         </section>
     </form>
+
     <div class="bottom"></div>
     <a id="clear-order" href="@routes.Application.clearOrder">Clear order</a>
 }{
