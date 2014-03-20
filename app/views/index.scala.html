@@ -1,6 +1,11 @@
 @(cart: Cart, product: Product)
 
-@main("I want donuts!", "product"){
+@scripts = {
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/lib-form.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/products.min.js")"></script>
+}
+
+@main("I want donuts!", "product", scripts){
 
 }{
 <form id="product-form" action="@routes.Application.submitProduct" method="post">
