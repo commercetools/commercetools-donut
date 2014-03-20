@@ -1,19 +1,16 @@
 $ ->
-    iteroJS = {}
-    iteroJSPayment = {}
-
-    paymentConfig = { publicApiKey: "523075921d8dd007f822edaa" }
+    paymentConfig = { publicApiKey: "532846f751f459b0d07df5fd" }
 
     iteroJS = new IteroJS.Signup()
     iteroJSPayment = new IteroJS.Payment( paymentConfig
-        -> console.log("iteroJS payment loaded")
-        -> console.log("iteroJS payment FAILED to load")
+        -> console.log "iteroJS payment loaded"
+        -> console.error "iteroJS payment failed to load"
     )
 
     $("#form-checkout").submit ->
         cart = {
             planVariantId: $("#pactas-variant").val()
-            currency: $("#pactas-currency").val()
+            currency: $("#transaction-form-currency").val()
         }
 
         customerData = {
@@ -36,15 +33,13 @@ $ ->
             "expiryYear": $("#transaction-form-year").val()
         }
 
-        console.log(cart)
-        console.log(customerData)
-        console.log(paymentData)
-
         iteroJS.subscribe( iteroJSPayment
             cart
             customerData
             paymentData
-            (subscribeResult) -> console.log("subscribe returned", subscribeResult)
-            (errorData) ->  console.log("error: ", errorData)
+            (subscribeResult) -> console.log "Successful register: ", subscribeResult
+            (errorData) ->
+                console.error "Error from iteroJS: ", errorData
+                $("#error-message").text "Oops something went wrong... Please review the form and try again later."
         )
         return false
