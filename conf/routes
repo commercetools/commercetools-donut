@@ -8,7 +8,7 @@ POST    /	                                                controllers.Applicatio
 
 # Order page
 GET     /order                                              controllers.Application.showOrder()
-POST    /order/success                                      controllers.Application.submitOrder()
+POST    /order                                              controllers.Application.submitOrder()
 
 # Clear order
 GET     /order/clear                                        controllers.Application.clearOrder()
