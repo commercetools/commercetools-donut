@@ -1,5 +1,8 @@
 package utils;
 
+import com.google.common.base.Optional;
+import io.sphere.client.exceptions.SphereException;
+import io.sphere.client.model.CustomObject;
 import io.sphere.client.shop.model.*;
 import sphere.Session;
 import sphere.Sphere;
@@ -37,8 +40,12 @@ public class Util {
     }
 
     public static int getFrequency(String key) {
-        if (sphere().customObjects().get(FREQUENCY, key).fetch().isPresent()) {
-            return sphere().customObjects().get(FREQUENCY, key).fetch().get().getValue().asInt();
+        try {
+            if (sphere().customObjects().get(FREQUENCY, key).fetch().isPresent()) {
+                return sphere().customObjects().get(FREQUENCY, key).fetch().get().getValue().asInt();
+            }
+        } catch (SphereException se) {
+            return 0;
         }
         return 0;
     }
@@ -48,8 +55,12 @@ public class Util {
     }
 
     public static void unsetFrequency(String key) {
-        if (sphere().customObjects().get(FREQUENCY, key).fetch().isPresent()) {
-            sphere().customObjects().delete(FREQUENCY, key).execute();
+        try {
+            if (sphere().customObjects().get(FREQUENCY, key).fetch().orNull() != null) {
+                sphere().customObjects().delete(FREQUENCY, key).execute();
+            }
+        } catch (SphereException se) {
+            // Assume it is already unset
         }
     }
 
