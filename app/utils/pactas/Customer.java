@@ -22,7 +22,7 @@ public class Customer extends Pactas {
                 // Read request
                 response = Json.parse(promise.get().getBody());
             } catch (Exception e) {
-                play.Logger.error("Error on requesting customer");
+                play.Logger.error("Error on requesting customer: " + e.getMessage());
             }
         }
     }

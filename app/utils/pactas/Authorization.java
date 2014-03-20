@@ -11,9 +11,9 @@ import play.libs.WS;
 import java.util.logging.Logger;
 
 public class Authorization {
-    private static String AUTH_URL = Play.application().configuration().getString("pactas.auth");
-    private static String CLIENT_ID = Play.application().configuration().getString("pactas.clientId");
-    private static String CLIENT_SECRET = Play.application().configuration().getString("pactas.clientSecret");
+    private final static String AUTH_URL = Play.application().configuration().getString("pactas.auth");
+    private final static String CLIENT_ID = Play.application().configuration().getString("pactas.clientId");
+    private final static String CLIENT_SECRET = Play.application().configuration().getString("pactas.clientSecret");
 
     final protected static String access_token = authenticate();
     protected JsonNode response;
@@ -28,15 +28,15 @@ public class Authorization {
                     .post("grant_type=client_credentials");
 
             // Read request
-            play.Logger.debug("Auth response received from Pactas");
             JsonNode res = Json.parse(promise.get().getBody());
+            play.Logger.debug("Auth response received from Pactas");
             if (res.has("access_token")) {
                 play.Logger.debug("Received access token");
                 return res.get("access_token").getTextValue();
             }
-            play.Logger.error("Error on authentication "+ Json.stringify(res));
+            play.Logger.error("Error on authentication: "+ Json.stringify(res));
         } catch (Exception e) {
-            play.Logger.error("Error on authentication");
+            play.Logger.error("Error on authentication: " + e.getMessage());
         }
         return "";
     }

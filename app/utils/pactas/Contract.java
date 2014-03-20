@@ -24,7 +24,7 @@ public class Contract extends Pactas {
                 // Read request
                 response = Json.parse(promise.get().getBody());
             } catch (Exception e) {
-                play.Logger.error("Error on requesting invoice");
+                play.Logger.error("Error on requesting invoice: " + e.getMessage());
             }
         }
     }
