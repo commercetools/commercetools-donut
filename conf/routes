@@ -8,17 +8,15 @@ POST    /	                                                controllers.Applicatio
 
 # Order page
 GET     /order                                              controllers.Application.showOrder()
+POST    /order/success                                      controllers.Application.submitOrder()
 
 # Clear order
 GET     /order/clear                                        controllers.Application.clearOrder()
 
-
-# Pactas
-GET     /order/success                                      controllers.Application.success()
-GET     /order/failure                                      controllers.Application.failure()
+# Web hook
 POST    /order/execute                                      controllers.Application.executeSubscription()
-
-#GET     /test/:contract                                     controllers.Application.subscribe(contract: String)
+# Testing web hook
+GET     /test/:contract                                     controllers.Application.subscribe(contract: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                       controllers.Assets.at(path="/public", file)
