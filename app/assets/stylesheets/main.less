@@ -5,14 +5,8 @@
 
 body {
     background: @background;
+    margin: 0; padding: 0;
     font-family: 'Oswald', sans-serif; font-size: 100%; color: @brown;
-
-    &.product {
-      .top-banner { border-bottom: 1px solid #18b1a8; }
-    }
-    &.order {
-      .top-banner { border-bottom: 1px solid #822635; }
-    }
 }
 
 label { font-size: 100%; }
@@ -32,13 +26,17 @@ a, a:hover, a:visited { color: @brown; font-weight: 300; }
 
 /* COMMON */
 
-body.success #top-announcement {
-    display: none;
+.top-banner {
+    background-color: @yellow; border-bottom: 1px solid @black-light;
+    .box-sizing(border-box);
+    visibility: hidden;
+    width: 100%; padding: 1%; padding-right: 150px;
+    z-index: 199;
+
+    &.fixed { position: fixed; visibility: visible; }
 }
 
-.top-banner { padding: 10px; text-align: center; background-color: #f3f1d6; position: fixed; width: 100%; z-index: 199; }
-
-#container { text-align: center; padding-top: 40px; }
+#container { text-align: center; }
 form { margin: 0; }
 
 .variant { padding: 0 4% 4%; }
