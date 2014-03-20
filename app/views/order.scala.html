@@ -26,7 +26,7 @@
         </div>
     </section>
 
-    <form id="form-checkout">
+    <form id="form-checkout" method="post" action="@routes.Application.submitOrder">
         <input type="hidden" id="pactas-variant" value="@getPactasID(item, frequency)">
         <input type="hidden" id="transaction-form-currency" value="@item.getPrice.getValue.getCurrencyCode">
         <input type="hidden" id="transaction-form-amount" value="@item.getPrice.getValue.getAmount.setScale(2)" />
