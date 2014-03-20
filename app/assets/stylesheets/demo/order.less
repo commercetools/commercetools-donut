@@ -19,6 +19,14 @@ body.order, body.success {
         width: 768px; height: 30px;
         background: transparent url('../images/notebook-bottom.png') no-repeat top left;
     }
+
+    button[type=submit] {
+        float: left;
+        width: 323px; height: 90px;
+        background-size: 323px;
+        font-size: 1.7em;
+        &:hover { background-position: 0 -91px; }
+    }
 }
 
 body.order {
@@ -69,14 +77,9 @@ body.order {
 
     #order-purchase {
         padding: 5% 0;
-        button[type=submit] {
-            .zoom(0.4);
-            float: left;
-            font-size: 60px;
-        }
         .button-back {
-            padding-top: 3%;
-            font-size: 1.1em;
+            padding-top: 4%;
+            font-size: 1.3em;
         }
     }
 }
