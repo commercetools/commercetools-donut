@@ -12,6 +12,8 @@ $ ->
     checkoutForm.submit ->
         return true unless checkoutForm.find("input[name=orderId]").length < 1
 
+        checkoutForm.find("button[type=submit]").button("loading")
+
         cart = {
             planVariantId: $("#pactas-variant").val()
             currency: $("#transaction-form-currency").val()
