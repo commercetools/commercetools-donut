@@ -1,4 +1,6 @@
 $ ->
+    checkoutForm = $("#form-checkout")
+
     paymentConfig = { publicApiKey: "532846f751f459b0d07df5fd" }
 
     iteroJS = new IteroJS.Signup()
@@ -7,7 +9,9 @@ $ ->
         -> console.error "iteroJS payment failed to load"
     )
 
-    $("#form-checkout").submit ->
+    checkoutForm.submit ->
+        return true unless checkoutForm.find("input[name=orderId]").length < 1
+
         cart = {
             planVariantId: $("#pactas-variant").val()
             currency: $("#transaction-form-currency").val()
@@ -16,7 +20,7 @@ $ ->
         customerData = {
             firstName: $("#first-name").val()
             lastName: $("#last-name").val()
-            address : {
+            address: {
                 addressLine1: $("#address").val()
                 city: $("#address-city").val()
                 country: $("#address-country").val()
@@ -25,21 +29,25 @@ $ ->
         }
 
         paymentData = {
-            "bearer": "CreditCard:Paymill"
-            "cardNumber": $("#transaction-form-number").val()
-            "cardHolder": $("#transaction-form-name").val()
-            "cvc": $("#transaction-form-cvc").val()
-            "expiryMonth": $("#transaction-form-month").val()
-            "expiryYear": $("#transaction-form-year").val()
+            bearer: "CreditCard:Paymill"
+            cardNumber: $("#transaction-form-number").val()
+            cardHolder: $("#transaction-form-name").val()
+            cvc: $("#transaction-form-cvc").val()
+            expiryMonth: $("#transaction-form-month").val()
+            expiryYear: $("#transaction-form-year").val()
         }
 
         iteroJS.subscribe( iteroJSPayment
             cart
             customerData
             paymentData
-            (subscribeResult) -> console.log "Successful register: ", subscribeResult
+            (subscription) =>
+                console.log "Successful register: ", subscription
+                checkoutForm.append("<input type='hidden' name='orderId' value='#{subscription.OrderId}'>")
+                checkoutForm.submit()
             (errorData) ->
                 console.error "Error from iteroJS: ", errorData
-                $("#error-message").text "Oops something went wrong... Please review the form and try again later."
+                checkoutForm.find("#error-message").text "Oops something went wrong... Please review the form and try again later."
         )
+
         return false
