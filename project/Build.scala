@@ -30,7 +30,7 @@ object ApplicationBuild extends Build {
 
     object Libs {
         val appDependencies = Seq(
-          "io.sphere" %% "sphere-play-sdk" % "0.51.0",
+          "io.sphere" %% "sphere-play-sdk" % "0.54.0",
           "org.jsoup" % "jsoup" % "1.7.1"
         )
         val testDependencies = Seq(
