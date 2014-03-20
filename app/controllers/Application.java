@@ -73,7 +73,7 @@ public class Application extends ShopController {
 
     /* Method called by Pactas every time an order must be placed (weekly, monthly...) */
     public static Result executeSubscription() {
-        play.Logger.debug("------ Execute transaction");
+        play.Logger.debug("Executing Pactas transaction...");
         clearCart();
         String contractId = Pactas.getContractId(request());
         return subscribe(contractId);
@@ -83,32 +83,35 @@ public class Application extends ShopController {
         // Case contract does not exist in Pactas backend
         Contract contract = Contract.get(contractId);
         if (contract == null) {
-            return badRequest("Given contract ID is not valid");
+            play.Logger.error("Contract ID "+ contractId +" is not valid.");
+            return badRequest();
         }
 
         // Case customer does not exist in Pactas backend
         Customer customer = Customer.get(contract.getCustomerId());
         if (customer == null) {
-            return badRequest("Customer does not exist");
+            play.Logger.error("Customer ID "+ contract.getCustomerId() +" does not exist.");
+            return badRequest();
         }
 
         // Case variant from Pactas does not exist in Sphere backend
         Variant variant = contract.getVariant();
         if (variant == null) {
-            return badRequest("Requested variant does not exist");
+            play.Logger.error("Requested variant "+ contract.getVariant() +" does not exist");
+            return badRequest();
         }
         sphere().currentCart().addLineItem(Util.getProduct().getId(), variant.getId(), 1);
 
         // Case postal address from Pactas is invalid
         Address address = customer.getAddress();
         if (address == null) {
-            return badRequest("Given postal address is invalid");
+            play.Logger.error("Given postal address is invalid");
+            return badRequest();
         }
+
         sphere().currentCart().setShippingAddress(address);
-
-        // Case order can be created
         sphere().currentCart().createOrder(PaymentState.Paid);
-
-        return ok("Order created!");
+        play.Logger.debug("Order created!");
+        return ok();
     }
 }
