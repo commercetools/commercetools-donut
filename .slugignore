@@ -1,2 +1,6 @@
 /test
 /webtests
+README.md
+license.md
+/project/boot
+adjust_config.sh
