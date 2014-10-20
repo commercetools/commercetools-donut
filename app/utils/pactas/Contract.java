@@ -1,7 +1,7 @@
 package utils.pactas;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.sphere.client.shop.model.Variant;
-import org.codehaus.jackson.JsonNode;
 import play.libs.F;
 import play.libs.Json;
 import play.libs.WS;
@@ -40,7 +40,7 @@ public class Contract extends Pactas {
         if (response != null && hasNode(response, "Phases")) {
             List<JsonNode> nodes = response.get("Phases").findValues("PlanVariantId");
             if (!nodes.isEmpty()) {
-                variant = Util.getVariant(nodes.get(0).getTextValue());
+                variant = Util.getVariant(nodes.get(0).asText());
             }
         }
         return variant;
@@ -48,7 +48,7 @@ public class Contract extends Pactas {
 
     public String getCustomerId() {
         if (response != null && hasNode(response, "CustomerId")) {
-            return response.get("CustomerId").getTextValue();
+            return response.get("CustomerId").asText();
         }
         return null;
     }
