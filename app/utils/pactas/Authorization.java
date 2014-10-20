@@ -1,14 +1,11 @@
 package utils.pactas;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ning.http.client.Realm;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
 import play.Play;
 import play.libs.F;
 import play.libs.Json;
 import play.libs.WS;
-
-import java.util.logging.Logger;
 
 public class Authorization {
     private final static String AUTH_URL = Play.application().configuration().getString("pactas.auth");
@@ -32,7 +29,7 @@ public class Authorization {
             play.Logger.debug("Auth response received from Pactas");
             if (res.has("access_token")) {
                 play.Logger.debug("Received access token");
-                return res.get("access_token").getTextValue();
+                return res.get("access_token").asText();
             }
             play.Logger.error("Error on authentication: "+ Json.stringify(res));
         } catch (Exception e) {

@@ -1,9 +1,9 @@
 package utils.pactas;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.neovisionaries.i18n.CountryCode;
 import io.sphere.client.shop.model.Address;
 import io.sphere.client.shop.model.Variant;
-import org.codehaus.jackson.JsonNode;
 import play.libs.F;
 import play.libs.Json;
 import play.libs.WS;
@@ -42,7 +42,7 @@ public class Invoice extends Pactas {
         if (response != null && hasNode(response, "ItemList")) {
             List<JsonNode> nodes = response.get("ItemList").findValues("ProductId");
             if (!nodes.isEmpty()) {
-                variant = Util.getVariant(nodes.get(0).getTextValue());
+                variant = Util.getVariant(nodes.get(0).asText());
             }
         }
         return variant;
@@ -53,11 +53,11 @@ public class Invoice extends Pactas {
         if (response != null && hasNode(response, "RecipientAddress")) {
             JsonNode node = response.get("RecipientAddress");
             if (!hasNode(node, "Country")) return null;
-            address = new Address(CountryCode.valueOf(node.get("Country").getTextValue()));
-            if (hasNode(node, "AddressLine1")) address.setStreetName(node.get("AddressLine1").getTextValue());
-            if (hasNode(node, "AddressLine2")) address.setStreetNumber(node.get("AddressLine2").getTextValue());
-            if (hasNode(node, "PostalCode")) address.setPostalCode(node.get("PostalCode").getTextValue());
-            if (hasNode(node, "City")) address.setCity(node.get("City").getTextValue());
+            address = new Address(CountryCode.valueOf(node.get("Country").asText()));
+            if (hasNode(node, "AddressLine1")) address.setStreetName(node.get("AddressLine1").asText());
+            if (hasNode(node, "AddressLine2")) address.setStreetNumber(node.get("AddressLine2").asText());
+            if (hasNode(node, "PostalCode")) address.setPostalCode(node.get("PostalCode").asText());
+            if (hasNode(node, "City")) address.setCity(node.get("City").asText());
         }
         return address;
     }
