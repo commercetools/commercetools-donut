@@ -1,8 +1,6 @@
 package utils;
 
-import com.google.common.base.Optional;
 import io.sphere.client.exceptions.SphereException;
-import io.sphere.client.model.CustomObject;
 import io.sphere.client.shop.model.*;
 import sphere.Session;
 import sphere.Sphere;
