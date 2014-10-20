@@ -12,6 +12,3 @@ deploy:
   provider: heroku
   api_key:
     secure: ZKkGHArzu61yMHryDFN3+dYyZ6+9uWbErX2kMmjwBwUuwbP8fMegqVPgQsrFbvkw+hN8bboBmFR6earlQLKu7bPB7HdeRfKW6vTbZTks9bar5i07r3dMva5TQfOuD9zUeiMVe7K9Z6awH24fnHO5k/Zfdn+Fbf1WLvPGxVm/zfQ=
-  app: sphere-donut
-  on:
-    repo: commercetools/sphere-donut
