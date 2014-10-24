@@ -2,13 +2,13 @@ package controllers;
 
 import forms.AddToCart;
 import io.sphere.client.shop.model.*;
+import pactas.PactasImpl;
 import play.data.Form;
 import play.mvc.Result;
 import sphere.ShopController;
 import utils.Util;
-import utils.pactas.Contract;
-import utils.pactas.Customer;
-import utils.pactas.Pactas;
+import pactas.Contract;
+import pactas.Customer;
 import views.html.index;
 import views.html.order;
 import views.html.success;
@@ -75,7 +75,7 @@ public class Application extends ShopController {
     public static Result executeSubscription() {
         play.Logger.debug("Executing Pactas transaction...");
         clearCart();
-        String contractId = Pactas.getContractId(request());
+        String contractId = PactasImpl.getContractId(request());
         return subscribe(contractId);
     }
 
