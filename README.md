@@ -1,4 +1,4 @@
-SPHERE.IO Donut Store
+#SPHERE.IO Donut Store
 =====================
 
 This is not a real **donut** store. This is a _free template_ for subscription ecommerce sites and it's built on top of the APIs of [SPHERE.IO](http://sphere.io), [Pactas](http://www.pactas.com) and [Paymill](https://www.paymill.com).
@@ -42,7 +42,7 @@ More information about doing payments with PAYMILL at http://www.paymill.com.
 
 ### Deploy it
 
-### heroku
+#### heroku
 
 To run this SPHERE.IO example web shop on [heroku](https://www.heroku.com) just click the button:
 
