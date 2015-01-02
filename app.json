@@ -34,7 +34,7 @@
       "description": "The clientId of your Pactas account.",
       "required": false
     },
-    "SPHERE_CLIENT_SECRET": {
+    "PACTAS_CLIENT_SECRET": {
       "description": "The clientSecret of your Pactas account.",
       "required": false
     }
