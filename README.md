@@ -1,4 +1,4 @@
-SPHERE.IO Donut Store
+#SPHERE.IO Donut Store
 =====================
 
 This is not a real **donut** store. This is a _free template_ for subscription ecommerce sites and it's built on top of the APIs of [SPHERE.IO](http://sphere.io), [Pactas](http://www.pactas.com) and [Paymill](https://www.paymill.com).
@@ -13,7 +13,7 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 - [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-donut project from GitHub. or download it as [zip file](https://github.com/commercetools/sphere-donut/archive/master.zip).
 - Run `play run` command in root project directory.
 - Open your browser and point it to [http://localhost:9000](http://localhost:9000).
- 
+
 ### Configure it
 
 #### SPHERE.IO data
@@ -33,20 +33,20 @@ More about the ecommerce PaaS SPHERE.IO at http://sphere.io[http://sphere.io](ht
 More about recurring billing with Pactas at http://www.pactas.com.
 
 #### PAYMILL keys
-- [Register at PAYMILL](https://app.paymill.com/en-gb/auth/register) to get the (test) API keys. 
+- [Register at PAYMILL](https://app.paymill.com/en-gb/auth/register) to get the (test) API keys.
 - Go to `PAYMILL Cockpit -> My account -> Settings -> API keys` to retrieve your keys.
 - In your Pactas backend, head to `Settings -> Payments -> Payment Providers` and edit the Paymill settings. Enter your public and private PAYMILL keys and hit 'Save'.
 ![PactasPaymill](https://raw.github.com/commercetools/sphere-donut/master/public/images/pactas-paymill.png)
 
 More information about doing payments with PAYMILL at http://www.paymill.com.
- 
-### Deploy it
-- Install [Heroku Toolbelt](https://toolbelt.heroku.com/) (create account if needed).
-- Run `heroku create` command in root project directory, will create a new remote for Git.
-- Run `git push heroku master` to push the project to Heroku and deploy it.
-- Run `heroku open` to open your deployed website in a browser.
 
-> More information about deploying a Play application to Heroku [here](http://www.playframework.com/documentation/2.1.x/ProductionHeroku).
+### Deploy it
+
+#### heroku
+
+To run this SPHERE.IO example web shop on [heroku](https://www.heroku.com) just click the button:
+
+<a href="https://heroku.com/deploy?template=https://github.com/commercetools/sphere-donut"><img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy"></a>
 
 ### Develop it
 

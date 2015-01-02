@@ -1,0 +1,42 @@
+{
+  "name": "SPHERE.IO Donut",
+  "description": "Create your own webshop in minutes with SPHERE.IO and our template 'sphere-donut'",
+  "repository": "https://github.com/commercetools/sphere-donut",
+  "logo": "http://www.commercetools.com/assets/img/ct_logo_farbe.gif",
+  "keywords": ["sphere", "ecommerce", "shopping", "subscription"],
+  "env": {
+    "SPHERE_PROJECT_KEY": {
+      "description": "The project Key for your SPHERE.IO project.",
+      "value": "your SPHERE.IO projectKey",
+      "required": true
+    },
+    "SPHERE_CLIENT_ID": {
+      "description": "The clientId of your SPHERE.IO project.",
+      "value": "your SPHERE.IO clientId",
+      "required": true
+    },
+    "SPHERE_CLIENT_SECRET": {
+      "description": "The clientSecret of your SPHERE.IO project.",
+      "value": "your SPHERE.IO clientSecret",
+      "required": true
+    },
+    "PACTAS_API_URL": {
+      "description": "The API URL you want to use at Pactas.",
+      "value": "http://itero.demo.pactas.com/api/v1/",
+      "required": true
+    },
+    "PACTAS_AUTH_URL": {
+      "description": "The Auth URL you want to use at Pactas.",
+      "value": "http://itero.demo.pactas.com/oauth/token/",
+      "required": true
+    },
+    "PACTAS_CLIENT_ID": {
+      "description": "The clientId of your Pactas account.",
+      "required": false
+    },
+    "SPHERE_CLIENT_SECRET": {
+      "description": "The clientSecret of your Pactas account.",
+      "required": false
+    }
+  }
+}
