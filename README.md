@@ -22,7 +22,7 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 ![API Backend](https://raw.github.com/commercetools/sphere-donut/master/public/images/mc_api.png)
 - To use your SPHERE.IO project, modify `sphere.project`, `sphere.clientId` and `sphere.clientSecret` in `conf/application.conf`.
 
-More about the ecommerce PaaS SPHERE.IO at http://sphere.io[http://sphere.io](http://sphere.io).
+More about the ecommerce PaaS SPHERE.IO at [http://sphere.io](http://sphere.io).
 
 #### Pactas keys
 - [Login to the Pactas sandbox](https://sandbox.pactas.com) or [create a new Pactas sandbox account](https://sandbox.pactas.com/#/signup).
