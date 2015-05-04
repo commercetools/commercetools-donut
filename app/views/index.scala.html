@@ -1,4 +1,4 @@
-@(cart: Cart, product: Product)
+@(data: ProductPageData)
 
 @scripts = {
     <script type="text/javascript" src="@routes.Assets.at("javascripts/lib-form.min.js")"></script>
@@ -8,7 +8,7 @@
 @main("I want donuts!", "product", scripts){
 
 }{
-<form id="product-form" action="@routes.Application.submitProduct" method="post">
+<form id="product-form" action="@routes.ProductController.submit()" method="post">
     <section id="product-header">
         <div class="space">
             <div class="inner">
@@ -31,15 +31,15 @@
                 <div class="body clearfix">
                     <div class="variant-boxes">
                         <div class="variant-boxes-inner">
-                            @for(variant <- product.getVariants.asList) {
+                            @for(variant <- data.allVariants) {
                             <div class="variant-box">
                                 <label>
-                                    <input type="radio" name="variantId" id="product-variantId-@variant.getId" required
-                                           value="@variant.getId" @if(getVariant(cart) == variant.getId){checked} />
+                                    <input type="radio" name="variantId" id="product-variantId-@variant.id" required
+                                           value="@variant.id" @if(variant.id == data.variant.id){checked} />
                                     <div class="checked"><img src="@routes.Assets.at("images/checked.png")" ></div>
-                                    @helper.variant(variant)
+                                    @partials.variantDetail(variant)
                                     <div class="add-to-cart">
-                                        <div class="button" style="@getAddToCartImage(variant)"></div>
+                                        <div class="button" style="@data.variant.addToCartImageUrl()"></div>
                                         <span class="add">ADD THIS ONE!</span>
                                         <span class="added">ADDED</span>
                                     </div>
@@ -66,21 +66,21 @@
                             <div class="often-box">
                                 <label>
                                     <input type="radio" name="howOften" id="product-howOften-4" value="4" required
-                                        @if(getOften(cart) == 4){checked}>
+                                        @if(data.frequency == 4){checked}>
                                     <div class="text"><span class="check"></span> Once a week</div>
                                 </label>
                             </div>
                             <div class="often-box">
                                 <label>
                                     <input type="radio" name="howOften" id="product-howOften-2" value="2" required
-                                        @if(getOften(cart) == 2){checked}>
+                                        @if(data.frequency == 2){checked}>
                                     <div class="text"><span class="check"></span> Every two weeks</div>
                                 </label>
                             </div>
                             <div class="often-box">
                                 <label>
                                     <input type="radio" name="howOften" id="product-howOften-1" value="1" required
-                                        @if(getOften(cart) == 1){checked}>
+                                        @if(data.frequency == 1){checked}>
                                     <div class="text"><span class="check"></span> Once a month</div>
                                 </label>
                             </div>

@@ -2,17 +2,20 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
-import com.neovisionaries.i18n.CountryCode;
 import exceptions.SubscriptionProductNotFound;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.model.CustomObject;
-import io.sphere.client.shop.model.*;
+import io.sphere.client.shop.model.CartUpdate;
+import io.sphere.client.shop.model.LineItem;
+import io.sphere.client.shop.model.Product;
+import io.sphere.client.shop.model.Variant;
 import play.Configuration;
+import play.Logger;
 import play.mvc.Controller;
-import sphere.Session;
 import sphere.Sphere;
 
 import java.util.Currency;
+import java.util.List;
 
 import static utils.JsonUtils.convertToNewFormat;
 
@@ -24,17 +27,19 @@ public class BaseController extends Controller {
     public final static String ID_WEEKLY    = "pactas1";
 
     private final Sphere sphere;
-    private final Configuration configuration;
     private final GlobalOperations globalOperations;
 
-    public BaseController(Sphere sphere, Configuration configuration) {
+    public BaseController(final Sphere sphere, final Configuration configuration) {
         this.sphere = sphere;
-        this.configuration = configuration;
         this.globalOperations = GlobalOperations.of(configuration);
     }
 
     protected Sphere sphere() {
         return sphere;
+    }
+
+    protected Currency currency() {
+        return globalOperations.currency();
     }
 
     protected Product product() {
@@ -46,12 +51,12 @@ public class BaseController extends Controller {
         }
     }
 
-    protected Optional<Variant> variant(int variantId) {
+    protected Optional<Variant> variant(final int variantId) {
         return product().getVariants().byId(variantId);
     }
 
-    public Optional<Variant> variant(String pactasId) {
-        for (Variant variant : product().getVariants().asList()) {
+    protected Optional<Variant> variant(final String pactasId) {
+        for (final Variant variant : product().getVariants().asList()) {
             if (pactasId.equals(variant.getString(ID_MONTHLY))
                     || pactasId.equals(variant.getString(ID_TWO_WEEKS))
                     || pactasId.equals(variant.getString(ID_WEEKLY))) {
@@ -61,51 +66,26 @@ public class BaseController extends Controller {
         return Optional.absent();
     }
 
-    public Optional<Integer> getFrequency(String key) {
+    protected int fetchFrequency(final String cartId) {
         try {
-            final Optional<CustomObject> frequencyObj = sphere.customObjects().get(FREQUENCY, key).fetch();
+            final Optional<CustomObject> frequencyObj = sphere().customObjects().get(FREQUENCY, cartId).fetch();
             if (frequencyObj.isPresent()) {
                 final JsonNode frequencyNode = convertToNewFormat(frequencyObj.get().getValue());
-                return Optional.of(frequencyNode.asInt(0));
+                return frequencyNode.asInt(0);
             } else {
-                return Optional.absent();
+                return 0;
             }
         } catch (SphereException se) {
-            return Optional.absent();
+            Logger.error(se.getMessage(), se);
+            return 0;
         }
     }
 
-    public void setFrequency(String key, int frequency) {
-        sphere.customObjects().set(FREQUENCY, key, frequency);
-    }
-
-    public void unsetFrequency(String key) {
-        try {
-            sphere.customObjects().delete(FREQUENCY, key).execute();
-        } catch (SphereException se) {
-            // Assume it is already unset
+    protected void clearLineItemsFromCurrentCart(final List<LineItem> lineItems) {
+        CartUpdate cartUpdate = new CartUpdate();
+        for (final LineItem item : lineItems) {
+            cartUpdate = cartUpdate.removeLineItem(item.getId());
         }
+        sphere().currentCart().update(cartUpdate);
     }
-
-    public void addLineItem(Variant variant, int frequency) {
-        clearLineItems(sphere().currentCart().fetch());
-        Cart cart = sphere().currentCart().addLineItem(getProduct().getId(), variant.getId(), 1);
-        setFrequency(cart.getId(), frequency);
-    }
-
-
-    public static Cart clearLineItems(Cart cart) {
-        CartUpdate update = new CartUpdate();
-        for (LineItem item : cart.getLineItems()) {
-            update.removeLineItem(item.getId());
-        }
-        return sphere().currentCart().update(update);
-    }
-
-    public void clearCart() {
-        Cart cart = sphere.currentCart().fetch();
-        unsetFrequency(cart.getId());
-        Session.current().clearCart();
-    }
-
 }

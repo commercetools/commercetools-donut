@@ -2,7 +2,7 @@ package forms;
 
 import play.data.validation.Constraints;
 
-public class AddToCart {
+public class SubscriptionFormData {
 
     @Constraints.Required(message = "Product required")
     public int variantId;
@@ -13,7 +13,7 @@ public class AddToCart {
     public int howOften;
 
 
-    public AddToCart() {
+    public SubscriptionFormData() {
 
     }
 

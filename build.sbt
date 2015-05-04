@@ -19,7 +19,6 @@ libraryDependencies ++= Seq(
 lessEntryPoints := baseDirectory.value / "app" / "assets" / "stylesheets" * "*.less"
 
 templatesImport ++= Seq(
-  "utils.ViewHelper._",
   "forms._",
   "io.sphere.client.model._",
   "io.sphere.client.shop.model._"

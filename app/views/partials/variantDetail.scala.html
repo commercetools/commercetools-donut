@@ -1,0 +1,11 @@
+@(data: VariantData)
+
+<div class="variant clearfix">
+    <div class="variant-body">
+        <div class="stamp" style="@data.stampImageUrl"></div>
+        <div class="name">@data.boxSize</div>
+        <img src="@data.imageUrl" alt="@data.boxSize" />
+        <div class="price">@data.price</div>
+    </div>
+</div>
+<div class="description">BOX WITH <span class="stress">@data.quantity</span> DONUTS</div>

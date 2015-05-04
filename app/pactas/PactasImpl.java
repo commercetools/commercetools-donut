@@ -1,12 +1,12 @@
 package pactas;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Optional;
 import com.ning.http.client.Realm;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import pactas.models.PactasInvoice;
 import play.Configuration;
+import play.Logger;
 import play.libs.F;
 import play.libs.Json;
 import play.libs.WS;
@@ -24,18 +24,15 @@ public class PactasImpl implements Pactas {
     private final String clientId;
     private final String clientSecret;
 
-    private Optional<String> accessToken;
-
-    public PactasImpl(Configuration configuration) {
+    public PactasImpl(final Configuration configuration) {
         this.configuration = configuration;
         this.authUrl = configuration.getString("pactas.auth");
         this.clientId = configuration.getString("pactas.clientId");
         this.clientSecret = configuration.getString("pactas.clientSecret");
-        this.accessToken = Optional.absent();
     }
 
     @Override
-    public F.Promise<PactasContract> contract(String contractId) {
+    public F.Promise<PactasContract> contract(final String contractId) {
         String endpointUrl = configuration.getString("pactas.api.contracts") + contractId;
         return get(endpointUrl).map(new F.Function<JsonNode, PactasContract>() {
             @Override
@@ -50,7 +47,7 @@ public class PactasImpl implements Pactas {
     }
 
     @Override
-    public F.Promise<PactasInvoice> invoice(String invoiceId) {
+    public F.Promise<PactasInvoice> invoice(final String invoiceId) {
         String endpointUrl = configuration.getString("pactas.api.invoices") + invoiceId;
         return get(endpointUrl).map(new F.Function<JsonNode, PactasInvoice>() {
             @Override
@@ -65,7 +62,7 @@ public class PactasImpl implements Pactas {
     }
 
     @Override
-    public F.Promise<PactasCustomer> customer(String customerId) {
+    public F.Promise<PactasCustomer> customer(final String customerId) {
         String endpointUrl = configuration.getString("pactas.api.customers") + customerId;
         return get(endpointUrl).map(new F.Function<JsonNode, PactasCustomer>() {
             @Override
@@ -86,19 +83,25 @@ public class PactasImpl implements Pactas {
      * @throws PactasException when the request failed or the response could not be parsed.
      */
     private F.Promise<JsonNode> get(final String endpointUrl) {
-        return WS.url(endpointUrl)
-                .setContentType(APPLICATION_FORM_URLENCODED)
-                .setQueryParameter(ACCESS_TOKEN_PARAMETER, accessToken)
-                .get().map(new F.Function<WS.Response, JsonNode>() {
-                    @Override
-                    public JsonNode apply(final WS.Response response) throws Throwable {
-                        if (response.getStatus() == Http.Status.OK) {
-                            return response.asJson();
-                        } else {
-                            throw new PactasException(response.getStatus(), response.getBody());
-                        }
-                    }
-                });
+        return authenticate().flatMap(new F.Function<String, F.Promise<JsonNode>>() {
+            @Override
+            public F.Promise<JsonNode> apply(final String accessToken) throws Throwable {
+                return WS.url(endpointUrl)
+                        .setContentType(APPLICATION_FORM_URLENCODED)
+                        .setQueryParameter(ACCESS_TOKEN_PARAMETER, accessToken)
+                        .get().map(new F.Function<WS.Response, JsonNode>() {
+                            @Override
+                            public JsonNode apply(final WS.Response response) throws Throwable {
+                                if (response.getStatus() == Http.Status.OK) {
+                                    return response.asJson();
+                                } else {
+                                    throw new PactasException(response.getStatus(), response.getBody());
+                                }
+                            }
+                        });
+
+            }
+        });
     }
 
     /**
@@ -106,7 +109,7 @@ public class PactasImpl implements Pactas {
      * @return Promise of the access token.
      */
     private F.Promise<String> authenticate() {
-        play.Logger.debug("Refreshing pactas access token.");
+        Logger.debug("Fetching pactas access token");
         return WS.url(authUrl)
                 .setContentType(APPLICATION_FORM_URLENCODED)
                 .setAuth(clientId, clientSecret, Realm.AuthScheme.BASIC)
