@@ -1,14 +1,25 @@
 package models;
 
 import io.sphere.client.shop.model.Cart;
+import io.sphere.client.shop.model.Variant;
 
-import static java.math.BigDecimal.ROUND_HALF_EVEN;
+import static utils.PriceUtils.currencyCode;
+import static utils.PriceUtils.monetaryAmount;
 import static utils.PriceUtils.format;
 
-public class OrderPageData extends PageData {
+public class OrderPageData {
+    private final Variant selectedVariant;
+    private final int selectedFrequency;
+    private final Cart cart;
 
-    public OrderPageData(final Cart cart, final int frequency) {
-        super(cart, frequency);
+    public OrderPageData(final Variant selectedVariant, final int selectedFrequency, final Cart cart) {
+        this.selectedVariant = selectedVariant;
+        this.selectedFrequency = selectedFrequency;
+        this.cart = cart;
+    }
+
+    public VariantData selectedVariant() {
+        return new VariantData(selectedVariant);
     }
 
     public String totalPrice() {
@@ -17,7 +28,7 @@ public class OrderPageData extends PageData {
 
     public String frequencyName() {
         final String name;
-        switch (frequency) {
+        switch (selectedFrequency) {
             case 1: name = "ONCE A MONTH";
                 break;
             case 2: name = "EVERY TWO WEEKS";
@@ -30,15 +41,15 @@ public class OrderPageData extends PageData {
     }
 
     public String pactasVariantId() {
-        return lineItem().getVariant().getString("pactas" + frequency);
+        return selectedVariant.getString("pactas" + selectedFrequency);
     }
 
     public String currency() {
-        return lineItem().getPrice().getValue().getCurrencyCode();
+        return currencyCode(selectedVariant.getPrice()).or("");
     }
 
     public int priceAmount() {
-        return lineItem().getPrice().getValue().getAmount().setScale(2, ROUND_HALF_EVEN).intValue();
+        return monetaryAmount(selectedVariant.getPrice()).or(0);
     }
 
 }

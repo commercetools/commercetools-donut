@@ -24,8 +24,9 @@ public class ProductController extends BaseController {
 
     public Result show() {
         final Cart cart = sphere().currentCart().fetch();
-        final int frequency = frequency(cart.getId());
-        final ProductPageData productPageData = new ProductPageData(cart, frequency, product());
+        final Optional<Variant> selectedVariant = getSelectedVariant(cart);
+        final int selectedFrequency = frequency(cart.getId());
+        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product());
         return ok(index.render(productPageData));
     }
 
@@ -47,6 +48,16 @@ public class ProductController extends BaseController {
             flash("error", "Please select a box and how often you want it.");
         }
         return redirect(routes.ProductController.show());
+    }
+
+    private Optional<Variant> getSelectedVariant(final Cart cart) {
+        final Optional<Variant> selectedVariant;
+        if (cart.getLineItems().size() > 0) {
+            selectedVariant = Optional.of(cart.getLineItems().get(0).getVariant());
+        } else {
+            selectedVariant = Optional.absent();
+        }
+        return selectedVariant;
     }
 
     private void setProductToCart(final Variant variant, final int frequency) {
