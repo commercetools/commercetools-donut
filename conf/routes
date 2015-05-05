@@ -9,7 +9,9 @@ POST    /	                                                @controllers.ProductCo
 # Order page
 GET     /order                                              @controllers.OrderController.show()
 POST    /order                                              @controllers.OrderController.submit()
-DELETE  /order                                              @controllers.OrderController.clear()
+
+# Clear order
+GET     /order/clear                                        @controllers.OrderController.clear()
 
 # Web hook
 POST    /order/execute                                      @controllers.PactasWebhookController.createOrderFromSubscription()
