@@ -27,11 +27,11 @@ public class BaseController extends Controller {
     public final static String ID_WEEKLY    = "pactas1";
 
     private final Sphere sphere;
-    private final GlobalOperations globalOperations;
+    private final CurrencyOperations currencyOps;
 
     public BaseController(final Sphere sphere, final Configuration configuration) {
         this.sphere = sphere;
-        this.globalOperations = GlobalOperations.of(configuration);
+        this.currencyOps = CurrencyOperations.of(configuration);
     }
 
     protected Sphere sphere() {
@@ -39,7 +39,7 @@ public class BaseController extends Controller {
     }
 
     protected Currency currency() {
-        return globalOperations.currency();
+        return currencyOps.currency();
     }
 
     protected Product product() {

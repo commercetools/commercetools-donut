@@ -19,16 +19,11 @@ public class Global extends GlobalSettings {
         this.sphere = Sphere.getInstance();
         this.pactas = new PactasImpl(app.configuration());
         checkProjectCurrency(app);
-        checkProjectCountry(app);
         super.onStart(app);
     }
 
     private void checkProjectCurrency(final Application app) {
         GlobalOperations.of(app.configuration()).currency();
-    }
-
-    private void checkProjectCountry(final Application app) {
-        GlobalOperations.of(app.configuration()).country();
     }
 
     @SuppressWarnings("unchecked")

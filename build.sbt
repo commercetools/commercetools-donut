@@ -12,8 +12,7 @@ libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
   "io.sphere" %% "sphere-play-sdk" % "0.67.0" withSources(),
-  "org.jsoup" % "jsoup" % "1.7.1",
-  "org.mockito" % "mockito-all" % "1.9.5" % "test"
+  "org.assertj" % "assertj-core" % "2.0.0" % "test" // change to 3.0.0 with Java 8
 )
 
 lessEntryPoints := baseDirectory.value / "app" / "assets" / "stylesheets" * "*.less"
