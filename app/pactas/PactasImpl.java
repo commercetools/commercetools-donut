@@ -92,6 +92,7 @@ public class PactasImpl implements Pactas {
                         .get().map(new F.Function<WS.Response, JsonNode>() {
                             @Override
                             public JsonNode apply(final WS.Response response) throws Throwable {
+                                Logger.debug(response.getBody());
                                 if (response.getStatus() == Http.Status.OK) {
                                     return response.asJson();
                                 } else {
@@ -116,6 +117,7 @@ public class PactasImpl implements Pactas {
                 .post(AUTH_BODY).map(new F.Function<WS.Response, String>() {
                     @Override
                     public String apply(final WS.Response response) throws Throwable {
+                        Logger.debug(response.getBody());
                         if (response.getStatus() == Http.Status.OK) {
                             JsonNode responseNode = response.asJson();
                             if (responseNode.has(ACCESS_TOKEN_NODE)) {
