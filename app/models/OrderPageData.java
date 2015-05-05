@@ -1,6 +1,8 @@
 package models;
 
+import com.google.common.base.Optional;
 import io.sphere.client.shop.model.Cart;
+import io.sphere.client.shop.model.Price;
 import io.sphere.client.shop.model.Variant;
 
 import static utils.PriceUtils.currencyCode;
@@ -45,11 +47,15 @@ public class OrderPageData {
     }
 
     public String currency() {
-        return currencyCode(selectedVariant.getPrice()).or("");
+        return currencyCode(price()).or("");
     }
 
-    public int priceAmount() {
-        return monetaryAmount(selectedVariant.getPrice()).or(0);
+    public double priceAmount() {
+        return monetaryAmount(price()).or(0d);
+    }
+
+    private Optional<Price> price() {
+        return Optional.fromNullable(selectedVariant.getPrice());
     }
 
 }

@@ -21,33 +21,33 @@ public final class PriceUtils {
         return amount + " " + currency;
     }
 
-    public static int monetaryAmount(final Money money) {
-        return money.getAmount().setScale(2, ROUND_HALF_EVEN).intValue();
+    public static double monetaryAmount(final Money money) {
+        return money.getAmount().setScale(2, ROUND_HALF_EVEN).doubleValue();
     }
 
     private static String currencyCode(final Money money) {
         return money.getCurrencyCode();
     }
 
-    public static Optional<String> format(final Price price) {
-        if (price != null) {
-            return Optional.of(format(price.getValue()));
+    public static Optional<String> format(final Optional<Price> price) {
+        if (price.isPresent()) {
+            return Optional.of(format(price.get().getValue()));
         } else {
             return Optional.absent();
         }
     }
 
-    public static Optional<Integer> monetaryAmount(final Price price) {
-        if (price != null) {
-            return Optional.of(monetaryAmount(price.getValue()));
+    public static Optional<Double> monetaryAmount(final Optional<Price> price) {
+        if (price.isPresent()) {
+            return Optional.of(monetaryAmount(price.get().getValue()));
         } else {
             return Optional.absent();
         }
     }
 
-    public static Optional<String> currencyCode(final Price price) {
-        if (price != null) {
-            return Optional.of(currencyCode(price.getValue()));
+    public static Optional<String> currencyCode(final Optional<Price> price) {
+        if (price.isPresent()) {
+            return Optional.of(currencyCode(price.get().getValue()));
         } else {
             return Optional.absent();
         }
