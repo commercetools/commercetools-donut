@@ -47,6 +47,7 @@ public class PactasWebhookController extends BaseController {
     }
 
     private Optional<String> parseContractId(final Http.Request request) {
+        Logger.debug(request.body().asText());
         final Webhook webhook = Json.fromJson(request.body().asJson(), Webhook.class);
         if (webhook instanceof WebhookAccountCreated) {
             return Optional.of(((WebhookAccountCreated) webhook).getContractId());
