@@ -20,7 +20,7 @@ public class OrderController extends BaseController {
     public Result show() {
         final Cart cart = sphere().currentCart().fetch();
         if (cart.getLineItems().size() > 0) {
-            final int frequency = fetchFrequency(cart.getId());
+            final int frequency = frequency(cart.getId());
             if (frequency > 0) {
                 final OrderPageData orderPageData = new OrderPageData(cart, frequency);
                 return ok(order.render(orderPageData));

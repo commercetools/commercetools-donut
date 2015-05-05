@@ -24,7 +24,7 @@ public class ProductController extends BaseController {
 
     public Result show() {
         final Cart cart = sphere().currentCart().fetch();
-        final int frequency = fetchFrequency(cart.getId());
+        final int frequency = frequency(cart.getId());
         final ProductPageData productPageData = new ProductPageData(cart, frequency, product());
         return ok(index.render(productPageData));
     }

@@ -66,7 +66,7 @@ public class BaseController extends Controller {
         return Optional.absent();
     }
 
-    protected int fetchFrequency(final String cartId) {
+    protected int frequency(final String cartId) {
         try {
             final Optional<CustomObject> frequencyObj = sphere().customObjects().get(FREQUENCY, cartId).fetch();
             if (frequencyObj.isPresent()) {
