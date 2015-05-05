@@ -1,4 +1,4 @@
-import controllers.GlobalOperations;
+import controllers.CurrencyOperations;
 import controllers.OrderController;
 import controllers.PactasWebhookController;
 import controllers.ProductController;
@@ -23,7 +23,7 @@ public class Global extends GlobalSettings {
     }
 
     private void checkProjectCurrency(final Application app) {
-        GlobalOperations.of(app.configuration()).currency();
+        CurrencyOperations.of(app.configuration()).currency();
     }
 
     @SuppressWarnings("unchecked")
