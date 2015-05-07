@@ -27,6 +27,7 @@ public class PactasWebhookController extends BaseController {
 
     /* Method called by Pactas every time an order must be placed (weekly, monthly...) */
     public Result createOrderFromSubscription() {
+        Logger.debug("An order request has been received from Pactas...");
         final Optional<String> contractId = parseContractId(request());
         if (contractId.isPresent()) {
             try {

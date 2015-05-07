@@ -3,6 +3,7 @@ package models;
 import com.google.common.base.Optional;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
+import play.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class ProductPageData {
     }
 
     public int selectedFrequency() {
+        Logger.debug("Selected frequency: " + selectedFrequency);
         return selectedFrequency;
     }
 
