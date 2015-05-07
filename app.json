@@ -20,6 +20,14 @@
       "value": "your SPHERE.IO clientSecret",
       "required": true
     },
+    "PACTAS_CLIENT_ID": {
+      "description": "The clientId of your Pactas account.",
+      "required": true
+    },
+    "PACTAS_CLIENT_SECRET": {
+      "description": "The clientSecret of your Pactas account.",
+      "required": true
+    },
     "PACTAS_API_CONTRACTS": {
       "description": "The API URL at Pactas you want to use for the Contracts endpoint.",
       "value": "http://itero.demo.pactas.com/api/v1/contracts/",
@@ -39,14 +47,6 @@
       "description": "The Auth URL you want to use at Pactas.",
       "value": "http://itero.demo.pactas.com/oauth/token/",
       "required": false
-    },
-    "PACTAS_CLIENT_ID": {
-      "description": "The clientId of your Pactas account.",
-      "required": true
-    },
-    "PACTAS_CLIENT_SECRET": {
-      "description": "The clientSecret of your Pactas account.",
-      "required": true
     }
   }
 }
