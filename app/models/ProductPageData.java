@@ -28,7 +28,6 @@ public class ProductPageData {
     }
 
     public int selectedFrequency() {
-        Logger.debug("Selected frequency: " + selectedFrequency);
         return selectedFrequency;
     }
 

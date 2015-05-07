@@ -63,7 +63,7 @@ public class ProductController extends BaseController {
     private void setProductToCart(final Variant variant, final int frequency) {
         final Cart cart = sphere().currentCart().fetch();
         clearLineItemsFromCurrentCart(cart.getLineItems());
-        sphere().currentCart().addLineItem(product().getId(), variant.getId(), 1);
-        sphere().customObjects().set(FREQUENCY, cart.getId(), frequency).get();
+        final Cart updatedCart = sphere().currentCart().addLineItem(product().getId(), variant.getId(), 1);
+        sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
     }
 }
