@@ -22,31 +22,31 @@
     },
     "PACTAS_API_CONTRACTS": {
       "description": "The API URL at Pactas you want to use for the Contracts endpoint.",
-      "value": "http://itero.demo.pactas.com/api/v1/",
-      "required": true
+      "value": "http://itero.demo.pactas.com/api/v1/contracts/",
+      "required": false
     },
     "PACTAS_API_INVOICES": {
       "description": "The API URL at Pactas you want to use for the Invoices endpoint.",
-      "value": "http://itero.demo.pactas.com/api/v1/",
-      "required": true
+      "value": "http://itero.demo.pactas.com/api/v1/invoices/",
+      "required": false
     },
     "PACTAS_API_CUSTOMERS": {
       "description": "The API URL at Pactas you want to use for the Customers endpoint.",
-      "value": "http://itero.demo.pactas.com/api/v1/",
-      "required": true
+      "value": "http://itero.demo.pactas.com/api/v1/customers/",
+      "required": false
     },
     "PACTAS_AUTH_URL": {
       "description": "The Auth URL you want to use at Pactas.",
       "value": "http://itero.demo.pactas.com/oauth/token/",
-      "required": true
+      "required": false
     },
     "PACTAS_CLIENT_ID": {
       "description": "The clientId of your Pactas account.",
-      "required": false
+      "required": true
     },
     "PACTAS_CLIENT_SECRET": {
       "description": "The clientSecret of your Pactas account.",
-      "required": false
+      "required": true
     }
   }
 }
