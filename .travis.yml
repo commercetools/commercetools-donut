@@ -3,7 +3,7 @@ scala:
 - 2.10.0
 before_script:
 - "./create_version_info.sh"
-script: ./sbt test
+script: "./sbt test"
 notifications:
   email:
     on_success: never
@@ -11,4 +11,4 @@ notifications:
 deploy:
   provider: heroku
   api_key:
-    secure: ZKkGHArzu61yMHryDFN3+dYyZ6+9uWbErX2kMmjwBwUuwbP8fMegqVPgQsrFbvkw+hN8bboBmFR6earlQLKu7bPB7HdeRfKW6vTbZTks9bar5i07r3dMva5TQfOuD9zUeiMVe7K9Z6awH24fnHO5k/Zfdn+Fbf1WLvPGxVm/zfQ=
+    secure: IAoqyY58wF9XVw6Hk/Kuq0I/zeUeF3mAM+bHPA+8T4btoCFayvDAjYKF1FvuZgDJesnnFJRFLfCaTprHTxrZ1Ki35Ow9b8xtKolLHAVQuMA2QRYuAsIjvyQ8meEfGWEI2Z8CVJiu8mVfIZqcIduq1p9YukDzxZ4wVunr+wjJFM0=
