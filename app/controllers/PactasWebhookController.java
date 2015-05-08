@@ -12,10 +12,10 @@ import pactas.models.webhooks.Webhook;
 import pactas.models.webhooks.WebhookAccountCreated;
 import play.Configuration;
 import play.Logger;
-import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
 import sphere.Sphere;
+import utils.JsonUtils;
 
 public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
@@ -31,8 +31,8 @@ public class PactasWebhookController extends BaseController {
         final Optional<String> contractId = parseContractId(request());
         if (contractId.isPresent()) {
             try {
-                final PactasContract contract = pactas.contract(contractId.get()).get();
-                final PactasCustomer customer = pactas.customer(contract.getCustomerId()).get();
+                final PactasContract contract = pactas.fetchContract(contractId.get()).get();
+                final PactasCustomer customer = pactas.fetchCustomer(contract.getCustomerId()).get();
                 final Cart cart = createCartWithPactasInfo(contract, customer);
                 sphere().client().orders().createOrder(cart.getIdAndVersion(), PaymentState.Paid).execute();
                 Logger.debug("Order created!");
@@ -49,7 +49,7 @@ public class PactasWebhookController extends BaseController {
 
     private Optional<String> parseContractId(final Http.Request request) {
         Logger.debug(request.body().asText());
-        final Webhook webhook = Json.fromJson(request.body().asJson(), Webhook.class);
+        final Webhook webhook = JsonUtils.readObject(Webhook.class, request.body().asText());
         if (webhook instanceof WebhookAccountCreated) {
             return Optional.of(((WebhookAccountCreated) webhook).getContractId());
         } else {
@@ -67,14 +67,11 @@ public class PactasWebhookController extends BaseController {
     }
 
     private Variant getVariantInContract(final PactasContract contract) {
-        if (!contract.getPhases().isEmpty()) {
-            final String planVariantId = contract.getPhases().get(0).getPlanVariantId();
-            final Optional<Variant> variant = variant(planVariantId);
-            if (variant.isPresent()) {
-                return variant.get();
-            }
-            throw new PlanVariantNotFound(planVariantId);
+        final String planVariantId = contract.getPlanVariantId();
+        final Optional<Variant> variant = variant(planVariantId);
+        if (variant.isPresent()) {
+            return variant.get();
         }
-        throw new PlanVariantNotFound();
+        throw new PlanVariantNotFound(planVariantId);
     }
 }

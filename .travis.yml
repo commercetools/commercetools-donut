@@ -13,3 +13,7 @@ deploy:
   app: sphere-donut-new
   api_key:
     secure: IAoqyY58wF9XVw6Hk/Kuq0I/zeUeF3mAM+bHPA+8T4btoCFayvDAjYKF1FvuZgDJesnnFJRFLfCaTprHTxrZ1Ki35Ow9b8xtKolLHAVQuMA2QRYuAsIjvyQ8meEfGWEI2Z8CVJiu8mVfIZqcIduq1p9YukDzxZ4wVunr+wjJFM0=
+env:
+  global:
+  - secure: ZtjWzbst9A5bYwFdPkTIr/5GN1OP7uFNoIAOhkQBGf3z6M6SPewIkCdFZM/5Qyyk/xQLf3eHJN7RfB+YbuNQbn5cyzN6xh5mPezBQ8+LGYDOH5A2C9zUrk/PvS03YtuS0sMD/mCeiTorjCyK9yX5gTJBq5yzloRageS/Tepqs/Y=
+  - secure: dNIVEf8sEsIrrl80wqzf2PkOK03GINUz11UlFXSv531f7WlWFK4PCqZ9cPzoxRVI7GxBbK8mO5y4U9WfPPnAcvh+rFN7O+VXEreOnmLRV8Efyv59MyM0WdWaNnFlDkZ7XgsIyb1PELnXadWOD0u59bGkU0ZD+LHc266ahsYCCLc=
