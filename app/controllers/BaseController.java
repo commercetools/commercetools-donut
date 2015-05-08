@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
 import exceptions.SubscriptionProductNotFound;
 import io.sphere.client.exceptions.SphereException;
@@ -16,8 +15,6 @@ import sphere.Sphere;
 
 import java.util.Currency;
 import java.util.List;
-
-import static utils.JsonUtils.convertToNewFormat;
 
 public class BaseController extends Controller {
     public final static String FREQUENCY    = "cart-frequency";
@@ -70,15 +67,12 @@ public class BaseController extends Controller {
         try {
             final Optional<CustomObject> frequencyObj = sphere().customObjects().get(FREQUENCY, cartId).fetch();
             if (frequencyObj.isPresent()) {
-                final JsonNode frequencyNode = convertToNewFormat(frequencyObj.get().getValue());
-                return frequencyNode.asInt(0);
-            } else {
-                return 0;
+                return frequencyObj.get().getValue().asInt();
             }
         } catch (SphereException se) {
             Logger.error(se.getMessage(), se);
-            return 0;
         }
+        return 0;
     }
 
     protected void clearLineItemsFromCurrentCart(final List<LineItem> lineItems) {

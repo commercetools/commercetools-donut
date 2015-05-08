@@ -1,0 +1,44 @@
+{
+  "Id":"554b2eb051f45beaec6400b4",
+  "LastBillingDate":"2015-05-07T09:21:52.4760000Z",
+  "NextBillingDate":"2015-05-14T09:21:52.4760000Z",
+  "PlanId":"53284bc151f459b0d07df616",
+  "CustomerId":"554b2eb051f45beaec6400b2",
+  "LifecycleStatus":"Active",
+  "CustomerName":"Wiggum, Clancy",
+  "Phases":[
+    {
+      "Type":"Normal",
+      "StartDate":"2015-05-07T09:21:52.4760000Z",
+      "PlanVariantId":"53284c7751f459b0d07df61a",
+      "PlanId":"53284bc151f459b0d07df616"
+    }
+  ],
+  "Balance":0.00,
+  "ReferenceCode":"JHGZ-BRXK",
+  "Currency":"EUR",
+  "PlanGroupId":"53284b2751f459b0d07df611",
+  "PaymentBearer": {
+    "CardType":"visa",
+    "ExpiryMonth":12,
+    "ExpiryYear":2015,
+    "Holder":"Springfield Police Station",
+    "Country":"DE",
+    "Last4":"1111",
+    "Type":"CreditCard"
+  },
+  "PaymentProvider":"Paymill",
+  "EscalationSuspended":false,
+  "RecurringPaymentsPaused":false,
+  "CurrentPhase":{
+    "Type":"Normal",
+    "StartDate":"2015-05-07T09:21:52.4760000Z",
+    "PlanVariantId":"53284c7751f459b0d07df61a",
+    "PlanId":"53284bc151f459b0d07df616"
+  },
+  "CustomFields":{},
+  "PaymentProviderSupportRefunds":true,
+  "StartDate":"2015-05-07T09:21:52.4760000Z",
+  "BilledUntil":"2015-05-14T09:21:52.4760000Z",
+  "PlanVariantId":"53284c7751f459b0d07df61a"
+}

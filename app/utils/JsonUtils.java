@@ -1,49 +1,52 @@
 package utils;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import play.libs.Json;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import exceptions.JsonException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public final class JsonUtils {
-    private static final org.codehaus.jackson.map.ObjectMapper MAPPER = new org.codehaus.jackson.map.ObjectMapper();
+    private static final ObjectMapper MAPPER = newObjectMapper();
 
     private JsonUtils() {
     }
 
-    /**
-     * Converts the old JSON representation {@link org.codehaus.jackson.JsonNode} into the new Jackson JSON
-     * representation {@link com.fasterxml.jackson.databind.JsonNode}.
-     * @param jsonOldFormat JSON in the old Jackson format.
-     * @return the converted JSON in the new Jackson format.
-     */
-    public static com.fasterxml.jackson.databind.JsonNode convertToNewFormat(final org.codehaus.jackson.JsonNode jsonOldFormat) {
-        final String jsonAsString = jsonOldFormat.toString();
-        return Json.parse(jsonAsString);
+    public static ObjectMapper newObjectMapper() {
+        return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    /**
-     * Converts the new JSON representation {@link com.fasterxml.jackson.databind.JsonNode} into the old Jackson JSON
-     * representation {@link org.codehaus.jackson.JsonNode}.
-     * @param jsonNewFormat JSON in the new Jackson format.
-     * @return the converted JSON in the old Jackson format.
-     */
-    public static org.codehaus.jackson.JsonNode convertToOldFormat(final com.fasterxml.jackson.databind.JsonNode jsonNewFormat) {
+    public static <T> String toJson(final T object) {
         try {
-            return MAPPER.readValue(jsonNewFormat.toString(), org.codehaus.jackson.JsonNode.class);
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
+            return MAPPER.writeValueAsString(object);
+        } catch (final JsonProcessingException e) {
+            throw new JsonException(e);
         }
     }
 
-    /**
-     * Gets the object node in the new JSON representation from a JSON node in the old JSON representation.
-     * @param jsonNode JSON node in the old Jackson format.
-     * @return the converted object node in the new Jackson format.
-     */
-    public static ObjectNode objectNode(final org.codehaus.jackson.JsonNode jsonNode) {
-        ObjectNode json = Json.newObject();
-        if (jsonNode != null && jsonNode.isObject()) {
-            json = (ObjectNode) convertToNewFormat(jsonNode);
+    public static <T> T readObjectFromResource(final String resourcePath, final Class<T> clazz) {
+        try {
+            return MAPPER.readValue(readFromResource(resourcePath), clazz);
+        } catch (IOException e) {
+            throw new JsonException(e);
         }
-        return json;
+    }
+
+    public static <T> T readObject(final Class<T> clazz, final String input) {
+        try {
+            return MAPPER.readValue(input, clazz);
+        } catch (IOException e) {
+            throw new JsonException(input, e);
+        }
+    }
+
+    private static InputStreamReader readFromResource(final String resourcePath) throws UnsupportedEncodingException {
+        final InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
+        return new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8.name());
     }
 }
