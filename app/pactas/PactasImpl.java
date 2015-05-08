@@ -1,5 +1,6 @@
 package pactas;
 
+import com.google.common.net.HttpHeaders;
 import com.ning.http.client.Realm;
 import pactas.models.Authorization;
 import pactas.models.PactasContract;
@@ -12,9 +13,7 @@ import play.mvc.Http;
 import utils.JsonUtils;
 
 public class PactasImpl implements Pactas {
-    public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
-    public static final String ACCESS_TOKEN_PARAMETER = "access_token";
-    public static final String AUTH_BODY = "grant_type=client_credentials";
+    public static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
     private final Configuration configuration;
     private final String authUrl;
@@ -58,8 +57,8 @@ public class PactasImpl implements Pactas {
             @Override
             public F.Promise<T> apply(final Authorization authorization) throws Throwable {
                 return WS.url(endpointUrl)
-                        .setContentType(APPLICATION_FORM_URLENCODED)
-                        .setQueryParameter(ACCESS_TOKEN_PARAMETER, authorization.getAccessToken())
+                        .setContentType(CONTENT_TYPE)
+                        .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authorization.getAccessToken())
                         .get().map(new F.Function<WS.Response, T>() {
                             @Override
                             public T apply(final WS.Response response) throws Throwable {
@@ -83,9 +82,9 @@ public class PactasImpl implements Pactas {
     private F.Promise<Authorization> authenticate() {
         Logger.debug("Fetching pactas access token");
         return WS.url(authUrl)
-                .setContentType(APPLICATION_FORM_URLENCODED)
+                .setContentType(CONTENT_TYPE)
                 .setAuth(clientId, clientSecret, Realm.AuthScheme.BASIC)
-                .post(AUTH_BODY).map(new F.Function<WS.Response, Authorization>() {
+                .post("grant_type=client_credentials").map(new F.Function<WS.Response, Authorization>() {
                     @Override
                     public Authorization apply(final WS.Response response) throws Throwable {
                         Logger.info(response.getBody());
