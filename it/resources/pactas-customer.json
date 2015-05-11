@@ -1,0 +1,18 @@
+{
+  "Id":"554b2eb051f45beaec6400b2",
+  "CreatedAt":"2015-05-07T09:21:52.0000000Z",
+  "FirstName":"Clancy",
+  "LastName":"Wiggum",
+  "Language":"en-US",
+  "Address":{
+    "AddressLine1":"Elm Street, 792",
+    "PostalCode":"49007",
+    "City":"Springfield",
+    "Country":"DE"
+  },
+  "Locale":"en-US",
+  "CustomFields":{},
+  "DefaultBearerMedium":"ArchiveOnly",
+  "CustomerType":"Consumer",
+  "Hidden":false
+}

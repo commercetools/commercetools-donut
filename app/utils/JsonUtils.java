@@ -2,6 +2,7 @@ package utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exceptions.JsonException;
 
@@ -40,6 +41,15 @@ public final class JsonUtils {
     public static <T> T readObject(final Class<T> clazz, final String input) {
         try {
             return MAPPER.readValue(input, clazz);
+        } catch (IOException e) {
+            throw new JsonException(input, e);
+        }
+    }
+
+    public static JsonNode readJsonFromResource(final String input) {
+        try {
+            final InputStreamReader r = readFromResource(input);
+            return MAPPER.readTree(r);
         } catch (IOException e) {
             throw new JsonException(input, e);
         }

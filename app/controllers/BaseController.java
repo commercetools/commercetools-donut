@@ -18,16 +18,17 @@ import java.util.List;
 
 public class BaseController extends Controller {
     public final static String FREQUENCY    = "cart-frequency";
-    public final static String PRODUCT_SLUG = "donut-box";
     public final static String ID_MONTHLY   = "pactas4";
     public final static String ID_TWO_WEEKS = "pactas2";
     public final static String ID_WEEKLY    = "pactas1";
 
     private final Sphere sphere;
+    private final Product product;
     private final CurrencyOperations currencyOps;
 
-    public BaseController(final Sphere sphere, final Configuration configuration) {
+    public BaseController(final Sphere sphere, final Configuration configuration, final Product product) {
         this.sphere = sphere;
+        this.product = product;
         this.currencyOps = CurrencyOperations.of(configuration);
     }
 
@@ -40,12 +41,7 @@ public class BaseController extends Controller {
     }
 
     protected Product product() {
-        final Optional<Product> product = sphere.products().bySlug(PRODUCT_SLUG).fetch();
-        if (product.isPresent()) {
-            return product.get();
-        } else {
-            throw new SubscriptionProductNotFound();
-        }
+        return product;
     }
 
     protected Optional<Variant> variant(final int variantId) {
@@ -65,7 +61,7 @@ public class BaseController extends Controller {
 
     protected int frequency(final String cartId) {
         try {
-            final Optional<CustomObject> frequencyObj = sphere().customObjects().get(FREQUENCY, cartId).fetch();
+            final Optional<CustomObject> frequencyObj = sphere.customObjects().get(FREQUENCY, cartId).fetch();
             if (frequencyObj.isPresent()) {
                 return frequencyObj.get().getValue().asInt();
             }
@@ -80,6 +76,6 @@ public class BaseController extends Controller {
         for (final LineItem item : lineItems) {
             cartUpdate = cartUpdate.removeLineItem(item.getId());
         }
-        sphere().currentCart().update(cartUpdate);
+        sphere.currentCart().update(cartUpdate);
     }
 }

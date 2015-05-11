@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import forms.SubscriptionFormData;
 import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.Cart;
+import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
 import models.ProductPageData;
 import play.Configuration;
@@ -18,8 +19,8 @@ import static play.data.Form.form;
 public class ProductController extends BaseController {
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final Sphere sphere, final Configuration configuration) {
-        super(sphere, configuration);
+    public ProductController(final Sphere sphere, final Configuration configuration, final Product product) {
+        super(sphere, configuration, product);
     }
 
     public Result show() {

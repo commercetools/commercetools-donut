@@ -20,8 +20,8 @@ import utils.JsonUtils;
 public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
 
-    public PactasWebhookController(final Sphere sphere, final Configuration configuration, final Pactas pactas) {
-        super(sphere, configuration);
+    public PactasWebhookController(final Sphere sphere, final Configuration configuration, final Product product, final Pactas pactas) {
+        super(sphere, configuration, product);
         this.pactas = pactas;
     }
 
@@ -48,7 +48,7 @@ public class PactasWebhookController extends BaseController {
     }
 
     private Optional<String> parseContractId(final Http.Request request) {
-        Logger.debug(request.body().asText());
+        Logger.debug("Pactas webhook: " + request.body().asText());
         final Webhook webhook = JsonUtils.readObject(Webhook.class, request.body().asText());
         if (webhook instanceof WebhookAccountCreated) {
             return Optional.of(((WebhookAccountCreated) webhook).getContractId());
