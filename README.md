@@ -3,6 +3,9 @@
 
 This is not a real **donut** store. This is a _free template_ for subscription ecommerce sites and it's built on top of the APIs of [SPHERE.IO](http://sphere.io), [Pactas](http://www.pactas.com) and [Paymill](https://www.paymill.com).
 
+:warning: This template is built based on the [SPHERE Play SDK](https://github.com/commercetools/sphere-play-sdk) that is now DEPRECATED! :warning:   
+If you are looking for a template built using the new [SPHERE JVM SDK](https://github.com/sphereio/sphere-jvm-sdk) please have a look at [Sunrise](https://github.com/sphereio/sphere-sunrise) instead.
+
 ## Live demo
 Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdonuts.com).
 
