@@ -8,6 +8,7 @@ import io.sphere.client.shop.model.CartUpdate;
 import io.sphere.client.shop.model.LineItem;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.client.SphereClient;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Controller;
@@ -23,13 +24,16 @@ public class BaseController extends Controller {
     public final static String ID_WEEKLY    = "pactas1";
 
     private final Sphere sphere;
+    private final SphereClient sphereClient;
     private final Product product;
     private final CurrencyOperations currencyOps;
 
-    public BaseController(final Sphere sphere, final Configuration configuration, final Product product) {
+    public BaseController(final Sphere sphere, final SphereClient sphereClient, final Configuration configuration, final Product product) {
         this.sphere = sphere;
+        this.sphereClient = sphereClient;
         this.product = product;
         this.currencyOps = CurrencyOperations.of(configuration);
+
     }
 
     protected Sphere sphere() {

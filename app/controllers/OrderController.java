@@ -5,6 +5,7 @@ import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.client.SphereClient;
 import models.OrderPageData;
 import play.Configuration;
 import play.Logger;
@@ -15,8 +16,8 @@ import views.html.success;
 
 public class OrderController extends BaseController {
 
-    public OrderController(final Sphere sphere, final Configuration configuration, final Product product) {
-        super(sphere, configuration, product);
+    public OrderController(final Sphere sphere, final SphereClient sphereClient, final Configuration configuration, final Product product) {
+        super(sphere, sphereClient, configuration, product);
     }
 
     public Result show() {

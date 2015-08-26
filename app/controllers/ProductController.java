@@ -6,6 +6,7 @@ import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.client.SphereClient;
 import models.ProductPageData;
 import play.Configuration;
 import play.Logger;
@@ -19,8 +20,8 @@ import static play.data.Form.form;
 public class ProductController extends BaseController {
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final Sphere sphere, final Configuration configuration, final Product product) {
-        super(sphere, configuration, product);
+    public ProductController(final Sphere sphere, final SphereClient sphereClient, final Configuration configuration, final Product product) {
+        super(sphere, sphereClient, configuration, product);
     }
 
     public Result show() {

@@ -81,11 +81,11 @@ public class Global extends GlobalSettings {
     public <A> A getControllerInstance(final Class<A> controllerClass) throws Exception {
         final A result;
         if (controllerClass.equals(ProductController.class)) {
-            result = (A) new ProductController(sphere, app.configuration(), product);
+            result = (A) new ProductController(sphere, sphereClient, app.configuration(), product);
         } else if (controllerClass.equals(OrderController.class)) {
-            result = (A) new OrderController(sphere, app.configuration(), product);
+            result = (A) new OrderController(sphere, sphereClient, app.configuration(), product);
         } else if (controllerClass.equals(PactasWebhookController.class)) {
-            result = (A) new PactasWebhookController(sphere, app.configuration(), product, pactas);
+            result = (A) new PactasWebhookController(sphere, sphereClient, app.configuration(), product, pactas);
         } else {
             result = super.getControllerInstance(controllerClass);
         }
