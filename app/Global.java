@@ -5,11 +5,24 @@ import controllers.PactasWebhookController;
 import controllers.ProductController;
 import exceptions.SubscriptionProductNotFound;
 import io.sphere.client.shop.model.Product;
+import io.sphere.sdk.client.SphereAsyncHttpClientFactory;
+import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.client.SphereClientFactory;
+import io.sphere.sdk.http.ApacheHttpClientAdapter;
+import io.sphere.sdk.http.HttpClient;
+import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.queries.ProductProjectionQuery;
+import io.sphere.sdk.queries.PagedQueryResult;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import pactas.Pactas;
 import pactas.PactasImpl;
 import play.Application;
+import play.Configuration;
 import play.GlobalSettings;
 import sphere.Sphere;
+
+import java.util.concurrent.CompletionStage;
 
 public class Global extends GlobalSettings {
     private final static String PRODUCT_SLUG = "donut-box";
@@ -18,14 +31,36 @@ public class Global extends GlobalSettings {
     private Pactas pactas;
     private Product product;
 
+    private SphereClient sphereClient;
+
     @Override
     public void onStart(final Application app) {
         this.app = app;
         this.sphere = Sphere.getInstance();
         this.pactas = new PactasImpl(app.configuration());
         this.product = fetchProduct();
+
+        sphereClient = createSphereClient(app);
+
         checkProjectCurrency(app);
         super.onStart(app);
+    }
+
+    private SphereClient createSphereClient(final Application app) {
+        final Configuration configuration = app.configuration();
+        final String projectKey = configuration.getString("sphere.project");
+        final String clientId = configuration.getString("sphere.clientId");
+        final String clientSecret = configuration.getString("sphere.clientSecret");
+        final SphereClientFactory factory = SphereClientFactory.of(() -> ApacheHttpClientAdapter.of(HttpAsyncClients.createDefault()));
+        return factory.createClient(projectKey, clientId, clientSecret); //replace with your client secret
+    }
+
+    @Override
+    public void onStop(final Application app) {
+        super.onStop(app);
+        if (sphereClient != null) {
+            sphereClient.close();
+        }
     }
 
     private Product fetchProduct() {
