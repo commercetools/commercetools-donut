@@ -10,4 +10,4 @@ Feature: Get overview of all available donut-boxes from the shop
     And I see "24" donuts for "23.99 €" €
     And I see "36" donuts for "34.99 €" €
     When I click on the donut package
-     And click on add to cart
+     And selected box will be added to my cart

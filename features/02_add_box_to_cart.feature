@@ -1,5 +1,4 @@
-Feature:
-  Add a donut box to my shopping cart
+Feature: Add a donut box to my shopping cart
 
   I can select out of available donut boxes
 
