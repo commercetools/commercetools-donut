@@ -6,6 +6,8 @@ import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.carts.queries.CartQuery;
+import io.sphere.sdk.carts.queries.CartQueryModel;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
@@ -30,10 +32,10 @@ public class ProductController extends BaseController {
         final Cart cart = sphere().currentCart().fetch();
         final Optional<Variant> selectedVariant = getSelectedVariant(cart);
 
-        final Optional<ProductVariant> selectedProductVariant = _getSelectedVariant(cart);
+        final java.util.Optional<ProductVariant> selectedProductVariant = null; //TODO
 
         final int selectedFrequency = frequency(cart.getId());
-        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product(), productProjection(), selectedProductVariant);
+        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product());
         return ok(index.render(productPageData));
     }
 
@@ -65,10 +67,6 @@ public class ProductController extends BaseController {
             selectedVariant = Optional.absent();
         }
         return selectedVariant;
-    }
-
-    private Optional<ProductVariant> _getSelectedVariant(final Cart cart) {
-        return null;
     }
 
     private void setProductToCart(final Variant variant, final int frequency) {

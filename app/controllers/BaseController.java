@@ -10,6 +10,8 @@ import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.attributes.AttributeAccess;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Controller;
@@ -65,8 +67,6 @@ public class BaseController extends Controller {
         return product().getVariants().byId(variantId);
     }
 
-
-
     protected Optional<Variant> variant(final String pactasId) {
         for (final Variant variant : product().getVariants().asList()) {
             if (pactasId.equals(variant.getString(ID_MONTHLY))
@@ -76,6 +76,18 @@ public class BaseController extends Controller {
             }
         }
         return Optional.absent();
+    }
+
+    protected java.util.Optional<ProductVariant> _variant(final String pactasId) {
+        for(final ProductVariant variant : productProjection().getAllVariants()) {
+            final String monthly = variant.getAttribute(ID_MONTHLY).getValue(AttributeAccess.ofString());
+            final String twoWeeks = variant.getAttribute(ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
+            final String weekly = variant.getAttribute(ID_WEEKLY).getValue(AttributeAccess.ofString());
+            if(pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) {
+                return java.util.Optional.of(variant);
+            }
+        }
+        return java.util.Optional.empty();
     }
 
     protected int frequency(final String cartId) {
@@ -90,11 +102,20 @@ public class BaseController extends Controller {
         return 0;
     }
 
+
+    protected int _frequency(final String cartId) {
+        return 0; //TODO
+    }
+
     protected void clearLineItemsFromCurrentCart(final List<LineItem> lineItems) {
         CartUpdate cartUpdate = new CartUpdate();
         for (final LineItem item : lineItems) {
             cartUpdate = cartUpdate.removeLineItem(item.getId());
         }
         sphere.currentCart().update(cartUpdate);
+    }
+
+    protected void _clearLineItemsFromCurrentCart(final List<io.sphere.sdk.carts.LineItem> lineItems) {
+        //TODO
     }
 }

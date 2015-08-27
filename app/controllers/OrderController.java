@@ -31,7 +31,7 @@ public class OrderController extends BaseController {
 
                 final ProductVariant selectedProductVariant = null; //TODO
 
-                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, cart, selectedProductVariant);
+                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, cart);
                 return ok(order.render(orderPageData));
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");

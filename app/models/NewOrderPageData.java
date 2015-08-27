@@ -1,32 +1,31 @@
 package models;
 
 import com.google.common.base.Optional;
-import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Price;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.attributes.AttributeAccess;
 
-import static utils.PriceUtils.currencyCode;
-import static utils.PriceUtils.monetaryAmount;
-import static utils.PriceUtils.format;
+import static utils.PriceUtils.*;
 
-public class OrderPageData {
-    private final Variant selectedVariant;
+public class NewOrderPageData {
+    private final ProductVariant selectedVariant;
     private final int selectedFrequency;
     private final Cart cart;
 
-    public OrderPageData(final Variant selectedVariant, final int selectedFrequency, final Cart cart) {
+    public NewOrderPageData(final ProductVariant selectedVariant, final int selectedFrequency, final Cart cart) {
         this.selectedVariant = selectedVariant;
         this.selectedFrequency = selectedFrequency;
         this.cart = cart;
     }
 
-    public VariantData selectedVariant() {
-        return new VariantData(selectedVariant);
+    public NewVariantData selectedVariant() {
+        return new NewVariantData(selectedVariant);
     }
 
     public String totalPrice() {
-        return format(cart.getTotalPrice());
+        return cart.getTotalPrice().toString();
     }
 
     public String frequencyName() {
@@ -44,19 +43,22 @@ public class OrderPageData {
     }
 
     public String pactasVariantId() {
-        return selectedVariant.getString("pactas" + selectedFrequency);
+        return selectedVariant.getAttribute("pactas" + selectedFrequency).getValue(AttributeAccess.ofString());
     }
 
     public String currency() {
-        return currencyCode(price()).or("");
+        //return currencyCode(price()).or(""); //TODO
+        return "";
     }
 
     public double priceAmount() {
-        return monetaryAmount(price()).or(0d);
+        return 1d;
+        //return monetaryAmount(price()).or(0d); //TODO
     }
 
-    private Optional<Price> price() {
-        return Optional.fromNullable(selectedVariant.getPrice());
+
+    private java.util.Optional<io.sphere.sdk.products.Price> price() {
+        return java.util.Optional.ofNullable(selectedVariant.getPrices().get(0));
     }
 
 }
