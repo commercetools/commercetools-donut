@@ -23,7 +23,7 @@ public class NewVariantData {
     }
 
     public String price() {
-        final Price price = productVariant.getPrices().get(0);
+        final Price price = productVariant.getPrices().get(0); //
         if(price != null) {
             return price.getValue().toString();
         } else {

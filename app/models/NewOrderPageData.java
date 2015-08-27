@@ -1,11 +1,11 @@
 package models;
 
-import com.google.common.base.Optional;
-import io.sphere.client.shop.model.Price;
-import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
+
+import java.util.Optional;
 
 import static utils.PriceUtils.*;
 
@@ -47,18 +47,18 @@ public class NewOrderPageData {
     }
 
     public String currency() {
-        //return currencyCode(price()).or(""); //TODO
-        return "";
+        return price().get().getCountry().getCurrency().getCurrencyCode(); //TODO do that in PriceUtils
+        //return currencyCode(price()).or("");
     }
 
     public double priceAmount() {
-        return 1d;
-        //return monetaryAmount(price()).or(0d); //TODO
+        return price().get().getValue().getNumber().doubleValue(); //TODO do that in PriceUtils
+        //return monetaryAmount(price()).or(0d);
     }
 
 
-    private java.util.Optional<io.sphere.sdk.products.Price> price() {
-        return java.util.Optional.ofNullable(selectedVariant.getPrices().get(0));
+    private java.util.Optional<Price> price() {
+        return Optional.ofNullable(selectedVariant.getPrices().get(0));
     }
 
 }
