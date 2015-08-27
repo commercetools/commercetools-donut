@@ -6,6 +6,8 @@ import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.ProductVariant;
 import models.OrderPageData;
 import play.Configuration;
 import play.Logger;
@@ -16,8 +18,8 @@ import views.html.success;
 
 public class OrderController extends BaseController {
 
-    public OrderController(final Sphere sphere, final SphereClient sphereClient, final Configuration configuration, final Product product) {
-        super(sphere, sphereClient, configuration, product);
+    public OrderController(final Sphere sphere, final Configuration configuration, final Product product, final SphereClient sphereClient, final ProductProjection productProjection) {
+        super(sphere, configuration, product, sphereClient, productProjection);
     }
 
     public Result show() {
@@ -26,7 +28,10 @@ public class OrderController extends BaseController {
             final int selectedFrequency = frequency(cart.getId());
             if (selectedFrequency > 0) {
                 final Variant selectedVariant = cart.getLineItems().get(0).getVariant();
-                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, cart);
+
+                final ProductVariant selectedProductVariant = null; //TODO
+
+                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, cart, selectedProductVariant);
                 return ok(order.render(orderPageData));
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");

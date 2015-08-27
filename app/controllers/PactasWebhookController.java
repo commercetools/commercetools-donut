@@ -5,6 +5,7 @@ import exceptions.PlanVariantNotFound;
 import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.*;
 import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.products.ProductProjection;
 import pactas.Pactas;
 import pactas.PactasException;
 import pactas.models.PactasContract;
@@ -21,8 +22,10 @@ import utils.JsonUtils;
 public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
 
-    public PactasWebhookController(final Sphere sphere, final SphereClient sphereClient, final Configuration configuration, final Product product, final Pactas pactas) {
-        super(sphere, sphereClient, configuration, product);
+    public PactasWebhookController(final Sphere sphere, final Configuration configuration, final Product product,
+                                   final Pactas pactas, final SphereClient sphereClient,
+                                   final ProductProjection productProjection) {
+        super(sphere, configuration, product, sphereClient, productProjection);
         this.pactas = pactas;
     }
 

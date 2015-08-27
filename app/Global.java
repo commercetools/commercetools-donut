@@ -32,6 +32,7 @@ public class Global extends GlobalSettings {
     private Product product;
 
     private SphereClient sphereClient;
+    private ProductProjection productProjection;
 
     @Override
     public void onStart(final Application app) {
@@ -41,6 +42,7 @@ public class Global extends GlobalSettings {
         this.product = fetchProduct();
 
         sphereClient = createSphereClient(app);
+        productProjection = fetchProductProjection();
 
         checkProjectCurrency(app);
         super.onStart(app);
@@ -53,6 +55,17 @@ public class Global extends GlobalSettings {
         final String clientSecret = configuration.getString("sphere.clientSecret");
         final SphereClientFactory factory = SphereClientFactory.of(() -> ApacheHttpClientAdapter.of(HttpAsyncClients.createDefault()));
         return factory.createClient(projectKey, clientId, clientSecret); //replace with your client secret
+    }
+
+    private ProductProjection fetchProductProjection() {
+        final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
+
+        final CompletionStage<PagedQueryResult<ProductProjection>> resultCompletionStage =
+                sphereClient.execute(request);
+
+        final PagedQueryResult<ProductProjection> queryResult = resultCompletionStage.toCompletableFuture().join();
+        final java.util.Optional<io.sphere.sdk.products.ProductProjection> product = queryResult.head();
+        return product.orElseThrow(() -> new SubscriptionProductNotFound());
     }
 
     @Override
@@ -81,11 +94,11 @@ public class Global extends GlobalSettings {
     public <A> A getControllerInstance(final Class<A> controllerClass) throws Exception {
         final A result;
         if (controllerClass.equals(ProductController.class)) {
-            result = (A) new ProductController(sphere, sphereClient, app.configuration(), product);
+            result = (A) new ProductController(sphere, app.configuration(), product, sphereClient, productProjection);
         } else if (controllerClass.equals(OrderController.class)) {
-            result = (A) new OrderController(sphere, sphereClient, app.configuration(), product);
+            result = (A) new OrderController(sphere, app.configuration(), product, sphereClient, productProjection);
         } else if (controllerClass.equals(PactasWebhookController.class)) {
-            result = (A) new PactasWebhookController(sphere, sphereClient, app.configuration(), product, pactas);
+            result = (A) new PactasWebhookController(sphere, app.configuration(), product, pactas, sphereClient, productProjection);
         } else {
             result = super.getControllerInstance(controllerClass);
         }

@@ -7,6 +7,8 @@ import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
 import play.Configuration;
 import play.Logger;
@@ -20,15 +22,18 @@ import static play.data.Form.form;
 public class ProductController extends BaseController {
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final Sphere sphere, final SphereClient sphereClient, final Configuration configuration, final Product product) {
-        super(sphere, sphereClient, configuration, product);
+    public ProductController(final Sphere sphere, final Configuration configuration, final Product product, final SphereClient sphereClient, final ProductProjection productProjection) {
+        super(sphere, configuration, product, sphereClient, productProjection);
     }
 
     public Result show() {
         final Cart cart = sphere().currentCart().fetch();
         final Optional<Variant> selectedVariant = getSelectedVariant(cart);
+
+        final Optional<ProductVariant> selectedProductVariant = _getSelectedVariant(cart);
+
         final int selectedFrequency = frequency(cart.getId());
-        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product());
+        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product(), productProjection(), selectedProductVariant);
         return ok(index.render(productPageData));
     }
 
@@ -60,6 +65,10 @@ public class ProductController extends BaseController {
             selectedVariant = Optional.absent();
         }
         return selectedVariant;
+    }
+
+    private Optional<ProductVariant> _getSelectedVariant(final Cart cart) {
+        return null;
     }
 
     private void setProductToCart(final Variant variant, final int frequency) {

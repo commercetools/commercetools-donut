@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Price;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.products.ProductVariant;
 
 import static utils.PriceUtils.currencyCode;
 import static utils.PriceUtils.monetaryAmount;
@@ -14,14 +15,17 @@ public class OrderPageData {
     private final int selectedFrequency;
     private final Cart cart;
 
-    public OrderPageData(final Variant selectedVariant, final int selectedFrequency, final Cart cart) {
+    private final ProductVariant selectedProductVariant;
+
+    public OrderPageData(final Variant selectedVariant, final int selectedFrequency, final Cart cart, final ProductVariant selectedProductVariant) {
         this.selectedVariant = selectedVariant;
         this.selectedFrequency = selectedFrequency;
         this.cart = cart;
+        this.selectedProductVariant = selectedProductVariant;
     }
 
     public VariantData selectedVariant() {
-        return new VariantData(selectedVariant);
+        return new VariantData(selectedVariant, selectedProductVariant);
     }
 
     public String totalPrice() {

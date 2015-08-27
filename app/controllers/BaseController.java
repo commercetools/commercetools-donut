@@ -9,6 +9,7 @@ import io.sphere.client.shop.model.LineItem;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.products.ProductProjection;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Controller;
@@ -24,16 +25,20 @@ public class BaseController extends Controller {
     public final static String ID_WEEKLY    = "pactas1";
 
     private final Sphere sphere;
-    private final SphereClient sphereClient;
     private final Product product;
     private final CurrencyOperations currencyOps;
 
-    public BaseController(final Sphere sphere, final SphereClient sphereClient, final Configuration configuration, final Product product) {
+    private final SphereClient sphereClient;
+    private final ProductProjection productProjection;
+
+    public BaseController(final Sphere sphere, final Configuration configuration, final Product product,
+                          final SphereClient sphereClient, final ProductProjection productProjection) {
         this.sphere = sphere;
-        this.sphereClient = sphereClient;
         this.product = product;
         this.currencyOps = CurrencyOperations.of(configuration);
 
+        this.sphereClient = sphereClient;
+        this.productProjection = productProjection;
     }
 
     protected Sphere sphere() {
@@ -48,9 +53,19 @@ public class BaseController extends Controller {
         return product;
     }
 
+    protected SphereClient sphereClient() {
+        return sphereClient;
+    }
+
+    protected ProductProjection productProjection() {
+        return productProjection;
+    }
+
     protected Optional<Variant> variant(final int variantId) {
         return product().getVariants().byId(variantId);
     }
+
+
 
     protected Optional<Variant> variant(final String pactasId) {
         for (final Variant variant : product().getVariants().asList()) {
