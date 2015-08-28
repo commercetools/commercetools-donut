@@ -6,11 +6,10 @@ import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
-import io.sphere.sdk.carts.queries.CartQuery;
-import io.sphere.sdk.carts.queries.CartQueryModel;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
+import models.NewProductPageData;
 import models.ProductPageData;
 import play.Configuration;
 import play.Logger;
@@ -31,12 +30,28 @@ public class ProductController extends BaseController {
     public Result show() {
         final Cart cart = sphere().currentCart().fetch();
         final Optional<Variant> selectedVariant = getSelectedVariant(cart);
-
-        final java.util.Optional<ProductVariant> selectedProductVariant = null; //TODO
-
         final int selectedFrequency = frequency(cart.getId());
         final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product());
         return ok(index.render(productPageData));
+    }
+
+    public Result _show() {
+        final Cart cart = sphere().currentCart().fetch();
+        final java.util.Optional<Variant> selectedVariant = _getSelectedVariant(cart);
+        final int selectedFrequency = frequency(cart.getId());
+
+        final java.util.Optional<ProductVariant> productVariant = mapToProductVariant(selectedVariant);
+        final NewProductPageData productPageData = new NewProductPageData(productProjection(), productVariant, selectedFrequency);
+        return ok();//index.render(productPageData));
+    }
+
+    private java.util.Optional<ProductVariant> mapToProductVariant(final java.util.Optional<Variant> variant) {
+        if(variant.isPresent()) {
+            final Variant var = variant.get();
+            final int variantId = var.getId();
+            return productProjection().getAllVariants().stream().filter( v -> v.getId().equals(variantId)).findFirst();
+        }
+        return java.util.Optional.empty();
     }
 
     public Result submit() {
@@ -65,6 +80,17 @@ public class ProductController extends BaseController {
             selectedVariant = Optional.of(cart.getLineItems().get(0).getVariant());
         } else {
             selectedVariant = Optional.absent();
+        }
+        return selectedVariant;
+    }
+
+
+    private java.util.Optional<Variant> _getSelectedVariant(final Cart cart) {
+        final java.util.Optional<Variant> selectedVariant;
+        if (cart.getLineItems().size() > 0) {
+            selectedVariant = java.util.Optional.of(cart.getLineItems().get(0).getVariant());
+        } else {
+            selectedVariant = java.util.Optional.empty();
         }
         return selectedVariant;
     }

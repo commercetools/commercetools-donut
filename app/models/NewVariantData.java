@@ -1,17 +1,12 @@
 package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.sphere.client.shop.model.ScaledImage;
-import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 
-import static io.sphere.client.shop.model.ImageSize.MEDIUM;
-import static io.sphere.client.shop.model.ImageSize.ORIGINAL;
-import static utils.PriceUtils.format;
-
-public class NewVariantData {
+public class NewVariantData extends Base {
     private final ProductVariant productVariant;
 
     public NewVariantData(final ProductVariant productVariant) {

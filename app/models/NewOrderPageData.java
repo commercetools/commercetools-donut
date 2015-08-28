@@ -1,15 +1,14 @@
 package models;
 
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 
 import java.util.Optional;
 
-import static utils.PriceUtils.*;
-
-public class NewOrderPageData {
+public class NewOrderPageData extends Base {
     private final ProductVariant selectedVariant;
     private final int selectedFrequency;
     private final Cart cart;

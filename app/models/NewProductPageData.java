@@ -1,16 +1,14 @@
 package models;
 
-import io.sphere.client.shop.model.Product;
-import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class NewProductPageData {
+public class NewProductPageData extends Base {
 
     private final Optional<ProductVariant> selectedVariant;
     private final ProductProjection product;
