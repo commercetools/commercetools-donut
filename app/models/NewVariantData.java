@@ -20,7 +20,7 @@ public class NewVariantData extends Base {
     public String price() {
         final Price price = productVariant.getPrices().get(0); //
         if(price != null) {
-            return price.getValue().toString();
+            return String.valueOf(price.getValue().getNumber().doubleValueExact());
         } else {
             return "";
         }
@@ -38,7 +38,7 @@ public class NewVariantData extends Base {
 
 
     public String imageUrl() {
-        return ""; //TODO
+        return productVariant.getImages().get(0).getUrl();
     }
 
     public String stampImageUrl() {

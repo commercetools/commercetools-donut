@@ -1,13 +1,10 @@
 package utils;
 
-import com.google.common.base.Optional;
-import io.sphere.client.model.Money;
 import io.sphere.sdk.products.Price;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import static java.math.BigDecimal.ROUND_HALF_EVEN;
 import static java.util.Currency.getInstance;
 
 public final class NewPriceUtils {
@@ -29,19 +26,19 @@ public final class NewPriceUtils {
         return price.getCountry().getCurrency().getCurrencyCode();
     }
 
-    public static Optional<Double> monetaryAmount(final Optional<Price> price) {
+    public static java.util.Optional<Double> monetaryAmount(final java.util.Optional<Price> price) {
         if (price.isPresent()) {
-            return Optional.of(monetaryAmount(price.get()));
+            return java.util.Optional.of(monetaryAmount(price.get()));
         } else {
-            return Optional.absent();
+            return java.util.Optional.empty();
         }
     }
 
-    public static Optional<String> currencyCode(final Optional<Price> price) {
+    public static java.util.Optional<String> currencyCode(final java.util.Optional<Price> price) {
         if (price.isPresent()) {
-            return Optional.of(currencyCode(price.get()));
+            return java.util.Optional.of(currencyCode(price.get()));
         } else {
-            return Optional.absent();
+            return java.util.Optional.empty();
         }
     }
 }

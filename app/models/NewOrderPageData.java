@@ -5,6 +5,7 @@ import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
+import utils.NewPriceUtils;
 
 import java.util.Optional;
 
@@ -46,15 +47,12 @@ public class NewOrderPageData extends Base {
     }
 
     public String currency() {
-        return price().get().getCountry().getCurrency().getCurrencyCode(); //TODO do that in PriceUtils
-        //return currencyCode(price()).or("");
+        return NewPriceUtils.currencyCode(price()).orElse("");
     }
 
     public double priceAmount() {
-        return price().get().getValue().getNumber().doubleValue(); //TODO do that in PriceUtils
-        //return monetaryAmount(price()).or(0d);
+        return NewPriceUtils.monetaryAmount(price()).orElse(0d);
     }
-
 
     private java.util.Optional<Price> price() {
         return Optional.ofNullable(selectedVariant.getPrices().get(0));
