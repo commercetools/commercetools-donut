@@ -46,7 +46,7 @@ public class NewVariantData extends Base {
     }
 
 
-    public String _addToCartImageUrl() {
+    public String addToCartImageUrl() {
         return ""; //TODO
     }
 }

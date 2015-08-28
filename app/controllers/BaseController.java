@@ -1,7 +1,6 @@
 package controllers;
 
 import com.google.common.base.Optional;
-import exceptions.SubscriptionProductNotFound;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.model.CustomObject;
 import io.sphere.client.shop.model.CartUpdate;
@@ -102,11 +101,6 @@ public class BaseController extends Controller {
         return 0;
     }
 
-
-    protected int _frequency(final String cartId) {
-        return 0; //TODO
-    }
-
     protected void clearLineItemsFromCurrentCart(final List<LineItem> lineItems) {
         CartUpdate cartUpdate = new CartUpdate();
         for (final LineItem item : lineItems) {
@@ -115,7 +109,13 @@ public class BaseController extends Controller {
         sphere.currentCart().update(cartUpdate);
     }
 
-    protected void _clearLineItemsFromCurrentCart(final List<io.sphere.sdk.carts.LineItem> lineItems) {
-        //TODO
+
+    protected java.util.Optional<ProductVariant> mapToProductVariant(final java.util.Optional<Variant> variant) {
+        if(variant.isPresent()) {
+            final Variant var = variant.get();
+            final int variantId = var.getId();
+            return productProjection().getAllVariants().stream().filter( v -> v.getId().equals(variantId)).findFirst();
+        }
+        return java.util.Optional.empty();
     }
 }

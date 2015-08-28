@@ -8,7 +8,7 @@ import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
-import models.OrderPageData;
+import models.NewOrderPageData;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Result;
@@ -29,9 +29,9 @@ public class OrderController extends BaseController {
             if (selectedFrequency > 0) {
                 final Variant selectedVariant = cart.getLineItems().get(0).getVariant();
 
-                final ProductVariant selectedProductVariant = null; //TODO
+                final java.util.Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
 
-                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, cart);
+                final NewOrderPageData orderPageData = new NewOrderPageData(selectedProductVariant.get(), selectedFrequency, null);
                 return ok(order.render(orderPageData));
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");

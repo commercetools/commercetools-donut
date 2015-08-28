@@ -10,7 +10,6 @@ import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.NewProductPageData;
-import models.ProductPageData;
 import play.Configuration;
 import play.Logger;
 import play.data.Form;
@@ -27,31 +26,22 @@ public class ProductController extends BaseController {
         super(sphere, configuration, product, sphereClient, productProjection);
     }
 
-    public Result show() {
-        final Cart cart = sphere().currentCart().fetch();
-        final Optional<Variant> selectedVariant = getSelectedVariant(cart);
-        final int selectedFrequency = frequency(cart.getId());
-        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product());
-        return ok(index.render(productPageData));
-    }
+//    public Result show() {
+//        final Cart cart = sphere().currentCart().fetch();
+//        final Optional<Variant> selectedVariant = getSelectedVariant(cart);
+//        final int selectedFrequency = frequency(cart.getId());
+//        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product());
+//        return ok(index.render(productPageData));
+//    }
 
-    public Result _show() {
+    public Result show() {
         final Cart cart = sphere().currentCart().fetch();
         final java.util.Optional<Variant> selectedVariant = _getSelectedVariant(cart);
         final int selectedFrequency = frequency(cart.getId());
 
         final java.util.Optional<ProductVariant> productVariant = mapToProductVariant(selectedVariant);
         final NewProductPageData productPageData = new NewProductPageData(productProjection(), productVariant, selectedFrequency);
-        return ok();//index.render(productPageData));
-    }
-
-    private java.util.Optional<ProductVariant> mapToProductVariant(final java.util.Optional<Variant> variant) {
-        if(variant.isPresent()) {
-            final Variant var = variant.get();
-            final int variantId = var.getId();
-            return productProjection().getAllVariants().stream().filter( v -> v.getId().equals(variantId)).findFirst();
-        }
-        return java.util.Optional.empty();
+        return ok(index.render(productPageData));
     }
 
     public Result submit() {
