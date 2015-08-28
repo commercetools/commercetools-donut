@@ -2,6 +2,7 @@ package models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.sphere.sdk.models.Base;
+import io.sphere.sdk.products.Image;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
@@ -42,11 +43,18 @@ public class NewVariantData extends Base {
     }
 
     public String stampImageUrl() {
-        return ""; //TODO
+        if (productVariant.getImages().size() > 2) {
+            final Image image = productVariant.getImages().get(1);
+            return "background-image: url('"+ image.getUrl() +"')";
+        }
+        return "";
     }
 
 
     public String addToCartImageUrl() {
-        return ""; //TODO
-    }
+        if (productVariant.getImages().size() > 2) {
+            final Image image = productVariant.getImages().get(2);
+            return "background-image: url('"+ image.getUrl() +"')";
+        }
+        return "";    }
 }
