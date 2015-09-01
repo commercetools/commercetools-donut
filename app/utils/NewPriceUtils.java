@@ -4,6 +4,7 @@ import io.sphere.sdk.products.Price;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Optional;
 
 public final class NewPriceUtils {
 
@@ -24,19 +25,19 @@ public final class NewPriceUtils {
         return price.getValue().getCurrency().getCurrencyCode();
     }
 
-    public static java.util.Optional<Double> monetaryAmount(final java.util.Optional<Price> price) {
+    public static Optional<Double> monetaryAmount(final Optional<Price> price) {
         if (price.isPresent()) {
-            return java.util.Optional.of(monetaryAmount(price.get()));
+            return Optional.of(monetaryAmount(price.get()));
         } else {
-            return java.util.Optional.empty();
+            return Optional.empty();
         }
     }
 
-    public static java.util.Optional<String> currencyCode(final java.util.Optional<Price> price) {
+    public static java.util.Optional<String> currencyCode(final Optional<Price> price) {
         if (price.isPresent()) {
-            return java.util.Optional.of(currencyCode(price.get()));
+            return Optional.of(currencyCode(price.get()));
         } else {
-            return java.util.Optional.empty();
+            return Optional.empty();
         }
     }
 }

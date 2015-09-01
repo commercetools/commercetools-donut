@@ -1,11 +1,12 @@
 package controllers;
 
-import com.google.common.base.Optional;
 import exceptions.PlanVariantNotFound;
 import io.sphere.client.SphereClientException;
-import io.sphere.client.shop.model.*;
-import io.sphere.sdk.client.SphereClient;
+import io.sphere.client.shop.model.Cart;
+import io.sphere.client.shop.model.CartUpdate;
+import io.sphere.client.shop.model.PaymentState;
 import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.ProductVariant;
 import pactas.Pactas;
 import pactas.PactasException;
 import pactas.models.PactasContract;
@@ -19,20 +20,21 @@ import play.mvc.Result;
 import sphere.Sphere;
 import utils.JsonUtils;
 
+import java.util.Optional;
+
 public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
 
-    public PactasWebhookController(final Sphere sphere, final Configuration configuration, final Product product,
-                                   final Pactas pactas, final SphereClient sphereClient,
+    public PactasWebhookController(final Sphere sphere, final Configuration configuration, final Pactas pactas,
                                    final ProductProjection productProjection) {
-        super(sphere, configuration, product, sphereClient, productProjection);
+        super(sphere, configuration, productProjection);
         this.pactas = pactas;
     }
 
     /* Method called by Pactas every time an order must be placed (weekly, monthly...) */
     public Result createOrderFromSubscription() {
         Logger.debug("An order request has been received from Pactas...");
-        final Optional<String> contractId = parseContractId(request());
+        final com.google.common.base.Optional<String> contractId = parseContractId(request());
         if (contractId.isPresent()) {
             try {
                 final PactasContract contract = pactas.fetchContract(contractId.get()).get();
@@ -51,28 +53,28 @@ public class PactasWebhookController extends BaseController {
         return badRequest();
     }
 
-    private Optional<String> parseContractId(final Http.Request request) {
+    private com.google.common.base.Optional<String> parseContractId(final Http.Request request) {
         Logger.debug("Pactas webhook: " + request.body().asText());
         final Webhook webhook = JsonUtils.readObject(Webhook.class, request.body().asText());
         if (webhook instanceof WebhookAccountCreated) {
-            return Optional.of(((WebhookAccountCreated) webhook).getContractId());
+            return com.google.common.base.Optional.of(((WebhookAccountCreated) webhook).getContractId());
         } else {
-            return Optional.absent();
+            return com.google.common.base.Optional.absent();
         }
     }
 
     private Cart createCartWithPactasInfo(final PactasContract contract, final PactasCustomer customer) {
-        final Variant variant = getVariantInContract(contract);
+        final ProductVariant variant = getVariantInContract(contract);
         final Cart cart = sphere().client().carts().createCart(currency()).execute();
         final CartUpdate cartUpdate = new CartUpdate()
-                .addLineItem(1, product().getId(), variant.getId())
+                .addLineItem(1, productProjection().getId(), variant.getId())
                 .setShippingAddress(customer.getCompleteAddress());
         return sphere().client().carts().updateCart(cart.getIdAndVersion(), cartUpdate).execute();
     }
 
-    private Variant getVariantInContract(final PactasContract contract) {
+    private ProductVariant getVariantInContract(final PactasContract contract) {
         final String planVariantId = contract.getPlanVariantId();
-        final Optional<Variant> variant = variant(planVariantId);
+        final Optional<ProductVariant> variant = variant(planVariantId);
         if (variant.isPresent()) {
             return variant.get();
         }

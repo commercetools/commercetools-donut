@@ -1,21 +1,20 @@
 package models;
 
-import com.google.common.base.Optional;
 import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Price;
-import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.models.Base;
+import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.attributes.AttributeAccess;
+import utils.NewPriceUtils;
 
-import static utils.PriceUtils.currencyCode;
-import static utils.PriceUtils.monetaryAmount;
-import static utils.PriceUtils.format;
+import java.util.Optional;
 
-public class OrderPageData {
-    private final Variant selectedVariant;
+public class OrderPageData extends Base {
+    private final ProductVariant selectedVariant;
     private final int selectedFrequency;
     private final Cart cart;
 
-    public OrderPageData(final Variant selectedVariant, final int selectedFrequency, final Cart cart) {
+    public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency, final Cart cart) {
         this.selectedVariant = selectedVariant;
         this.selectedFrequency = selectedFrequency;
         this.cart = cart;
@@ -26,7 +25,7 @@ public class OrderPageData {
     }
 
     public String totalPrice() {
-        return format(cart.getTotalPrice());
+        return cart.getTotalPrice().toString();
     }
 
     public String frequencyName() {
@@ -44,19 +43,20 @@ public class OrderPageData {
     }
 
     public String pactasVariantId() {
-        return selectedVariant.getString("pactas" + selectedFrequency);
+        final String pactasId = selectedVariant.getAttribute("pactas" + selectedFrequency).getValue(AttributeAccess.ofString());
+        return pactasId;
     }
 
     public String currency() {
-        return currencyCode(price()).or("");
+        return NewPriceUtils.currencyCode(price()).orElse("");
     }
 
     public double priceAmount() {
-        return monetaryAmount(price()).or(0d);
+        return NewPriceUtils.monetaryAmount(price()).orElse(0d);
     }
 
     private Optional<Price> price() {
-        return Optional.fromNullable(selectedVariant.getPrice());
+        return Optional.ofNullable(selectedVariant.getPrices().get(0));
     }
 
 }

@@ -3,12 +3,10 @@ package controllers;
 import io.sphere.client.SphereClientException;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Product;
 import io.sphere.client.shop.model.Variant;
-import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
-import models.NewOrderPageData;
+import models.OrderPageData;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Result;
@@ -18,8 +16,8 @@ import views.html.success;
 
 public class OrderController extends BaseController {
 
-    public OrderController(final Sphere sphere, final Configuration configuration, final Product product, final SphereClient sphereClient, final ProductProjection productProjection) {
-        super(sphere, configuration, product, sphereClient, productProjection);
+    public OrderController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection) {
+        super(sphere, configuration, productProjection);
     }
 
     public Result show() {
@@ -31,7 +29,7 @@ public class OrderController extends BaseController {
 
                 final java.util.Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
 
-                final NewOrderPageData orderPageData = new NewOrderPageData(selectedProductVariant.get(), selectedFrequency, cart);
+                final OrderPageData orderPageData = new OrderPageData(selectedProductVariant.get(), selectedFrequency, cart);
                 return ok(order.render(orderPageData));
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");

@@ -1,12 +1,10 @@
 package controllers;
 
-import com.google.common.base.Optional;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.model.CustomObject;
 import io.sphere.client.shop.model.CartUpdate;
 import io.sphere.client.shop.model.LineItem;
 import io.sphere.client.shop.model.Variant;
-import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
@@ -17,6 +15,7 @@ import sphere.Sphere;
 
 import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 
 public class BaseController extends Controller {
     public final static String FREQUENCY    = "cart-frequency";
@@ -26,15 +25,11 @@ public class BaseController extends Controller {
 
     private final Sphere sphere;
     private final CurrencyOperations currencyOps;
-
-    private final SphereClient sphereClient;
     private final ProductProjection productProjection;
 
-    public BaseController(final Sphere sphere, final Configuration configuration, final SphereClient sphereClient,
-                          final ProductProjection productProjection) {
+    public BaseController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection) {
         this.sphere = sphere;
         this.currencyOps = CurrencyOperations.of(configuration);
-        this.sphereClient = sphereClient;
         this.productProjection = productProjection;
     }
 
@@ -46,19 +41,15 @@ public class BaseController extends Controller {
         return currencyOps.currency();
     }
 
-    protected SphereClient sphereClient() {
-        return sphereClient;
-    }
-
     protected ProductProjection productProjection() {
         return productProjection;
     }
 
-    protected java.util.Optional<ProductVariant> variant(final int variantId) {
+    protected Optional<ProductVariant> variant(final int variantId) {
         return productProjection().getAllVariants().stream().filter(v -> v.getId().equals(variantId)).findFirst();
     }
 
-    protected java.util.Optional<ProductVariant> variant(final String pactasId) {
+    protected Optional<ProductVariant> variant(final String pactasId) {
         for(final ProductVariant variant : productProjection().getAllVariants()) {
             final String monthly = variant.getAttribute(ID_MONTHLY).getValue(AttributeAccess.ofString());
             final String twoWeeks = variant.getAttribute(ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
@@ -72,7 +63,7 @@ public class BaseController extends Controller {
 
     protected int frequency(final String cartId) {
         try {
-            final Optional<CustomObject> frequencyObj = sphere.customObjects().get(FREQUENCY, cartId).fetch();
+            final com.google.common.base.Optional<CustomObject> frequencyObj = sphere.customObjects().get(FREQUENCY, cartId).fetch();
             if (frequencyObj.isPresent()) {
                 return frequencyObj.get().getValue().asInt();
             }
@@ -91,12 +82,11 @@ public class BaseController extends Controller {
     }
 
 
-    protected java.util.Optional<ProductVariant> mapToProductVariant(final java.util.Optional<Variant> variant) {
+    protected Optional<ProductVariant> mapToProductVariant(final Optional<Variant> variant) {
         if(variant.isPresent()) {
-            final Variant var = variant.get();
-            final int variantId = var.getId();
+            final int variantId = variant.get().getId();
             return productProjection().getAllVariants().stream().filter( v -> v.getId().equals(variantId)).findFirst();
         }
-        return java.util.Optional.empty();
+        return Optional.empty();
     }
 }

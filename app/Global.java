@@ -1,19 +1,14 @@
-import com.google.common.base.Optional;
 import controllers.CurrencyOperations;
 import controllers.OrderController;
 import controllers.PactasWebhookController;
 import controllers.ProductController;
 import exceptions.SubscriptionProductNotFound;
-import io.sphere.client.shop.model.Product;
-import io.sphere.sdk.client.SphereAsyncHttpClientFactory;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.client.SphereClientFactory;
 import io.sphere.sdk.http.ApacheHttpClientAdapter;
-import io.sphere.sdk.http.HttpClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.queries.ProductProjectionQuery;
 import io.sphere.sdk.queries.PagedQueryResult;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import pactas.Pactas;
 import pactas.PactasImpl;
@@ -22,15 +17,14 @@ import play.Configuration;
 import play.GlobalSettings;
 import sphere.Sphere;
 
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 public class Global extends GlobalSettings {
-    private final static String PRODUCT_SLUG = "donut-box";
+
     private Application app;
     private Sphere sphere;
     private Pactas pactas;
-    private Product product;
-
     private SphereClient sphereClient;
     private ProductProjection productProjection;
 
@@ -39,11 +33,8 @@ public class Global extends GlobalSettings {
         this.app = app;
         this.sphere = Sphere.getInstance();
         this.pactas = new PactasImpl(app.configuration());
-        this.product = fetchProduct();
-
         sphereClient = createSphereClient(app);
         productProjection = fetchProductProjection();
-
         checkProjectCurrency(app);
         super.onStart(app);
     }
@@ -59,13 +50,12 @@ public class Global extends GlobalSettings {
 
     private ProductProjection fetchProductProjection() {
         final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
-
         final CompletionStage<PagedQueryResult<ProductProjection>> resultCompletionStage =
                 sphereClient.execute(request);
 
         final PagedQueryResult<ProductProjection> queryResult = resultCompletionStage.toCompletableFuture().join();
-        final java.util.Optional<io.sphere.sdk.products.ProductProjection> product = queryResult.head();
-        return product.orElseThrow(() -> new SubscriptionProductNotFound());
+        final Optional<ProductProjection> product = queryResult.head();
+        return product.orElseThrow(SubscriptionProductNotFound::new);
     }
 
     @Override
@@ -73,15 +63,6 @@ public class Global extends GlobalSettings {
         super.onStop(app);
         if (sphereClient != null) {
             sphereClient.close();
-        }
-    }
-
-    private Product fetchProduct() {
-        final Optional<Product> product = sphere.products().bySlug(PRODUCT_SLUG).fetch();
-        if (product.isPresent()) {
-            return product.get();
-        } else {
-            throw new SubscriptionProductNotFound();
         }
     }
 
@@ -94,11 +75,11 @@ public class Global extends GlobalSettings {
     public <A> A getControllerInstance(final Class<A> controllerClass) throws Exception {
         final A result;
         if (controllerClass.equals(ProductController.class)) {
-            result = (A) new ProductController(sphere, app.configuration(), product, sphereClient, productProjection);
+            result = (A) new ProductController(sphere, app.configuration(), productProjection);
         } else if (controllerClass.equals(OrderController.class)) {
-            result = (A) new OrderController(sphere, app.configuration(), product, sphereClient, productProjection);
+            result = (A) new OrderController(sphere, app.configuration(), productProjection);
         } else if (controllerClass.equals(PactasWebhookController.class)) {
-            result = (A) new PactasWebhookController(sphere, app.configuration(), product, pactas, sphereClient, productProjection);
+            result = (A) new PactasWebhookController(sphere, app.configuration(), pactas, productProjection);
         } else {
             result = super.getControllerInstance(controllerClass);
         }
