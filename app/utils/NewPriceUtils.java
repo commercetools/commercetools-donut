@@ -21,7 +21,7 @@ public final class NewPriceUtils {
     }
 
     private static String currencyCode(final Price price) {
-        return price.getCountry().getCurrency().getCurrencyCode();
+        return price.getValue().getCurrency().getCurrencyCode();
     }
 
     public static java.util.Optional<Double> monetaryAmount(final java.util.Optional<Price> price) {

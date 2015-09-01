@@ -31,7 +31,7 @@ public class OrderController extends BaseController {
 
                 final java.util.Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
 
-                final NewOrderPageData orderPageData = new NewOrderPageData(selectedProductVariant.get(), selectedFrequency, null);
+                final NewOrderPageData orderPageData = new NewOrderPageData(selectedProductVariant.get(), selectedFrequency, cart);
                 return ok(order.render(orderPageData));
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");

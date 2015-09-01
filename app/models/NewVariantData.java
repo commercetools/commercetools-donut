@@ -22,7 +22,8 @@ public class NewVariantData extends Base {
     public String price() {
         final Price price = productVariant.getPrices().get(0); //
         if(price != null) {
-            return NewPriceUtils.format(price);
+            final String p = NewPriceUtils.format(price);
+            return p;
         } else {
             return "";
         }

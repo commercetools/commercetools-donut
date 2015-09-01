@@ -38,5 +38,4 @@ public class NewProductPageData extends Base {
                 .collect(Collectors.toList());
         return variantDataList;
     }
-
 }

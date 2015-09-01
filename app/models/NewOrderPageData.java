@@ -1,6 +1,6 @@
 package models;
 
-import io.sphere.sdk.carts.Cart;
+import io.sphere.client.shop.model.Cart;
 import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
@@ -43,19 +43,23 @@ public class NewOrderPageData extends Base {
     }
 
     public String pactasVariantId() {
-        return selectedVariant.getAttribute("pactas" + selectedFrequency).getValue(AttributeAccess.ofString());
+        final String pactasId = selectedVariant.getAttribute("pactas" + selectedFrequency).getValue(AttributeAccess.ofString());
+        return pactasId;
     }
 
     public String currency() {
-        return NewPriceUtils.currencyCode(price()).orElse("");
+        final String currencyCode = NewPriceUtils.currencyCode(price()).orElse("");
+        return currencyCode;
     }
 
     public double priceAmount() {
-        return NewPriceUtils.monetaryAmount(price()).orElse(0d);
+        final double monetaryAmount = NewPriceUtils.monetaryAmount(price()).orElse(0d);
+        return monetaryAmount;
     }
 
     private java.util.Optional<Price> price() {
-        return Optional.ofNullable(selectedVariant.getPrices().get(0));
+        final java.util.Optional<Price> price = Optional.ofNullable(selectedVariant.getPrices().get(0));
+        return price;
     }
 
 }
