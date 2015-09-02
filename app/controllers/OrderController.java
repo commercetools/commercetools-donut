@@ -14,6 +14,8 @@ import sphere.Sphere;
 import views.html.order;
 import views.html.success;
 
+import java.util.Optional;
+
 public class OrderController extends BaseController {
 
     public OrderController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection) {
@@ -26,9 +28,7 @@ public class OrderController extends BaseController {
             final int selectedFrequency = frequency(cart.getId());
             if (selectedFrequency > 0) {
                 final Variant selectedVariant = cart.getLineItems().get(0).getVariant();
-
-                final java.util.Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
-
+                final Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
                 final OrderPageData orderPageData = new OrderPageData(selectedProductVariant.get(), selectedFrequency, cart);
                 return ok(order.render(orderPageData));
             } else {

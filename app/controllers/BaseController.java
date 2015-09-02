@@ -55,10 +55,10 @@ public class BaseController extends Controller {
             final String twoWeeks = variant.getAttribute(ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
             final String weekly = variant.getAttribute(ID_WEEKLY).getValue(AttributeAccess.ofString());
             if(pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) {
-                return java.util.Optional.of(variant);
+                return Optional.of(variant);
             }
         }
-        return java.util.Optional.empty();
+        return Optional.empty();
     }
 
     protected int frequency(final String cartId) {
@@ -85,7 +85,7 @@ public class BaseController extends Controller {
     protected Optional<ProductVariant> mapToProductVariant(final Optional<Variant> variant) {
         if(variant.isPresent()) {
             final int variantId = variant.get().getId();
-            return productProjection().getAllVariants().stream().filter( v -> v.getId().equals(variantId)).findFirst();
+            return variant(variantId);
         }
         return Optional.empty();
     }

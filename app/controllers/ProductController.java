@@ -36,7 +36,7 @@ public class ProductController extends BaseController {
     public Result submit() {
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
-            final java.util.Optional<ProductVariant> variant = variant(boundForm.get().variantId);
+            final Optional<ProductVariant> variant = variant(boundForm.get().variantId);
             if (variant.isPresent()) {
                 try {
                     setProductToCart(variant.get(), boundForm.get().howOften);

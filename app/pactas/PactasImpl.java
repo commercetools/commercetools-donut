@@ -53,26 +53,17 @@ public class PactasImpl implements Pactas {
      * @throws PactasException when the request failed or the response could not be parsed.
      */
     private <T> F.Promise<T> executeRequest(final String endpointUrl, final Class<T> clazz) {
-        return authorizationPromise.flatMap(new F.Function<Authorization, F.Promise<T>>() {
-            @Override
-            public F.Promise<T> apply(final Authorization authorization) throws Throwable {
-                return WS.url(endpointUrl)
-                        .setContentType(CONTENT_TYPE)
-                        .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authorization.getAccessToken())
-                        .get().map(new F.Function<WS.Response, T>() {
-                            @Override
-                            public T apply(final WS.Response response) throws Throwable {
-                                Logger.info(response.getBody());
-                                if (response.getStatus() == Http.Status.OK) {
-                                    return JsonUtils.readObject(clazz, response.getBody());
-                                } else {
-                                    throw new PactasException(response.getStatus(), response.getBody());
-                                }
-                            }
-                        });
-
-            }
-        });
+        return authorizationPromise.flatMap(authorization -> WS.url(endpointUrl)
+                .setContentType(CONTENT_TYPE)
+                .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authorization.getAccessToken())
+                .get().map(response -> {
+                    Logger.info(response.getBody());
+                    if (response.getStatus() == Http.Status.OK) {
+                        return JsonUtils.readObject(clazz, response.getBody());
+                    } else {
+                        throw new PactasException(response.getStatus(), response.getBody());
+                    }
+                }));
     }
 
     /**
@@ -84,15 +75,12 @@ public class PactasImpl implements Pactas {
         return WS.url(authUrl)
                 .setContentType(CONTENT_TYPE)
                 .setAuth(clientId, clientSecret, Realm.AuthScheme.BASIC)
-                .post("grant_type=client_credentials").map(new F.Function<WS.Response, Authorization>() {
-                    @Override
-                    public Authorization apply(final WS.Response response) throws Throwable {
-                        Logger.info(response.getBody());
-                        if (response.getStatus() == Http.Status.OK) {
-                            return JsonUtils.readObject(Authorization.class, response.getBody());
-                        } else {
-                            throw new PactasException(response.getStatus(), response.getBody());
-                        }
+                .post("grant_type=client_credentials").map(response -> {
+                    Logger.info(response.getBody());
+                    if (response.getStatus() == Http.Status.OK) {
+                        return JsonUtils.readObject(Authorization.class, response.getBody());
+                    } else {
+                        throw new PactasException(response.getStatus(), response.getBody());
                     }
                 });
     }

@@ -34,7 +34,7 @@ public class PactasWebhookController extends BaseController {
     /* Method called by Pactas every time an order must be placed (weekly, monthly...) */
     public Result createOrderFromSubscription() {
         Logger.debug("An order request has been received from Pactas...");
-        final com.google.common.base.Optional<String> contractId = parseContractId(request());
+        final Optional<String> contractId = parseContractId(request());
         if (contractId.isPresent()) {
             try {
                 final PactasContract contract = pactas.fetchContract(contractId.get()).get();
@@ -53,13 +53,13 @@ public class PactasWebhookController extends BaseController {
         return badRequest();
     }
 
-    private com.google.common.base.Optional<String> parseContractId(final Http.Request request) {
+    private Optional<String> parseContractId(final Http.Request request) {
         Logger.debug("Pactas webhook: " + request.body().asText());
         final Webhook webhook = JsonUtils.readObject(Webhook.class, request.body().asText());
         if (webhook instanceof WebhookAccountCreated) {
-            return com.google.common.base.Optional.of(((WebhookAccountCreated) webhook).getContractId());
+            return Optional.of(((WebhookAccountCreated) webhook).getContractId());
         } else {
-            return com.google.common.base.Optional.absent();
+            return Optional.empty();
         }
     }
 
