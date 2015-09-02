@@ -33,7 +33,7 @@ public final class NewPriceUtils {
         }
     }
 
-    public static java.util.Optional<String> currencyCode(final Optional<Price> price) {
+    public static Optional<String> currencyCode(final Optional<Price> price) {
         if (price.isPresent()) {
             return Optional.of(currencyCode(price.get()));
         } else {
