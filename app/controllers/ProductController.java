@@ -3,7 +3,7 @@ package controllers;
 import forms.SubscriptionFormData;
 import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
@@ -21,14 +21,15 @@ import static play.data.Form.form;
 public class ProductController extends BaseController {
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection) {
-        super(sphere, configuration, productProjection);
+    public ProductController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection,
+                             final SphereClient sphereClient) {
+        super(sphere, configuration, productProjection, sphereClient);
     }
 
     public Result show() {
-        final Cart cart = sphere().currentCart().fetch();
-        final Optional<ProductVariant> selectedVariant = getSelectedVariant(cart);
-        final int selectedFrequency = frequency(cart.getId());
+        final io.sphere.sdk.carts.Cart newCart = currentCart();
+        final Optional<ProductVariant> selectedVariant = getSelectedVariant(newCart);
+        final int selectedFrequency = frequency(newCart.getId());
         final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant, selectedFrequency);
         return ok(index.render(productPageData));
     }
@@ -53,11 +54,21 @@ public class ProductController extends BaseController {
         return redirect(routes.ProductController.show());
     }
 
-    private Optional<ProductVariant> getSelectedVariant(final Cart cart) {
-        final Optional<Variant> selectedVariant = (cart.getLineItems().size() > 0)
-                ? Optional.ofNullable(cart.getLineItems().get(0).getVariant()) : Optional.empty();
-        final Optional<ProductVariant> variant = mapToProductVariant(selectedVariant);
-        return variant;
+//    private Optional<ProductVariant> getSelectedVariant(final Cart cart) {
+//        final Optional<Variant> selectedVariant =
+//                (cart.getLineItems().size() > 0)
+//                        ? Optional.ofNullable(cart.getLineItems().get(0).getVariant())
+//                        : Optional.empty();
+//        final Optional<ProductVariant> variant = mapToProductVariant(selectedVariant);
+//        return variant;
+//    }
+
+    private Optional<ProductVariant> getSelectedVariant(final io.sphere.sdk.carts.Cart cart) {
+        final Optional<ProductVariant> selectedVariant =
+                (cart.getLineItems().size() > 0)
+                        ? Optional.ofNullable(cart.getLineItems().get(0).getVariant())
+                        : Optional.empty();
+        return selectedVariant;
     }
 
     private void setProductToCart(final ProductVariant variant, final int frequency) {

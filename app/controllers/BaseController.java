@@ -5,17 +5,26 @@ import io.sphere.client.model.CustomObject;
 import io.sphere.client.shop.model.CartUpdate;
 import io.sphere.client.shop.model.LineItem;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.carts.queries.CartQuery;
+import io.sphere.sdk.carts.queries.CartQueryModel;
+import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
+import io.sphere.sdk.queries.PagedQueryResult;
+import io.sphere.sdk.queries.Query;
+import io.sphere.sdk.queries.QueryPredicate;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Controller;
+import sphere.Session;
 import sphere.Sphere;
 
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 
 public class BaseController extends Controller {
     public final static String FREQUENCY    = "cart-frequency";
@@ -25,16 +34,23 @@ public class BaseController extends Controller {
 
     private final Sphere sphere;
     private final CurrencyOperations currencyOps;
+    private final SphereClient sphereClient;
     private final ProductProjection productProjection;
 
-    public BaseController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection) {
+    public BaseController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection,
+                          final SphereClient sphereClient) {
         this.sphere = sphere;
         this.currencyOps = CurrencyOperations.of(configuration);
         this.productProjection = productProjection;
+        this.sphereClient = sphereClient;
     }
 
     protected Sphere sphere() {
         return sphere;
+    }
+
+    protected SphereClient sphereClient() {
+        return sphereClient;
     }
 
     protected Currency currency() {
@@ -88,5 +104,17 @@ public class BaseController extends Controller {
             return variant(variantId);
         }
         return Optional.empty();
+    }
+
+    protected Cart currentCart() {
+        final Session session = Session.current();
+        final String cartId = session.getCartId().getId();
+        final QueryPredicate<Cart> predicate = CartQueryModel.of().id().is(cartId);
+        final Query<Cart> cartQuery = CartQuery.of().withPredicates(predicate);
+        final CompletionStage<PagedQueryResult<Cart>> resultCompletionStage = sphereClient().execute(cartQuery);
+        final PagedQueryResult<Cart> queryResult = resultCompletionStage.toCompletableFuture().join();
+        final Optional<Cart> cart = queryResult.head();
+        return cart.get();
+
     }
 }

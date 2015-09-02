@@ -4,6 +4,7 @@ import io.sphere.client.SphereClientException;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.OrderPageData;
@@ -18,8 +19,9 @@ import java.util.Optional;
 
 public class OrderController extends BaseController {
 
-    public OrderController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection) {
-        super(sphere, configuration, productProjection);
+    public OrderController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection,
+                           final SphereClient sphereClient) {
+        super(sphere, configuration, productProjection, sphereClient);
     }
 
     public Result show() {

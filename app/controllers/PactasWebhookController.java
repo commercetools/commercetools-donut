@@ -5,6 +5,7 @@ import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.CartUpdate;
 import io.sphere.client.shop.model.PaymentState;
+import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import pactas.Pactas;
@@ -26,8 +27,8 @@ public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
 
     public PactasWebhookController(final Sphere sphere, final Configuration configuration, final Pactas pactas,
-                                   final ProductProjection productProjection) {
-        super(sphere, configuration, productProjection);
+                                   final ProductProjection productProjection, final SphereClient sphereClient) {
+        super(sphere, configuration, productProjection, sphereClient);
         this.pactas = pactas;
     }
 
