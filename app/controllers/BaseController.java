@@ -38,6 +38,7 @@ public class BaseController extends Controller {
 
     private final Sphere sphere;
     private final CurrencyOperations currencyOps;
+    private final SphereClient sphereClient;
     private final ProductProjection productProjection;
     private final SphereClient sphereClient;
 
@@ -51,6 +52,10 @@ public class BaseController extends Controller {
 
     protected Sphere sphere() {
         return sphere;
+    }
+
+    protected SphereClient sphereClient() {
+        return sphereClient;
     }
 
     protected Currency currency() {
