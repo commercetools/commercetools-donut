@@ -47,6 +47,8 @@ public class CurrencyOperations {
         }
     }
 
+
+
     /**
      * Gets the currency for this project.
      * @return the currency as defined in the configuration file, or empty string if none defined.
