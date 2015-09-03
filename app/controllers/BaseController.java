@@ -38,7 +38,6 @@ public class BaseController extends Controller {
 
     private final Sphere sphere;
     private final CurrencyOperations currencyOps;
-    private final SphereClient sphereClient;
     private final ProductProjection productProjection;
     private final SphereClient sphereClient;
 
@@ -128,9 +127,5 @@ public class BaseController extends Controller {
             Logger.debug("Fetched existing Cart[cartId={}]", cart.get().getId());
             return cart.get();
         }
-    }
-
-    protected SphereClient sphereClient() {
-        return sphereClient;
     }
 }
