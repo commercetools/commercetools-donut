@@ -2,7 +2,8 @@ package controllers;
 
 import forms.SubscriptionFormData;
 import io.sphere.client.SphereClientException;
-import io.sphere.client.shop.model.Cart;
+import io.sphere.sdk.carts.commands.CartUpdateCommand;
+import io.sphere.sdk.carts.commands.updateactions.AddLineItem;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
@@ -71,20 +72,20 @@ public class ProductController extends BaseController {
         return selectedVariant;
     }
 
-    private void setProductToCart(final ProductVariant variant, final int frequency) {
-        final Cart cart = sphere().currentCart().fetch();
-        clearLineItemsFromCurrentCart(cart.getLineItems());
-        final Cart updatedCart = sphere().currentCart().addLineItem(productProjection().getId(), variant.getId(), 1);
-        sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
-    }
-
-//    private void _setProductToCart(final ProductVariant variant, final int frequency) {
-//        final io.sphere.sdk.carts.Cart cart = currentCart();
-//        //clearLineItemsFromCurrentCart(cart.getLineItems());
-//        final AddLineItem action = AddcLineItem.of(productProjection().getId(), variant.getId(), frequency);
-//        final CartUpdateCommand command = CartUpdateCommand.of(cart, action);
-//        final io.sphere.sdk.carts.Cart updatedCart = sphereClient().execute(command).toCompletableFuture().join();
-//
+//    private void setProductToCart(final ProductVariant variant, final int frequency) {
+//        final Cart cart = sphere().currentCart().fetch();
+//        clearLineItemsFromCurrentCart(cart.getLineItems());
+//        final Cart updatedCart = sphere().currentCart().addLineItem(productProjection().getId(), variant.getId(), 1);
 //        sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
 //    }
+
+    private void setProductToCart(final ProductVariant variant, final int frequency) {
+        final io.sphere.sdk.carts.Cart cart = currentCart();
+        //clearLineItemsFromCurrentCart(cart.getLineItems());
+        final AddLineItem action = AddLineItem.of(productProjection().getId(), variant.getId(), frequency);
+        final CartUpdateCommand command = CartUpdateCommand.of(cart, action);
+        final io.sphere.sdk.carts.Cart updatedCart = sphereClient().execute(command).toCompletableFuture().join();
+
+        sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
+    }
 }
