@@ -29,9 +29,9 @@ public class ProductController extends BaseController {
     }
 
     public Result show() {
-        final Cart newCart = currentCart();
-        final Optional<ProductVariant> selectedVariant = getSelectedVariant(newCart);
-        final int selectedFrequency = frequency(newCart.getId());
+        final Cart cart = currentCart();
+        final Optional<ProductVariant> selectedVariant = getSelectedVariant(cart);
+        final int selectedFrequency = frequency(cart.getId());
         final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant, selectedFrequency);
         return ok(index.render(productPageData));
     }
@@ -64,14 +64,10 @@ public class ProductController extends BaseController {
         return selectedVariant;
     }
 
-
-
     private void setProductToCart(final ProductVariant variant, final int frequency) {
-        final Cart cart = currentCart();
-        final Cart clearedCart = clearLineItemsFromCurrentCart(cart);
+        final Cart clearedCart = clearLineItemsFromCurrentCart(currentCart());
         final AddLineItem action = AddLineItem.of(productProjection().getId(), variant.getId(), frequency);
-        final CartUpdateCommand command = CartUpdateCommand.of(clearedCart, action);
-        final Cart updatedCart = sphereClient().execute(command).toCompletableFuture().join(); //TODO
+        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
         sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
     }
 }

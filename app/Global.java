@@ -45,14 +45,13 @@ public class Global extends GlobalSettings {
         final String clientId = configuration.getString("sphere.clientId");
         final String clientSecret = configuration.getString("sphere.clientSecret");
         final SphereClientFactory factory = SphereClientFactory.of(() -> ApacheHttpClientAdapter.of(HttpAsyncClients.createDefault()));
-        return factory.createClient(projectKey, clientId, clientSecret); //replace with your client secret
+        return factory.createClient(projectKey, clientId, clientSecret);
     }
 
     private ProductProjection fetchProductProjection() {
         final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
         final CompletionStage<PagedQueryResult<ProductProjection>> resultCompletionStage =
                 sphereClient.execute(request);
-
         final PagedQueryResult<ProductProjection> queryResult = resultCompletionStage.toCompletableFuture().join();
         final Optional<ProductProjection> product = queryResult.head();
         return product.orElseThrow(SubscriptionProductNotFound::new);

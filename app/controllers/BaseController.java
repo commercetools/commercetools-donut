@@ -1,6 +1,5 @@
 package controllers;
 
-import com.neovisionaries.i18n.CountryCode;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.model.CustomObject;
 import io.sphere.sdk.carts.Cart;
@@ -8,16 +7,12 @@ import io.sphere.sdk.carts.CartDraft;
 import io.sphere.sdk.carts.commands.CartCreateCommand;
 import io.sphere.sdk.carts.commands.CartUpdateCommand;
 import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
-import io.sphere.sdk.carts.queries.CartQuery;
-import io.sphere.sdk.carts.queries.CartQueryModel;
+import io.sphere.sdk.carts.queries.CartByIdGet;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.models.DefaultCurrencyUnits;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
-import io.sphere.sdk.queries.PagedQueryResult;
-import io.sphere.sdk.queries.Query;
-import io.sphere.sdk.queries.QueryPredicate;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Controller;
@@ -27,7 +22,6 @@ import sphere.Sphere;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 public class BaseController extends Controller {
@@ -102,23 +96,18 @@ public class BaseController extends Controller {
         return result;
     }
 
+
     protected Cart currentCart() {
         final Http.Session session = session();
         if(session.get("cartId") == null) {
-            final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR).withCountry(CountryCode.DE);
-            final Cart cart = sphereClient().execute(CartCreateCommand.of(cartDraft)).toCompletableFuture().join();
+            final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
             Logger.debug("Created new Cart[cartId={}]", cart.getId());
             session.put("cartId", cart.getId());
             return cart;
         } else {
-            final String cartId = session.get("cartId");
-            final QueryPredicate<Cart> predicate = CartQueryModel.of().id().is(cartId);
-            final Query<Cart> cartQuery = CartQuery.of().withPredicates(predicate);
-            final CompletionStage<PagedQueryResult<Cart>> resultCompletionStage = sphereClient().execute(cartQuery);
-            final PagedQueryResult<Cart> queryResult = resultCompletionStage.toCompletableFuture().join();
-            final Optional<Cart> cart = queryResult.head();
-            Logger.debug("Fetched existing Cart[cartId={}]", cart.get().getId());
-            return cart.get();
+            final Cart cart = sphereClient().execute(CartByIdGet.of(session.get("cartId"))).toCompletableFuture().join();
+            Logger.debug("Fetched existing Cart[cartId={}]", cart.getId());
+            return cart;
         }
     }
 }

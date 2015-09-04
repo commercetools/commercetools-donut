@@ -40,9 +40,8 @@ public class OrderController extends BaseController {
 
     public Result submit() {
         try {
-            final io.sphere.client.shop.model.Cart cart = sphere().currentCart().fetch();
-//            clearLineItemsFromCurrentCart(cart.getLineItems());
-            clearFrequency(cart.getId());
+            final Cart clearedCart = clearLineItemsFromCurrentCart(currentCart());
+            clearFrequency(clearedCart.getId());
             return ok(success.render());
         } catch (SphereClientException e) {
             Logger.error(e.getMessage(), e);
@@ -52,9 +51,8 @@ public class OrderController extends BaseController {
 
     public Result clear() {
         try {
-            final io.sphere.client.shop.model.Cart cart = sphere().currentCart().fetch();
-//            clearLineItemsFromCurrentCart(cart.getLineItems());
-            clearFrequency(cart.getId());
+            final Cart clearedCart = clearLineItemsFromCurrentCart(currentCart());
+            clearFrequency(clearedCart.getId());
             return redirect(routes.ProductController.show());
         } catch (SphereClientException e) {
             Logger.error(e.getMessage(), e);
