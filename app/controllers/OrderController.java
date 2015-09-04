@@ -2,8 +2,7 @@ package controllers;
 
 import io.sphere.client.SphereClientException;
 import io.sphere.client.exceptions.SphereException;
-import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
@@ -24,14 +23,29 @@ public class OrderController extends BaseController {
         super(sphere, configuration, productProjection, sphereClient);
     }
 
+//    public Result show() {
+//        final Cart cart = sphere().currentCart().fetch();
+//        if (cart.getLineItems().size() > 0) {
+//            final int selectedFrequency = frequency(cart.getId());
+//            if (selectedFrequency > 0) {
+//                final Variant selectedVariant = cart.getLineItems().get(0).getVariant();
+//                final Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
+//                final OrderPageData orderPageData = new OrderPageData(selectedProductVariant.get(), selectedFrequency, cart);
+//                return ok(order.render(orderPageData));
+//            } else {
+//                flash("error", "Missing frequency of delivery. Please try selecting it again.");
+//            }
+//        }
+//        return redirect(routes.ProductController.show());
+//    }
+
     public Result show() {
-        final Cart cart = sphere().currentCart().fetch();
+        final Cart cart = currentCart();
         if (cart.getLineItems().size() > 0) {
             final int selectedFrequency = frequency(cart.getId());
             if (selectedFrequency > 0) {
-                final Variant selectedVariant = cart.getLineItems().get(0).getVariant();
-                final Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
-                final OrderPageData orderPageData = new OrderPageData(selectedProductVariant.get(), selectedFrequency, cart);
+                final Optional<ProductVariant> selectedVariant = Optional.of(cart.getLineItems().get(0).getVariant());
+                final OrderPageData orderPageData = new OrderPageData(selectedVariant.get(), selectedFrequency, cart);
                 return ok(order.render(orderPageData));
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");
@@ -42,8 +56,8 @@ public class OrderController extends BaseController {
 
     public Result submit() {
         try {
-            final Cart cart = sphere().currentCart().fetch();
-            clearLineItemsFromCurrentCart(cart.getLineItems());
+            final io.sphere.client.shop.model.Cart cart = sphere().currentCart().fetch();
+//            clearLineItemsFromCurrentCart(cart.getLineItems());
             clearFrequency(cart.getId());
             return ok(success.render());
         } catch (SphereClientException e) {
@@ -54,8 +68,8 @@ public class OrderController extends BaseController {
 
     public Result clear() {
         try {
-            final Cart cart = sphere().currentCart().fetch();
-            clearLineItemsFromCurrentCart(cart.getLineItems());
+            final io.sphere.client.shop.model.Cart cart = sphere().currentCart().fetch();
+//            clearLineItemsFromCurrentCart(cart.getLineItems());
             clearFrequency(cart.getId());
             return redirect(routes.ProductController.show());
         } catch (SphereClientException e) {

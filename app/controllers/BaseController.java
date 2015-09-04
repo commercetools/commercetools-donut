@@ -3,12 +3,12 @@ package controllers;
 import com.neovisionaries.i18n.CountryCode;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.model.CustomObject;
-import io.sphere.client.shop.model.CartUpdate;
-import io.sphere.client.shop.model.LineItem;
 import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
 import io.sphere.sdk.carts.commands.CartCreateCommand;
+import io.sphere.sdk.carts.commands.CartUpdateCommand;
+import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
 import io.sphere.sdk.carts.queries.CartQuery;
 import io.sphere.sdk.carts.queries.CartQueryModel;
 import io.sphere.sdk.client.SphereClient;
@@ -22,13 +22,14 @@ import io.sphere.sdk.queries.QueryPredicate;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Controller;
-import sphere.Session;
+import play.mvc.Http;
 import sphere.Sphere;
 
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 public class BaseController extends Controller {
     public final static String FREQUENCY    = "cart-frequency";
@@ -93,12 +94,22 @@ public class BaseController extends Controller {
         return 0;
     }
 
-    protected void clearLineItemsFromCurrentCart(final List<LineItem> lineItems) {
-        CartUpdate cartUpdate = new CartUpdate();
-        for (final LineItem item : lineItems) {
-            cartUpdate = cartUpdate.removeLineItem(item.getId());
-        }
-        sphere.currentCart().update(cartUpdate);
+//    protected void clearLineItemsFromCurrentCart(final List<LineItem> lineItems) {
+//        CartUpdate cartUpdate = new CartUpdate();
+//        for (final LineItem item : lineItems) {
+//            cartUpdate = cartUpdate.removeLineItem(item.getId());
+//        }
+//        sphere.currentCart().update(cartUpdate);
+//    }
+
+    protected void clearLineItemsFromCurrentCart(final List<io.sphere.sdk.carts.LineItem> lineItems) {
+        final Cart cart = currentCart();
+        final List<RemoveLineItem> items = lineItems.stream().map((item) -> {
+            final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
+            return removeLineItem;
+        }).collect(Collectors.toList());
+        final CartUpdateCommand command = CartUpdateCommand.of(cart, items);
+        sphereClient().execute(command);
     }
 
 
@@ -111,14 +122,15 @@ public class BaseController extends Controller {
     }
 
     protected Cart currentCart() {
-        final Session session = Session.current();
-        if(session.getCartId() == null) {
+        final Http.Session session = session();
+        if(session.get("cartId") == null) {
             final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR).withCountry(CountryCode.DE);
             final Cart cart = sphereClient().execute(CartCreateCommand.of(cartDraft)).toCompletableFuture().join();
             Logger.debug("Created new Cart[cartId={}]", cart.getId());
+            session.put("cartId", cart.getId());
             return cart;
         } else {
-            final String cartId = session.getCartId().getId();
+            final String cartId = session.get("cartId");
             final QueryPredicate<Cart> predicate = CartQueryModel.of().id().is(cartId);
             final Query<Cart> cartQuery = CartQuery.of().withPredicates(predicate);
             final CompletionStage<PagedQueryResult<Cart>> resultCompletionStage = sphereClient().execute(cartQuery);

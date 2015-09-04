@@ -1,6 +1,7 @@
 package models;
 
-import io.sphere.client.shop.model.Cart;
+//import io.sphere.client.shop.model.Cart;
+import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
@@ -25,7 +26,7 @@ public class OrderPageData extends Base {
     }
 
     public String totalPrice() {
-        return cart.getTotalPrice().toString();
+        return NewPriceUtils.format(cart);
     }
 
     public String frequencyName() {

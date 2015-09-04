@@ -1,5 +1,6 @@
 package utils;
 
+import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.Price;
 
 import java.text.NumberFormat;
@@ -14,6 +15,12 @@ public final class NewPriceUtils {
     public static String format(final Price price) {
         final String amount = NumberFormat.getInstance(Locale.GERMANY).format(price.getValue().getNumber().doubleValueExact());
         final String currency = price.getValue().getCurrency().getCurrencyCode();
+        return String.format("%s %s", amount, currency);
+    }
+
+    public static String format(final Cart cart) {
+        final String amount = NumberFormat.getInstance(Locale.GERMANY).format(cart.getTotalPrice().getNumber().doubleValueExact());
+        final String currency = cart.getTotalPrice().getCurrency().getCurrencyCode();
         return String.format("%s %s", amount, currency);
     }
 
