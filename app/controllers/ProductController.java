@@ -67,12 +67,11 @@ public class ProductController extends BaseController {
 
 
     private void setProductToCart(final ProductVariant variant, final int frequency) {
-        final io.sphere.sdk.carts.Cart cart = currentCart();
-//        clearLineItemsFromCurrentCart(cart.getLineItems());
+        final Cart cart = currentCart();
+        final Cart clearedCart = clearLineItemsFromCurrentCart(cart);
         final AddLineItem action = AddLineItem.of(productProjection().getId(), variant.getId(), frequency);
-        final CartUpdateCommand command = CartUpdateCommand.of(cart, action);
-        final io.sphere.sdk.carts.Cart updatedCart = sphereClient().execute(command).toCompletableFuture().join();
-
+        final CartUpdateCommand command = CartUpdateCommand.of(clearedCart, action);
+        final Cart updatedCart = sphereClient().execute(command).toCompletableFuture().join(); //TODO
         sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
     }
 }

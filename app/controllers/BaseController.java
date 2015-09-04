@@ -93,14 +93,13 @@ public class BaseController extends Controller {
         return 0;
     }
 
-    protected void clearLineItemsFromCurrentCart(final List<io.sphere.sdk.carts.LineItem> lineItems) {
-        final Cart cart = currentCart();
-        final List<RemoveLineItem> items = lineItems.stream().map((item) -> {
+    protected Cart clearLineItemsFromCurrentCart(final Cart cart) {
+        final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
             final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
             return removeLineItem;
         }).collect(Collectors.toList());
-        final CartUpdateCommand command = CartUpdateCommand.of(cart, items);
-        sphereClient().execute(command);
+        final Cart result = sphereClient().execute(CartUpdateCommand.of(cart, items)).toCompletableFuture().join();
+        return result;
     }
 
     protected Cart currentCart() {
