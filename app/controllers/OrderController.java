@@ -23,22 +23,6 @@ public class OrderController extends BaseController {
         super(sphere, configuration, productProjection, sphereClient);
     }
 
-//    public Result show() {
-//        final Cart cart = sphere().currentCart().fetch();
-//        if (cart.getLineItems().size() > 0) {
-//            final int selectedFrequency = frequency(cart.getId());
-//            if (selectedFrequency > 0) {
-//                final Variant selectedVariant = cart.getLineItems().get(0).getVariant();
-//                final Optional<ProductVariant> selectedProductVariant = mapToProductVariant(java.util.Optional.of(selectedVariant));
-//                final OrderPageData orderPageData = new OrderPageData(selectedProductVariant.get(), selectedFrequency, cart);
-//                return ok(order.render(orderPageData));
-//            } else {
-//                flash("error", "Missing frequency of delivery. Please try selecting it again.");
-//            }
-//        }
-//        return redirect(routes.ProductController.show());
-//    }
-
     public Result show() {
         final Cart cart = currentCart();
         if (cart.getLineItems().size() > 0) {

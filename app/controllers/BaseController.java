@@ -3,7 +3,6 @@ package controllers;
 import com.neovisionaries.i18n.CountryCode;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.client.model.CustomObject;
-import io.sphere.client.shop.model.Variant;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
 import io.sphere.sdk.carts.commands.CartCreateCommand;
@@ -94,14 +93,6 @@ public class BaseController extends Controller {
         return 0;
     }
 
-//    protected void clearLineItemsFromCurrentCart(final List<LineItem> lineItems) {
-//        CartUpdate cartUpdate = new CartUpdate();
-//        for (final LineItem item : lineItems) {
-//            cartUpdate = cartUpdate.removeLineItem(item.getId());
-//        }
-//        sphere.currentCart().update(cartUpdate);
-//    }
-
     protected void clearLineItemsFromCurrentCart(final List<io.sphere.sdk.carts.LineItem> lineItems) {
         final Cart cart = currentCart();
         final List<RemoveLineItem> items = lineItems.stream().map((item) -> {
@@ -110,15 +101,6 @@ public class BaseController extends Controller {
         }).collect(Collectors.toList());
         final CartUpdateCommand command = CartUpdateCommand.of(cart, items);
         sphereClient().execute(command);
-    }
-
-
-    protected Optional<ProductVariant> mapToProductVariant(final Optional<Variant> variant) {
-        if(variant.isPresent()) {
-            final int variantId = variant.get().getId();
-            return variant(variantId);
-        }
-        return Optional.empty();
     }
 
     protected Cart currentCart() {
