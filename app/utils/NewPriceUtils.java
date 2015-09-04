@@ -3,6 +3,7 @@ package utils;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.Price;
 
+import javax.money.MonetaryAmount;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Optional;
@@ -13,15 +14,19 @@ public final class NewPriceUtils {
     }
 
     public static String format(final Price price) {
-        final String amount = NumberFormat.getInstance(Locale.GERMANY).format(price.getValue().getNumber().doubleValueExact());
-        final String currency = price.getValue().getCurrency().getCurrencyCode();
-        return String.format("%s %s", amount, currency);
+        final MonetaryAmount amount = price.getValue();
+        return doFormat(amount);
     }
 
     public static String format(final Cart cart) {
-        final String amount = NumberFormat.getInstance(Locale.GERMANY).format(cart.getTotalPrice().getNumber().doubleValueExact());
-        final String currency = cart.getTotalPrice().getCurrency().getCurrencyCode();
-        return String.format("%s %s", amount, currency);
+        final MonetaryAmount amount = cart.getTotalPrice();
+        return doFormat(amount);
+    }
+
+    private static String doFormat(MonetaryAmount amount) {
+        final String am = NumberFormat.getInstance(Locale.GERMANY).format(amount.getNumber().doubleValueExact());
+        final String currency = amount.getCurrency().getCurrencyCode();
+        return String.format("%s %s", am, currency);
     }
 
     public static double monetaryAmount(final Price price) {
