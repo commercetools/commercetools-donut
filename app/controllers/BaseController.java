@@ -8,16 +8,15 @@ import io.sphere.sdk.carts.commands.CartCreateCommand;
 import io.sphere.sdk.carts.commands.CartUpdateCommand;
 import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
 import io.sphere.sdk.carts.queries.CartByIdGet;
-import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.models.DefaultCurrencyUnits;
-import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Http;
-import sphere.Sphere;
+import services.CartService;
+import services.PaymentService;
 import utils.CurrencyOperations;
 
 import java.util.Currency;
@@ -25,39 +24,36 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
+
 public class BaseController extends Controller {
     public final static String FREQUENCY    = "cart-frequency";
     public final static String ID_MONTHLY   = "pactas4";
     public final static String ID_TWO_WEEKS = "pactas2";
     public final static String ID_WEEKLY    = "pactas1";
 
-    private final Sphere sphere;
     private final CurrencyOperations currencyOps;
-    private final ProductProjection productProjection;
-    private final SphereClient sphereClient;
 
-    public BaseController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection,
-                          final SphereClient sphereClient) {
-        this.sphere = sphere;
+    private final CartService cartService;
+    private final PaymentService paymentService;
+
+
+    public BaseController(final CartService cartService, final PaymentService paymentService, final Configuration configuration) {
+        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
+        this.paymentService = requireNonNull(paymentService, "'paymentService' must not be null");
         this.currencyOps = CurrencyOperations.of(configuration);
-        this.productProjection = productProjection;
-        this.sphereClient = sphereClient;
     }
 
-    protected Sphere sphere() {
-        return sphere;
+    protected CartService cartService() {
+        return cartService;
     }
 
-    protected SphereClient sphereClient() {
-        return sphereClient;
+    protected PaymentService paymentService() {
+        return paymentService;
     }
 
     protected Currency currency() {
         return currencyOps.currency();
-    }
-
-    protected ProductProjection productProjection() {
-        return productProjection;
     }
 
     protected Optional<ProductVariant> variant(final int variantId) {

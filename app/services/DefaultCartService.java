@@ -1,5 +1,7 @@
 package services;
 
+import io.sphere.client.exceptions.SphereException;
+import io.sphere.client.model.CustomObject;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
 import io.sphere.sdk.carts.commands.CartCreateCommand;
@@ -13,6 +15,7 @@ import io.sphere.sdk.products.queries.ProductProjectionQuery;
 import io.sphere.sdk.queries.PagedQueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sphere.Sphere;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -20,15 +23,20 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
 import static org.springframework.util.Assert.notNull;
 
 public final class DefaultCartService implements CartService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCartService.class);
     private final SphereClient sphereClient;
+    private final Sphere deprecatedClient;
 
-    public DefaultCartService(final SphereClient sphereClient) {
-        this.sphereClient = sphereClient;
+    public final static String FREQUENCY    = "cart-frequency";
+
+    public DefaultCartService(final SphereClient sphereClient, final Sphere deprecatedClient) {
+        this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
+        this.deprecatedClient = requireNonNull(deprecatedClient, "'deprecatedClient' must not be null");
     }
 
     public Cart createOrGet(final HttpSession session) {
@@ -66,5 +74,17 @@ public final class DefaultCartService implements CartService {
                 sphereClient.execute(request);
         final PagedQueryResult<ProductProjection> queryResult = resultCompletionStage.toCompletableFuture().join();
         return queryResult.head();
+    }
+
+    protected int getCartFrequency(final String cartId) {
+        try {
+            final com.google.common.base.Optional<CustomObject> frequencyObj = deprecatedClient.customObjects().get(FREQUENCY, cartId).fetch();
+            if (frequencyObj.isPresent()) {
+                return frequencyObj.get().getValue().asInt();
+            }
+        } catch (SphereException se) {
+            play.Logger.error(se.getMessage(), se);
+        }
+        return 0;
     }
 }

@@ -1,24 +1,21 @@
 import controllers.OrderController;
 import controllers.PactasWebhookController;
 import controllers.ProductController;
-import exceptions.SubscriptionProductNotFound;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.client.SphereClientFactory;
 import io.sphere.sdk.http.ApacheHttpClientAdapter;
-import io.sphere.sdk.products.ProductProjection;
-import io.sphere.sdk.products.queries.ProductProjectionQuery;
-import io.sphere.sdk.queries.PagedQueryResult;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import pactas.Pactas;
 import pactas.PactasImpl;
 import play.Application;
 import play.Configuration;
 import play.GlobalSettings;
+import services.CartService;
+import services.DefaultCartService;
+import services.PactasPaymentService;
+import services.PaymentService;
 import sphere.Sphere;
 import utils.CurrencyOperations;
-
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
 
 public class Global extends GlobalSettings {
 
@@ -26,15 +23,18 @@ public class Global extends GlobalSettings {
     private Sphere sphere;
     private Pactas pactas;
     private SphereClient sphereClient;
-    private ProductProjection productProjection;
+    private CartService cartService;
+    private PaymentService paymentService;
 
     @Override
     public void onStart(final Application app) {
         this.app = app;
         this.sphere = Sphere.getInstance();
         this.pactas = new PactasImpl(app.configuration());
-        sphereClient = sphereClient(app);
-        productProjection = fetchProductProjection();
+
+        this.sphereClient = sphereClient(app);
+        this.cartService = cartService(sphereClient, sphere);
+        this.paymentService = paymentService(sphereClient, sphere);
         checkProjectCurrency(app);
         super.onStart(app);
     }
@@ -48,13 +48,14 @@ public class Global extends GlobalSettings {
         return factory.createClient(projectKey, clientId, clientSecret);
     }
 
-    private ProductProjection fetchProductProjection() {
-        final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
-        final CompletionStage<PagedQueryResult<ProductProjection>> resultCompletionStage =
-                sphereClient.execute(request);
-        final PagedQueryResult<ProductProjection> queryResult = resultCompletionStage.toCompletableFuture().join();
-        final Optional<ProductProjection> product = queryResult.head();
-        return product.orElseThrow(SubscriptionProductNotFound::new);
+    private CartService cartService(final SphereClient sphereClient, final Sphere sphere) {
+        final CartService cartService = new DefaultCartService(sphereClient, sphere);
+        return cartService;
+    }
+
+    private PaymentService paymentService(final SphereClient sphereClient, final Sphere sphere) {
+        final PaymentService paymentService = new PactasPaymentService(sphereClient, sphere);
+        return paymentService;
     }
 
     @Override
@@ -74,11 +75,11 @@ public class Global extends GlobalSettings {
     public <A> A getControllerInstance(final Class<A> controllerClass) throws Exception {
         final A result;
         if (controllerClass.equals(ProductController.class)) {
-            result = (A) new ProductController(sphere, app.configuration(), productProjection, sphereClient);
+            result = (A) new ProductController(cartService, paymentService, app.configuration());
         } else if (controllerClass.equals(OrderController.class)) {
-            result = (A) new OrderController(sphere, app.configuration(), productProjection, sphereClient);
+            result = (A) new OrderController(cartService, paymentService, app.configuration());
         } else if (controllerClass.equals(PactasWebhookController.class)) {
-            result = (A) new PactasWebhookController(sphere, app.configuration(), pactas, productProjection, sphereClient);
+            result = (A) new PactasWebhookController(cartService, paymentService, app.configuration(), pactas);
         } else {
             result = super.getControllerInstance(controllerClass);
         }

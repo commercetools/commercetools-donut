@@ -5,15 +5,14 @@ import io.sphere.client.SphereClientException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.commands.CartUpdateCommand;
 import io.sphere.sdk.carts.commands.updateactions.AddLineItem;
-import io.sphere.sdk.client.SphereClient;
-import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
 import play.Configuration;
 import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
-import sphere.Sphere;
+import services.CartService;
+import services.PaymentService;
 import views.html.index;
 
 import java.util.Optional;
@@ -23,9 +22,8 @@ import static play.data.Form.form;
 public class ProductController extends BaseController {
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection,
-                             final SphereClient sphereClient) {
-        super(sphere, configuration, productProjection, sphereClient);
+    public ProductController(final CartService cartService, final PaymentService paymentService, final Configuration configuration) {
+        super(cartService, paymentService, configuration);
     }
 
     public Result show() {

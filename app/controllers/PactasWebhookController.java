@@ -5,8 +5,6 @@ import io.sphere.client.SphereClientException;
 import io.sphere.client.shop.model.Cart;
 import io.sphere.client.shop.model.CartUpdate;
 import io.sphere.client.shop.model.PaymentState;
-import io.sphere.sdk.client.SphereClient;
-import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import pactas.Pactas;
 import pactas.PactasException;
@@ -18,18 +16,21 @@ import play.Configuration;
 import play.Logger;
 import play.mvc.Http;
 import play.mvc.Result;
-import sphere.Sphere;
+import services.CartService;
+import services.PaymentService;
 import utils.JsonUtils;
 
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
+
 public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
 
-    public PactasWebhookController(final Sphere sphere, final Configuration configuration, final Pactas pactas,
-                                   final ProductProjection productProjection, final SphereClient sphereClient) {
-        super(sphere, configuration, productProjection, sphereClient);
-        this.pactas = pactas;
+    public PactasWebhookController(final CartService cartService, final PaymentService paymentService,
+                                   final Configuration configuration, final Pactas pactas) {
+        super(cartService, paymentService, configuration);
+        this.pactas = requireNonNull(pactas, "'pactas' must not be null");
     }
 
     /* Method called by Pactas every time an order must be placed (weekly, monthly...) */

@@ -3,14 +3,13 @@ package controllers;
 import io.sphere.client.SphereClientException;
 import io.sphere.client.exceptions.SphereException;
 import io.sphere.sdk.carts.Cart;
-import io.sphere.sdk.client.SphereClient;
-import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.OrderPageData;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Result;
-import sphere.Sphere;
+import services.CartService;
+import services.PaymentService;
 import views.html.order;
 import views.html.success;
 
@@ -18,9 +17,8 @@ import java.util.Optional;
 
 public class OrderController extends BaseController {
 
-    public OrderController(final Sphere sphere, final Configuration configuration, final ProductProjection productProjection,
-                           final SphereClient sphereClient) {
-        super(sphere, configuration, productProjection, sphereClient);
+    public OrderController(final CartService cartService, final PaymentService paymentService, final Configuration configuration) {
+        super(cartService, paymentService, configuration);
     }
 
     public Result show() {
