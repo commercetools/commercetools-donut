@@ -1,4 +1,4 @@
-package controllers;
+package utils;
 
 import com.google.common.base.Optional;
 import exceptions.DefaultCurrencyNotFound;

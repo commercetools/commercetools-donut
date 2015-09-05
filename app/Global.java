@@ -1,4 +1,3 @@
-import controllers.CurrencyOperations;
 import controllers.OrderController;
 import controllers.PactasWebhookController;
 import controllers.ProductController;
@@ -16,6 +15,7 @@ import play.Application;
 import play.Configuration;
 import play.GlobalSettings;
 import sphere.Sphere;
+import utils.CurrencyOperations;
 
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -33,13 +33,13 @@ public class Global extends GlobalSettings {
         this.app = app;
         this.sphere = Sphere.getInstance();
         this.pactas = new PactasImpl(app.configuration());
-        sphereClient = createSphereClient(app);
+        sphereClient = sphereClient(app);
         productProjection = fetchProductProjection();
         checkProjectCurrency(app);
         super.onStart(app);
     }
 
-    private SphereClient createSphereClient(final Application app) {
+    private SphereClient sphereClient(final Application app) {
         final Configuration configuration = app.configuration();
         final String projectKey = configuration.getString("sphere.project");
         final String clientId = configuration.getString("sphere.clientId");
