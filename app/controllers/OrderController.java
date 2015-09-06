@@ -7,7 +7,7 @@ import models.OrderPageData;
 import play.Configuration;
 import play.Logger;
 import play.mvc.Result;
-import services.CartService;
+import services.ShopService;
 import views.html.order;
 import views.html.success;
 
@@ -15,14 +15,14 @@ import java.util.Optional;
 
 public class OrderController extends BaseController {
 
-    public OrderController(final Configuration configuration, final CartService cartService) {
+    public OrderController(final Configuration configuration, final ShopService cartService) {
         super(configuration, cartService);
     }
 
     public Result show() {
-        final Cart currentCart = cartService().createOrGet(session());
+        final Cart currentCart = shopService().getOrCreateCart(session());
         if (currentCart.getLineItems().size() > 0) {
-            final int selectedFrequency = cartService().getFrequency(currentCart.getId());
+            final int selectedFrequency = shopService().getFrequency(currentCart.getId());
             if (selectedFrequency > 0) {
                 final Optional<ProductVariant> selectedVariant = Optional.of(currentCart.getLineItems().get(0).getVariant());
                 final OrderPageData orderPageData = new OrderPageData(selectedVariant.get(), selectedFrequency, currentCart);
@@ -36,8 +36,8 @@ public class OrderController extends BaseController {
 
     public Result submit() {
         try {
-            final Cart currentCart = cartService().createOrGet(session());
-            final Cart clearedCart = cartService().clearCart(currentCart);
+            final Cart currentCart = shopService().getOrCreateCart(session());
+            final Cart clearedCart = shopService().clearCart(currentCart);
             return ok(success.render());
         } catch (SphereClientException e) {
             Logger.error(e.getMessage(), e);
@@ -47,8 +47,8 @@ public class OrderController extends BaseController {
 
     public Result clear() {
         try {
-            final Cart currentCart = cartService().createOrGet(session());
-            final Cart clearedCart = cartService().clearCart(currentCart);
+            final Cart currentCart = shopService().getOrCreateCart(session());
+            final Cart clearedCart = shopService().clearCart(currentCart);
             return redirect(routes.ProductController.show());
         } catch (SphereClientException e) {
             Logger.error(e.getMessage(), e);
