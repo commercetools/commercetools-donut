@@ -1,8 +1,7 @@
 package services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import exceptions.PlanVariantNotFound;
-import io.sphere.client.exceptions.SphereException;
-import io.sphere.client.model.CustomObject;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
 import io.sphere.sdk.carts.commands.CartCreateCommand;
@@ -12,6 +11,7 @@ import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
 import io.sphere.sdk.carts.commands.updateactions.SetShippingAddress;
 import io.sphere.sdk.carts.queries.CartByIdGet;
 import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.customobjects.queries.CustomObjectByKeyGet;
 import io.sphere.sdk.models.Address;
 import io.sphere.sdk.models.AddressBuilder;
 import io.sphere.sdk.models.DefaultCurrencyUnits;
@@ -78,6 +78,16 @@ public final class DefaultShopService implements ShopService {
         final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
         final Cart updatedCart = sphereClient.execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
 
+        io.sphere.sdk.customobjects.CustomObject<JsonNode> result = sphereClient.execute(CustomObjectByKeyGet.of(FREQUENCY, updatedCart.getId())).toCompletableFuture().join();
+        Logger.debug("Fetched CustomObject: {}", result); //TODO is null
+
+//        final String container = "CustomObjectFixtures";
+//        final String key = randomKey();
+//        final Foo value = FOO_DEFAULT_VALUE;
+//        final TypeReference<CustomObject<Foo>> typeReference = Foo.customObjectTypeReference();
+//        final CustomObjectDraft<Foo> draft = CustomObjectDraft.ofUnversionedUpsert(container, key, value, typeReference);
+//        final CustomObjectUpsertCommand<Foo> createCommand = CustomObjectUpsertCommand.of(draft);
+//        final CustomObject<Foo> customObject = client.execute(createCommand);
         deprecatedClient.customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
     }
 
@@ -115,15 +125,8 @@ public final class DefaultShopService implements ShopService {
     }
 
     private void clearFrequency(final String cartId) {
-        try {
-            deprecatedClient.customObjects().delete(FREQUENCY, cartId).execute();
-        } catch (SphereException e) {
-            // Assume already removed
-            play.Logger.info(e.getMessage(), e);
-        }
+        deprecatedClient.customObjects().delete(FREQUENCY, cartId).execute();
     }
-
-
 
     @Override
     public Optional<ProductProjection> getProduct() {
@@ -137,13 +140,10 @@ public final class DefaultShopService implements ShopService {
 
     @Override
     public int getFrequency(final String cartId) {
-        try {
-            final com.google.common.base.Optional<CustomObject> frequencyObj = deprecatedClient.customObjects().get(FREQUENCY, cartId).fetch();
-            if (frequencyObj.isPresent()) {
-                return frequencyObj.get().getValue().asInt();
-            }
-        } catch (SphereException se) {
-            play.Logger.error(se.getMessage(), se);
+        final com.google.common.base.Optional<io.sphere.client.model.CustomObject> frequencyObj =
+                deprecatedClient.customObjects().get(FREQUENCY, cartId).fetch();
+        if (frequencyObj.isPresent()) {
+            return frequencyObj.get().getValue().asInt();
         }
         return 0;
     }
