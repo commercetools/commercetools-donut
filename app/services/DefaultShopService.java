@@ -25,10 +25,9 @@ import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 import io.sphere.sdk.products.queries.ProductProjectionQuery;
 import io.sphere.sdk.queries.PagedQueryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
+import play.Logger;
 import play.mvc.Http;
 import sphere.Sphere;
 
@@ -42,14 +41,13 @@ import static org.springframework.util.Assert.notNull;
 
 public final class DefaultShopService implements ShopService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultShopService.class);
     private final SphereClient sphereClient;
     private final Sphere deprecatedClient;
 
-    public final static String FREQUENCY    = "cart-frequency";
-    public final static String ID_MONTHLY   = "pactas4";
+    public final static String FREQUENCY = "cart-frequency";
+    public final static String ID_MONTHLY = "pactas4";
     public final static String ID_TWO_WEEKS = "pactas2";
-    public final static String ID_WEEKLY    = "pactas1";
+    public final static String ID_WEEKLY = "pactas1";
 
     public DefaultShopService(final SphereClient sphereClient, final Sphere deprecatedClient) {
         this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
@@ -62,16 +60,25 @@ public final class DefaultShopService implements ShopService {
                 .map(String::valueOf)
                 .map(cardId -> {
                             final Cart cart = sphereClient.execute(CartByIdGet.of(cardId)).toCompletableFuture().join();
-                            LOG.debug("Fetched existing Cart[cartId={}]", cart.getId());
+                            Logger.debug("Fetched existing Cart[cartId={}]", cart.getId());
                             return cart;
                         }
                 )
                 .orElseGet(() -> {
                     final Cart cart = sphereClient.execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-                    LOG.debug("Created new Cart[cartId={}]", cart.getId());
+                    Logger.debug("Created new Cart[cartId={}]", cart.getId());
                     session.put(SessionKeys.CART_ID, cart.getId());
                     return cart;
                 });
+    }
+
+    @Override
+    public void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
+        final Cart clearedCart = clearCart(cart);
+        final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
+        final Cart updatedCart = sphereClient.execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
+
+        deprecatedClient.customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
     }
 
     @Override
@@ -86,7 +93,7 @@ public final class DefaultShopService implements ShopService {
     public Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
         final ProductVariant variant = getVariantInContract(product, contract);
         final Cart cart = sphereClient.execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-        LOG.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
+        Logger.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
 
         final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
         final Cart updatedCart = sphereClient.execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();
@@ -116,13 +123,7 @@ public final class DefaultShopService implements ShopService {
         }
     }
 
-    @Override
-    public void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
-            final Cart clearedCart = clearCart(cart);
-            final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
-            final Cart updatedCart = sphereClient.execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
-            deprecatedClient.customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
-    }
+
 
     @Override
     public Optional<ProductProjection> getProduct() {
@@ -132,7 +133,6 @@ public final class DefaultShopService implements ShopService {
         final PagedQueryResult<ProductProjection> queryResult = resultCompletionStage.toCompletableFuture().join();
         return queryResult.head();
     }
-
 
 
     @Override
@@ -158,8 +158,7 @@ public final class DefaultShopService implements ShopService {
     }
 
 
-
-    private ProductVariant getVariantInContract(final ProductProjection product,final PactasContract contract) {
+    private ProductVariant getVariantInContract(final ProductProjection product, final PactasContract contract) {
         final String planVariantId = contract.getPlanVariantId();
         final Optional<ProductVariant> variant = variant(product, planVariantId);
         if (variant.isPresent()) {
@@ -172,12 +171,12 @@ public final class DefaultShopService implements ShopService {
         return product.getAllVariants().stream().filter(v -> v.getId().equals(variantId)).findFirst();
     }
 
-    protected Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
-        for(final ProductVariant variant : product.getAllVariants()) {
+    private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
+        for (final ProductVariant variant : product.getAllVariants()) {
             final String monthly = variant.getAttribute(ID_MONTHLY).getValue(AttributeAccess.ofString());
             final String twoWeeks = variant.getAttribute(ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
             final String weekly = variant.getAttribute(ID_WEEKLY).getValue(AttributeAccess.ofString());
-            if(pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) {
+            if (pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) {
                 return Optional.of(variant);
             }
         }
