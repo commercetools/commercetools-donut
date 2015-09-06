@@ -3,8 +3,6 @@ package controllers;
 import forms.SubscriptionFormData;
 import io.sphere.client.SphereClientException;
 import io.sphere.sdk.carts.Cart;
-import io.sphere.sdk.carts.commands.CartUpdateCommand;
-import io.sphere.sdk.carts.commands.updateactions.AddLineItem;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
 import play.Configuration;
@@ -12,7 +10,6 @@ import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
 import services.CartService;
-import services.PaymentService;
 import views.html.index;
 
 import java.util.Optional;
@@ -22,15 +19,19 @@ import static play.data.Form.form;
 public class ProductController extends BaseController {
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final CartService cartService, final PaymentService paymentService, final Configuration configuration) {
-        super(cartService, paymentService, configuration);
+    public ProductController(final Configuration configuration, final CartService cartService) {
+        super(configuration, cartService);
     }
 
     public Result show() {
-        final Cart cart = currentCart();
-        final Optional<ProductVariant> selectedVariant = getSelectedVariant(cart);
-        final int selectedFrequency = frequency(cart.getId());
-        final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant, selectedFrequency);
+        Logger.debug("Display Product page");
+        final Cart currentCart = cartService().createOrGet(session());
+        Logger.debug("Current Cart: {}", currentCart);
+        final Optional<ProductVariant> selectedVariant = getSelectedVariant(currentCart);
+        Logger.debug("Selected variant: {}", selectedVariant);
+        final int selectedFrequency = cartService().getFrequency(currentCart.getId());
+        Logger.debug("Selected frequency: {}", selectedFrequency);
+        final ProductPageData productPageData = new ProductPageData(product(), selectedVariant, selectedFrequency);
         return ok(index.render(productPageData));
     }
 
@@ -40,7 +41,8 @@ public class ProductController extends BaseController {
             final Optional<ProductVariant> variant = variant(boundForm.get().variantId);
             if (variant.isPresent()) {
                 try {
-                    setProductToCart(variant.get(), boundForm.get().howOften);
+                    final Cart currentCart = cartService().createOrGet(session());
+                    cartService().setProductToCart(currentCart, product(), variant.get(), boundForm.get().howOften);
                     return redirect(routes.OrderController.show());
                 } catch (SphereClientException e) {
                     Logger.error(e.getMessage(), e);
@@ -54,18 +56,11 @@ public class ProductController extends BaseController {
         return redirect(routes.ProductController.show());
     }
 
-    private Optional<ProductVariant> getSelectedVariant(final io.sphere.sdk.carts.Cart cart) {
+    private Optional<ProductVariant> getSelectedVariant(final Cart cart) {
         final Optional<ProductVariant> selectedVariant =
                 (cart.getLineItems().size() > 0)
                         ? Optional.ofNullable(cart.getLineItems().get(0).getVariant())
                         : Optional.empty();
         return selectedVariant;
-    }
-
-    private void setProductToCart(final ProductVariant variant, final int frequency) {
-        final Cart clearedCart = clearLineItemsFromCurrentCart(currentCart());
-        final AddLineItem action = AddLineItem.of(productProjection().getId(), variant.getId(), frequency);
-        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
-        sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
     }
 }

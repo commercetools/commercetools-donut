@@ -12,8 +12,6 @@ import play.Configuration;
 import play.GlobalSettings;
 import services.CartService;
 import services.DefaultCartService;
-import services.PactasPaymentService;
-import services.PaymentService;
 import sphere.Sphere;
 import utils.CurrencyOperations;
 
@@ -24,17 +22,15 @@ public class Global extends GlobalSettings {
     private Pactas pactas;
     private SphereClient sphereClient;
     private CartService cartService;
-    private PaymentService paymentService;
 
     @Override
     public void onStart(final Application app) {
         this.app = app;
         this.sphere = Sphere.getInstance();
-        this.pactas = new PactasImpl(app.configuration());
+        this.pactas = pactas(app.configuration());
 
         this.sphereClient = sphereClient(app);
         this.cartService = cartService(sphereClient, sphere);
-        this.paymentService = paymentService(sphereClient, sphere);
         checkProjectCurrency(app);
         super.onStart(app);
     }
@@ -53,9 +49,8 @@ public class Global extends GlobalSettings {
         return cartService;
     }
 
-    private PaymentService paymentService(final SphereClient sphereClient, final Sphere sphere) {
-        final PaymentService paymentService = new PactasPaymentService(sphereClient, sphere);
-        return paymentService;
+    private Pactas pactas(final Configuration configuration) {
+        return new PactasImpl(configuration);
     }
 
     @Override
@@ -75,11 +70,11 @@ public class Global extends GlobalSettings {
     public <A> A getControllerInstance(final Class<A> controllerClass) throws Exception {
         final A result;
         if (controllerClass.equals(ProductController.class)) {
-            result = (A) new ProductController(cartService, paymentService, app.configuration());
+            result = (A) new ProductController(app.configuration(), cartService);
         } else if (controllerClass.equals(OrderController.class)) {
-            result = (A) new OrderController(cartService, paymentService, app.configuration());
+            result = (A) new OrderController(app.configuration(), cartService);
         } else if (controllerClass.equals(PactasWebhookController.class)) {
-            result = (A) new PactasWebhookController(cartService, paymentService, app.configuration(), pactas);
+            result = (A) new PactasWebhookController(app.configuration(), cartService, pactas);
         } else {
             result = super.getControllerInstance(controllerClass);
         }

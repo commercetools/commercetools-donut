@@ -17,7 +17,6 @@ import play.Logger;
 import play.mvc.Http;
 import play.mvc.Result;
 import services.CartService;
-import services.PaymentService;
 import utils.JsonUtils;
 
 import java.util.Optional;
@@ -27,9 +26,8 @@ import static java.util.Objects.requireNonNull;
 public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
 
-    public PactasWebhookController(final CartService cartService, final PaymentService paymentService,
-                                   final Configuration configuration, final Pactas pactas) {
-        super(cartService, paymentService, configuration);
+    public PactasWebhookController(final Configuration configuration, final CartService cartService, final Pactas pactas) {
+        super(configuration, cartService);
         this.pactas = requireNonNull(pactas, "'pactas' must not be null");
     }
 
