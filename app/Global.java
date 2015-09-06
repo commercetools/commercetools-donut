@@ -1,4 +1,5 @@
 import controllers.OrderController;
+import controllers.PactasWebhookController;
 import controllers.ProductController;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.client.SphereClientFactory;
@@ -13,8 +14,6 @@ import services.DefaultShopService;
 import services.ShopService;
 import sphere.Sphere;
 import utils.CurrencyOperations;
-
-//import controllers.PactasWebhookController;
 
 public class Global extends GlobalSettings {
 
@@ -74,9 +73,9 @@ public class Global extends GlobalSettings {
         } else if (controllerClass.equals(OrderController.class)) {
             result = (A) new OrderController(app.configuration(), cartService);
         }
-//        else if (controllerClass.equals(PactasWebhookController.class)) {
-//            result = (A) new PactasWebhookController(app.configuration(), cartService, pactas);
-//        }
+        else if (controllerClass.equals(PactasWebhookController.class)) {
+            result = (A) new PactasWebhookController(app.configuration(), cartService, pactas);
+        }
         else {
             result = super.getControllerInstance(controllerClass);
         }

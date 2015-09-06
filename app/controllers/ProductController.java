@@ -1,7 +1,6 @@
 package controllers;
 
 import forms.SubscriptionFormData;
-import io.sphere.client.SphereClientException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
@@ -42,14 +41,10 @@ public class ProductController extends BaseController {
             final Optional<ProductVariant> selectedVariant = shopService().variantFromId(product(), boundForm.get().variantId);
             Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
             if (selectedVariant.isPresent()) {
-                try {
-                    final Cart currentCart = shopService().getOrCreateCart(session());
-                    Logger.debug("Current Cart[cartId={}]", currentCart.getId());
-                    shopService().setProductToCart(currentCart, product(), selectedVariant.get(), boundForm.get().howOften);
-                    return redirect(routes.OrderController.show());
-                } catch (SphereClientException e) {
-                    Logger.error(e.getMessage(), e);
-                }
+                final Cart currentCart = shopService().getOrCreateCart(session());
+                Logger.debug("Current Cart[cartId={}]", currentCart.getId());
+                shopService().setProductToCart(currentCart, product(), selectedVariant.get(), boundForm.get().howOften);
+                return redirect(routes.OrderController.show());
             } else {
                 flash("error", "Product not found. Please try again.");
             }
