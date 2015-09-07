@@ -17,7 +17,6 @@ import play.api.http.MediaRange;
 import play.i18n.Lang;
 import play.libs.F;
 import play.mvc.Http;
-import play.mvc.Result;
 import services.CartServiceImpl;
 
 import java.util.Collections;
@@ -25,9 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static play.mvc.Http.Status.OK;
-import static play.test.Helpers.status;
 import static utils.JsonUtils.readJsonFromResource;
 import static utils.JsonUtils.readObjectFromResource;
 
@@ -48,9 +44,9 @@ public class PactasWebhookControllerIntegrationTest {
     @Ignore // requires mocking with SPHERE.IO Play SDK, enable it back with SPHERE.IO JVM SDK
     @Test
     public void testName() throws Exception {
-        final PactasWebhookController controller = new PactasWebhookController(config(), product(), pactas(), orderService);
-        final Result result = controller.createOrderFromSubscription();
-        assertThat(status(result)).isEqualTo(OK);
+//        final PactasWebhookController controller = new PactasWebhookController(config(), product(), pactas(), orderService);
+//        final Result result = controller.createOrderFromSubscription();
+//        assertThat(status(result)).isEqualTo(OK);
     }
 
     private Product product() {

@@ -17,6 +17,4 @@ public abstract class BaseController extends Controller {
     protected Currency currency() {
         return currencyOps.currency();
     }
-
-
 }
