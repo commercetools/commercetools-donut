@@ -34,7 +34,7 @@ public class VariantData extends Base {
     }
 
     public int quantity() {
-        //FIXME this is just a workaround because there's no AttributeAccess for int values
+        //FIXME this is just a workaround because there's no AttributeAccess for int values in Sdk M16
         final JsonNode quantity = productVariant.getAttribute("quantity").getValue(AttributeAccess.ofJsonNode());
         return quantity.asInt();
     }

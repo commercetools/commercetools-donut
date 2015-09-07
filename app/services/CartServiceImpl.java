@@ -81,6 +81,7 @@ public class CartServiceImpl implements CartService {
     }
 
     private void clearFrequency(final String cartId) {
+        //sphereClient.execute(CustomObjectDeleteCommand.of(FREQUENCY, cartId)).toCompletableFuture().join();
         deprecatedClient.customObjects().delete(FREQUENCY, cartId).execute();
     }
 

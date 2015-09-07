@@ -12,9 +12,7 @@ public class SubscriptionFormData {
     @Constraints.Max(value = 4, message = "Frequency cannot be more than monthly")
     public int howOften;
 
-
     public SubscriptionFormData() {
-
     }
 
 }

@@ -1,6 +1,5 @@
 package controllers;
 
-import io.sphere.client.SphereClientException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.orders.Order;
 import pactas.Pactas;
@@ -53,10 +52,10 @@ public class PactasWebhookController extends BaseController {
                 final Order order = orderService.createOrder(cart);
                 Logger.debug("Order created: {}", order);
                 return ok();
-            } catch (SphereClientException e) {
+            } catch (PactasException e) {
                 Logger.error(e.getMessage(), e);
                 return internalServerError();
-            } catch (PactasException e) {
+            } catch (Exception e) {
                 Logger.error(e.getMessage(), e);
             }
         }
