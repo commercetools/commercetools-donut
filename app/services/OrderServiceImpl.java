@@ -8,21 +8,17 @@ import io.sphere.sdk.orders.commands.OrderFromCartCreateCommand;
 import io.sphere.sdk.orders.commands.OrderUpdateCommand;
 import io.sphere.sdk.orders.commands.updateactions.ChangePaymentState;
 
-import static java.util.Objects.requireNonNull;
-
-public class OrderServiceImpl implements OrderService{
-
-    private final SphereClient sphereClient;
+public class OrderServiceImpl extends AbstractShopService implements OrderService{
 
     public OrderServiceImpl(final SphereClient sphereClient) {
-        this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
+        super(sphereClient);
     }
 
     @Override
     public Order createOrder(final Cart cart) {
-        final Order order = sphereClient.execute(OrderFromCartCreateCommand.of(cart)).toCompletableFuture().join();
+        final Order order = sphereClient().execute(OrderFromCartCreateCommand.of(cart)).toCompletableFuture().join();
         final ChangePaymentState action = ChangePaymentState.of(PaymentState.PAID);
-        final Order updatedOrder = sphereClient.execute(OrderUpdateCommand.of(order, action)).toCompletableFuture().join();
+        final Order updatedOrder = sphereClient().execute(OrderUpdateCommand.of(order, action)).toCompletableFuture().join();
         return updatedOrder;
     }
 }

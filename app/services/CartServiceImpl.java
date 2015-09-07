@@ -32,12 +32,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.requireNonNull;
 import static org.springframework.util.Assert.notNull;
 
-public class CartServiceImpl implements CartService {
-
-    private final SphereClient sphereClient;
+public class CartServiceImpl extends AbstractShopService implements CartService {
 
     public final static String FREQUENCY = "cart-frequency";
     public final static String ID_MONTHLY = "pactas4";
@@ -45,7 +42,7 @@ public class CartServiceImpl implements CartService {
     public final static String ID_WEEKLY = "pactas1";
 
     public CartServiceImpl(final SphereClient sphereClient) {
-        this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
+        super(sphereClient);
     }
 
     @Override
@@ -54,13 +51,13 @@ public class CartServiceImpl implements CartService {
         return Optional.ofNullable(session.get(SessionKeys.CART_ID))
                 .map(String::valueOf)
                 .map(cardId -> {
-                            final Cart cart = sphereClient.execute(CartByIdGet.of(cardId)).toCompletableFuture().join();
+                            final Cart cart = sphereClient().execute(CartByIdGet.of(cardId)).toCompletableFuture().join();
                             Logger.debug("Fetched existing Cart[cartId={}]", cart.getId());
                             return cart;
                         }
                 )
                 .orElseGet(() -> {
-                    final Cart cart = sphereClient.execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
+                    final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
                     Logger.debug("Created new Cart[cartId={}]", cart.getId());
                     session.put(SessionKeys.CART_ID, cart.getId());
                     return cart;
@@ -73,7 +70,7 @@ public class CartServiceImpl implements CartService {
             final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
             return removeLineItem;
         }).collect(Collectors.toList());
-        final Cart result = sphereClient.execute(CartUpdateCommand.of(cart, items)).toCompletableFuture().join();
+        final Cart result = sphereClient().execute(CartUpdateCommand.of(cart, items)).toCompletableFuture().join();
         clearFrequency(result.getId());
         return result;
     }
@@ -81,10 +78,10 @@ public class CartServiceImpl implements CartService {
     private void clearFrequency(final String cartId) {
         Logger.debug("Clearing frequency");
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient.execute(CustomObjectByKeyGet.of(FREQUENCY, cartId)).toCompletableFuture().join());
+                sphereClient().execute(CustomObjectByKeyGet.of(FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
             Logger.debug("Fetched existing CustomObject: {}", result);
-            final CustomObject<JsonNode> cleared =  sphereClient.execute(CustomObjectDeleteCommand.of(FREQUENCY, cartId)).toCompletableFuture().join();
+            final CustomObject<JsonNode> cleared =  sphereClient().execute(CustomObjectDeleteCommand.of(FREQUENCY, cartId)).toCompletableFuture().join();
             Logger.debug("Cleared CustomObject: {}", cleared);
         }
     }
@@ -93,20 +90,20 @@ public class CartServiceImpl implements CartService {
     public void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
         final Cart clearedCart = clearCart(cart);
         final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
-        final Cart updatedCart = sphereClient.execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
+        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
 
         final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(FREQUENCY, updatedCart.getId(), frequency,
                 new TypeReference<CustomObject<Integer>>() {
                 });
 
-        final CustomObject<Integer> customObject = sphereClient.execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
+        final CustomObject<Integer> customObject = sphereClient().execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
         Logger.debug("Setting new or update CustomObject: {}", customObject);
     }
 
     @Override
     public int getFrequency(final String cartId) {
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient.execute(CustomObjectByKeyGet.of(FREQUENCY, cartId)).toCompletableFuture().join());
+                sphereClient().execute(CustomObjectByKeyGet.of(FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
             return result.get().getValue().asInt();
         }
@@ -125,14 +122,14 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
         final ProductVariant variant = getVariantInContract(product, contract);
-        final Cart cart = sphereClient.execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
+        final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
         Logger.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
 
         final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
-        final Cart updatedCart = sphereClient.execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();
+        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();
 
         final Address address = AddressBuilder.of(customer.getCompleteAddress()).build();
-        final Cart cartWithAddress = sphereClient.execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address))).toCompletableFuture().join();
+        final Cart cartWithAddress = sphereClient().execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address))).toCompletableFuture().join();
         return cartWithAddress;
     }
 
