@@ -13,7 +13,9 @@ import play.Configuration;
 import play.Logger;
 import play.mvc.Http;
 import play.mvc.Result;
-import services.ShopService;
+import services.CartService;
+import services.OrderService;
+import services.ProductService;
 import utils.JsonUtils;
 
 import java.util.Optional;
@@ -21,10 +23,14 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class PactasWebhookController extends BaseController {
-    private final Pactas pactas;
 
-    public PactasWebhookController(final Configuration configuration, final ShopService cartService, final Pactas pactas) {
-        super(configuration, cartService);
+    private final Pactas pactas;
+    private final OrderService orderService;
+
+    public PactasWebhookController(final Configuration configuration, final ProductService productService,
+                                   final CartService cartService, final OrderService orderService, final Pactas pactas) {
+        super(configuration, productService, cartService);
+        this.orderService = requireNonNull(orderService, "'orderService' must not be null");
         this.pactas = requireNonNull(pactas, "'pactas' must not be null");
     }
 
@@ -38,8 +44,8 @@ public class PactasWebhookController extends BaseController {
                 Logger.debug("Fetched Pactas contract: {}", contract);
                 final PactasCustomer customer = pactas.fetchCustomer(contract.getCustomerId()).get();
                 Logger.debug("Fetched Pactas customer: {}", customer);
-                final Cart cart = shopService().createCartWithPactasInfo(product(), contract, customer);
-                final Order order = shopService().createOrder(cart);
+                final Cart cart = cartService().createCartWithPactasInfo(product(), contract, customer);
+                final Order order = orderService.createOrder(cart);
                 Logger.debug("Order created: {}", order);
                 return ok();
             } catch (SphereClientException e) {

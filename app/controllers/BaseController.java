@@ -4,7 +4,8 @@ import exceptions.ProductNotFoundException;
 import io.sphere.sdk.products.ProductProjection;
 import play.Configuration;
 import play.mvc.Controller;
-import services.ShopService;
+import services.CartService;
+import services.ProductService;
 import utils.CurrencyOperations;
 
 import java.util.Currency;
@@ -15,14 +16,16 @@ import static java.util.Objects.requireNonNull;
 public abstract class BaseController extends Controller {
 
     private final CurrencyOperations currencyOps;
-    private final ShopService shopService;
+    private final ProductService productService;
+    private final CartService cartService;
 
     private final ProductProjection cachedProduct;
 
-    public BaseController(final Configuration configuration, final ShopService cartService) {
-        this.shopService = requireNonNull(cartService, "'shopService' must not be null");
+    public BaseController(final Configuration configuration, ProductService productService, final CartService cartService) {
+        this.productService = requireNonNull(productService, "'productService' must not be null");
+        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
         this.currencyOps = CurrencyOperations.of(configuration);
-        final Optional<ProductProjection> product = shopService().getProduct();
+        final Optional<ProductProjection> product = productService().getProduct();
         if(!product.isPresent()) {
             throw new ProductNotFoundException();
         }
@@ -33,9 +36,14 @@ public abstract class BaseController extends Controller {
         return cachedProduct;
     }
 
-    protected ShopService shopService() {
-        return shopService;
+    protected CartService cartService() {
+        return cartService;
     }
+
+    protected ProductService productService() {
+        return productService;
+    }
+
 
     protected Currency currency() {
         return currencyOps.currency();

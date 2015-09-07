@@ -10,8 +10,7 @@ import pactas.PactasImpl;
 import play.Application;
 import play.Configuration;
 import play.GlobalSettings;
-import services.DefaultShopService;
-import services.ShopService;
+import services.*;
 import sphere.Sphere;
 import utils.CurrencyOperations;
 
@@ -21,7 +20,9 @@ public class Global extends GlobalSettings {
     private Sphere sphere;
     private Pactas pactas;
     private SphereClient sphereClient;
-    private ShopService cartService;
+    private CartService cartService;
+    private ProductService productService;
+    private OrderService orderService;
 
     @Override
     public void onStart(final Application app) {
@@ -30,7 +31,9 @@ public class Global extends GlobalSettings {
         this.pactas = pactas(app.configuration());
 
         this.sphereClient = sphereClient(app);
-        this.cartService = shopService(sphereClient, sphere);
+        this.cartService = cartService(sphereClient, sphere);
+        this.productService = productService(sphereClient);
+        this.orderService = orderService(sphereClient);
         checkProjectCurrency(app);
         super.onStart(app);
     }
@@ -44,8 +47,16 @@ public class Global extends GlobalSettings {
         return factory.createClient(projectKey, clientId, clientSecret);
     }
 
-    private ShopService shopService(final SphereClient sphereClient, final Sphere sphere) {
-        return new DefaultShopService(sphereClient, sphere);
+    private CartService cartService(final SphereClient sphereClient, final Sphere sphere) {
+        return new CartServiceImpl(sphereClient, sphere);
+    }
+
+    private ProductService productService(final SphereClient sphereClient) {
+        return new ProductServiceImpl(sphereClient);
+    }
+
+    private OrderService orderService(final SphereClient sphereClient) {
+        return new OrderServiceImpl(sphereClient);
     }
 
     private Pactas pactas(final Configuration configuration) {
@@ -69,12 +80,11 @@ public class Global extends GlobalSettings {
     public <A> A getControllerInstance(final Class<A> controllerClass) throws Exception {
         final A result;
         if (controllerClass.equals(ProductController.class)) {
-            result = (A) new ProductController(app.configuration(), cartService);
+            result = (A) new ProductController(app.configuration(), productService, cartService);
         } else if (controllerClass.equals(OrderController.class)) {
-            result = (A) new OrderController(app.configuration(), cartService);
-        }
-        else if (controllerClass.equals(PactasWebhookController.class)) {
-            result = (A) new PactasWebhookController(app.configuration(), cartService, pactas);
+            result = (A) new OrderController(app.configuration(), productService, cartService);
+        } else if (controllerClass.equals(PactasWebhookController.class)) {
+            result = (A) new PactasWebhookController(app.configuration(), productService, cartService, orderService, pactas);
         }
         else {
             result = super.getControllerInstance(controllerClass);

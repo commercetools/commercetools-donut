@@ -8,7 +8,8 @@ import play.Configuration;
 import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
-import services.ShopService;
+import services.CartService;
+import services.ProductService;
 import views.html.index;
 
 import java.util.Optional;
@@ -16,19 +17,20 @@ import java.util.Optional;
 import static play.data.Form.form;
 
 public class ProductController extends BaseController {
+
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final Configuration configuration, final ShopService cartService) {
-        super(configuration, cartService);
+    public ProductController(final Configuration configuration, ProductService productService, final CartService cartService) {
+        super(configuration, productService, cartService);
     }
 
     public Result show() {
         Logger.debug("Display Product page");
-        final Cart currentCart = shopService().getOrCreateCart(session());
+        final Cart currentCart = cartService().getOrCreateCart(session());
         Logger.debug("Current Cart[cartId={}]", currentCart.getId());
-        final Optional<ProductVariant> selectedVariant = shopService().getSelectedVariant(currentCart);
+        final Optional<ProductVariant> selectedVariant = cartService().getSelectedVariant(currentCart);
         Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
-        final int selectedFrequency = shopService().getFrequency(currentCart.getId());
+        final int selectedFrequency = cartService().getFrequency(currentCart.getId());
         Logger.debug("Selected frequency: {}", selectedFrequency);
         final ProductPageData productPageData = new ProductPageData(product(), selectedVariant, selectedFrequency);
         return ok(index.render(productPageData));
@@ -38,12 +40,12 @@ public class ProductController extends BaseController {
         Logger.debug("Submitting Product page");
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
-            final Optional<ProductVariant> selectedVariant = shopService().variantFromId(product(), boundForm.get().variantId);
+            final Optional<ProductVariant> selectedVariant = productService().getVariantFromId(product(), boundForm.get().variantId);
             Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
             if (selectedVariant.isPresent()) {
-                final Cart currentCart = shopService().getOrCreateCart(session());
+                final Cart currentCart = cartService().getOrCreateCart(session());
                 Logger.debug("Current Cart[cartId={}]", currentCart.getId());
-                shopService().setProductToCart(currentCart, product(), selectedVariant.get(), boundForm.get().howOften);
+                cartService().setProductToCart(currentCart, product(), selectedVariant.get(), boundForm.get().howOften);
                 return redirect(routes.OrderController.show());
             } else {
                 flash("error", "Product not found. Please try again.");

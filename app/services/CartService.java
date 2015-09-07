@@ -1,7 +1,6 @@
 package services;
 
 import io.sphere.sdk.carts.Cart;
-import io.sphere.sdk.orders.Order;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import pactas.models.PactasContract;
@@ -10,7 +9,7 @@ import play.mvc.Http;
 
 import java.util.Optional;
 
-public interface ShopService {
+public interface CartService {
 
     Cart getOrCreateCart(Http.Session session);
 
@@ -22,12 +21,5 @@ public interface ShopService {
 
     Optional<ProductVariant> getSelectedVariant(final Cart cart);
 
-    Optional<ProductVariant> variantFromId(final ProductProjection product, final int variantId);
-
     Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
-
-    Optional<ProductProjection> getProduct();
-
-    Order createOrder(Cart cart);
 }
-

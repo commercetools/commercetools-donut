@@ -47,7 +47,7 @@ public class PactasWebhookControllerIntegrationTest {
     @Ignore // requires mocking with SPHERE.IO Play SDK, enable it back with SPHERE.IO JVM SDK
     @Test
     public void testName() throws Exception {
-        final PactasWebhookController controller = new PactasWebhookController(null, config(), product(), pactas());
+        final PactasWebhookController controller = new PactasWebhookController(null, config(), product(), pactas(), orderService);
         final Result result = controller.createOrderFromSubscription();
         assertThat(status(result)).isEqualTo(OK);
     }
