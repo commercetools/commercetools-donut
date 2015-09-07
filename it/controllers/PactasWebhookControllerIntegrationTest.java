@@ -18,6 +18,7 @@ import play.i18n.Lang;
 import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Result;
+import services.CartServiceImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,13 +48,13 @@ public class PactasWebhookControllerIntegrationTest {
     @Ignore // requires mocking with SPHERE.IO Play SDK, enable it back with SPHERE.IO JVM SDK
     @Test
     public void testName() throws Exception {
-        final PactasWebhookController controller = new PactasWebhookController(null, config(), product(), pactas(), orderService);
+        final PactasWebhookController controller = new PactasWebhookController(config(), product(), pactas(), orderService);
         final Result result = controller.createOrderFromSubscription();
         assertThat(status(result)).isEqualTo(OK);
     }
 
     private Product product() {
-        final Attribute attribute = new Attribute(BaseController.ID_TWO_WEEKS, CONTRACT.getPlanVariantId());
+        final Attribute attribute = new Attribute(CartServiceImpl.ID_TWO_WEEKS, CONTRACT.getPlanVariantId());
         return productWithVariant(Variant.create(1, null, null, null, asList(attribute), null));
     }
 

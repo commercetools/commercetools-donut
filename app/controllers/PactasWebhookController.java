@@ -26,11 +26,16 @@ public class PactasWebhookController extends BaseController {
 
     private final Pactas pactas;
     private final OrderService orderService;
+    private final CartService cartService;
+    private final ProductService productService;
 
-    public PactasWebhookController(final Configuration configuration, final ProductService productService,
-                                   final CartService cartService, final OrderService orderService, final Pactas pactas) {
-        super(configuration, productService, cartService);
+    public PactasWebhookController(final Configuration configuration, final CartService cartService,
+                                   final OrderService orderService, final ProductService productService,
+                                   final Pactas pactas) {
+        super(configuration);
+        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
         this.orderService = requireNonNull(orderService, "'orderService' must not be null");
+        this.productService = requireNonNull(productService, "'productService' must not be null");
         this.pactas = requireNonNull(pactas, "'pactas' must not be null");
     }
 
@@ -44,7 +49,7 @@ public class PactasWebhookController extends BaseController {
                 Logger.debug("Fetched Pactas contract: {}", contract);
                 final PactasCustomer customer = pactas.fetchCustomer(contract.getCustomerId()).get();
                 Logger.debug("Fetched Pactas customer: {}", customer);
-                final Cart cart = cartService().createCartWithPactasInfo(product(), contract, customer);
+                final Cart cart = cartService.createCartWithPactasInfo(productService.getProduct().get(), contract, customer);
                 final Order order = orderService.createOrder(cart);
                 Logger.debug("Order created: {}", order);
                 return ok();

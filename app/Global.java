@@ -82,11 +82,10 @@ public class Global extends GlobalSettings {
         if (controllerClass.equals(ProductController.class)) {
             result = (A) new ProductController(app.configuration(), productService, cartService);
         } else if (controllerClass.equals(OrderController.class)) {
-            result = (A) new OrderController(app.configuration(), productService, cartService);
+            result = (A) new OrderController(app.configuration(), cartService);
         } else if (controllerClass.equals(PactasWebhookController.class)) {
-            result = (A) new PactasWebhookController(app.configuration(), productService, cartService, orderService, pactas);
-        }
-        else {
+            result = (A) new PactasWebhookController(app.configuration(), cartService, orderService,  productService, pactas);
+        } else {
             result = super.getControllerInstance(controllerClass);
         }
         return result;

@@ -1,5 +1,6 @@
 package services;
 
+import exceptions.ProductNotFoundException;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
@@ -14,9 +15,15 @@ import static java.util.Objects.requireNonNull;
 public class ProductServiceImpl implements ProductService {
 
     private final SphereClient sphereClient;
+    private final ProductProjection cachedProduct;
 
     public ProductServiceImpl(final SphereClient sphereClient) {
         this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
+        final Optional<ProductProjection> product = loadProduct();
+        if(!product.isPresent()) {
+            throw new ProductNotFoundException();
+        }
+        this.cachedProduct = product.get();
     }
 
     @Override
@@ -24,12 +31,17 @@ public class ProductServiceImpl implements ProductService {
         return product.getAllVariants().stream().filter(v -> v.getId().equals(variantId)).findFirst();
     }
 
-    @Override
-    public Optional<ProductProjection> getProduct() {
+    private Optional<ProductProjection> loadProduct() {
         final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
         final CompletionStage<PagedQueryResult<ProductProjection>> resultCompletionStage =
                 sphereClient.execute(request);
         final PagedQueryResult<ProductProjection> queryResult = resultCompletionStage.toCompletableFuture().join();
         return queryResult.head();
+    }
+
+    @Override
+    public Optional<ProductProjection> getProduct() {
+       return Optional.of(cachedProduct);
+
     }
 }
