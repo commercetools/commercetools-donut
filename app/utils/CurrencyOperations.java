@@ -9,7 +9,7 @@ import java.util.Currency;
 
 public class CurrencyOperations {
     public static final Logger.ALogger LOGGER = Logger.of(CurrencyOperations.class);
-    static final String CURRENCY_CONFIG = "sphere.cart.currency";
+    public static final String CURRENCY_CONFIG = "sphere.cart.currency";
     private final Configuration configuration;
 
     private CurrencyOperations(final Configuration configuration) {

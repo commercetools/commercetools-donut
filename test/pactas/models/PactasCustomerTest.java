@@ -1,6 +1,6 @@
 package pactas.models;
 
-import io.sphere.client.shop.model.Address;
+import io.sphere.sdk.models.Address;
 import org.junit.Test;
 
 import static com.neovisionaries.i18n.CountryCode.DE;
