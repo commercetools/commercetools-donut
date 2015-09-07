@@ -1,6 +1,5 @@
 package controllers;
 
-import io.sphere.client.SphereClientException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductVariant;
 import models.OrderPageData;
@@ -44,7 +43,7 @@ public class OrderController extends BaseController {
             final Cart currentCart = cartService.getOrCreateCart(session());
             final Cart clearedCart = cartService.clearCart(currentCart);
             return ok(success.render());
-        } catch (SphereClientException e) {
+        } catch (Exception e) {
             Logger.error(e.getMessage(), e);
             return internalServerError();
         }
@@ -55,7 +54,7 @@ public class OrderController extends BaseController {
             final Cart currentCart = cartService.getOrCreateCart(session());
             final Cart clearedCart = cartService.clearCart(currentCart);
             return redirect(routes.ProductController.show());
-        } catch (SphereClientException e) {
+        } catch (Exception e) {
             Logger.error(e.getMessage(), e);
             return internalServerError();
         }
