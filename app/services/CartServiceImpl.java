@@ -14,6 +14,7 @@ import io.sphere.sdk.carts.queries.CartByIdGet;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.customobjects.CustomObject;
 import io.sphere.sdk.customobjects.CustomObjectDraft;
+import io.sphere.sdk.customobjects.commands.CustomObjectDeleteCommand;
 import io.sphere.sdk.customobjects.commands.CustomObjectUpsertCommand;
 import io.sphere.sdk.customobjects.queries.CustomObjectByKeyGet;
 import io.sphere.sdk.models.Address;
@@ -26,7 +27,6 @@ import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Logger;
 import play.mvc.Http;
-import sphere.Sphere;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,16 +38,14 @@ import static org.springframework.util.Assert.notNull;
 public class CartServiceImpl implements CartService {
 
     private final SphereClient sphereClient;
-    private final Sphere deprecatedClient;
 
     public final static String FREQUENCY = "cart-frequency";
     public final static String ID_MONTHLY = "pactas4";
     public final static String ID_TWO_WEEKS = "pactas2";
     public final static String ID_WEEKLY = "pactas1";
 
-    public CartServiceImpl(final SphereClient sphereClient, final Sphere deprecatedClient) {
+    public CartServiceImpl(final SphereClient sphereClient) {
         this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
-        this.deprecatedClient = requireNonNull(deprecatedClient, "'deprecatedClient' must not be null");
     }
 
     @Override
@@ -81,8 +79,14 @@ public class CartServiceImpl implements CartService {
     }
 
     private void clearFrequency(final String cartId) {
-        //sphereClient.execute(CustomObjectDeleteCommand.of(FREQUENCY, cartId)).toCompletableFuture().join();
-        deprecatedClient.customObjects().delete(FREQUENCY, cartId).execute();
+        Logger.debug("Clearing frequency");
+        final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
+                sphereClient.execute(CustomObjectByKeyGet.of(FREQUENCY, cartId)).toCompletableFuture().join());
+        if (result.isPresent()) {
+            Logger.debug("Fetched existing CustomObject: {}", result);
+            final CustomObject<JsonNode> cleared =  sphereClient.execute(CustomObjectDeleteCommand.of(FREQUENCY, cartId)).toCompletableFuture().join();
+            Logger.debug("Cleared CustomObject: {}", cleared);
+        }
     }
 
     @Override

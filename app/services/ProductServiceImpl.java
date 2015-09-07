@@ -19,10 +19,7 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductServiceImpl(final SphereClient sphereClient) {
         this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
-        final Optional<ProductProjection> product = loadProduct();
-        if(!product.isPresent()) {
-            throw new ProductNotFoundException();
-        }
+        final Optional<ProductProjection> product = Optional.of(loadProduct().orElseThrow(ProductNotFoundException::new));
         this.cachedProduct = product.get();
     }
 

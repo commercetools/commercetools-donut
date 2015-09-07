@@ -11,13 +11,11 @@ import play.Application;
 import play.Configuration;
 import play.GlobalSettings;
 import services.*;
-import sphere.Sphere;
 import utils.CurrencyOperations;
 
 public class Global extends GlobalSettings {
 
     private Application app;
-    private Sphere sphere;
     private Pactas pactas;
     private SphereClient sphereClient;
     private CartService cartService;
@@ -27,11 +25,10 @@ public class Global extends GlobalSettings {
     @Override
     public void onStart(final Application app) {
         this.app = app;
-        this.sphere = Sphere.getInstance();
         this.pactas = pactas(app.configuration());
 
         this.sphereClient = sphereClient(app);
-        this.cartService = cartService(sphereClient, sphere);
+        this.cartService = cartService(sphereClient);
         this.productService = productService(sphereClient);
         this.orderService = orderService(sphereClient);
         checkProjectCurrency(app);
@@ -47,8 +44,8 @@ public class Global extends GlobalSettings {
         return factory.createClient(projectKey, clientId, clientSecret);
     }
 
-    private CartService cartService(final SphereClient sphereClient, final Sphere sphere) {
-        return new CartServiceImpl(sphereClient, sphere);
+    private CartService cartService(final SphereClient sphereClient) {
+        return new CartServiceImpl(sphereClient);
     }
 
     private ProductService productService(final SphereClient sphereClient) {
