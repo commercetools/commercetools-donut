@@ -10,18 +10,20 @@ import io.sphere.sdk.queries.PagedQueryResult;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
+import static java.util.Objects.requireNonNull;
+
 public class ProductServiceImpl extends AbstractShopService implements ProductService {
 
     private final ProductProjection cachedProduct;
 
     public ProductServiceImpl(final SphereClient sphereClient) {
         super(sphereClient);
-        final Optional<ProductProjection> product = Optional.of(loadProduct().orElseThrow(ProductNotFoundException::new));
-        this.cachedProduct = product.get();
+        this.cachedProduct = loadProduct().orElseThrow(ProductNotFoundException::new);
     }
 
     @Override
     public Optional<ProductVariant> getVariantFromId(ProductProjection product, int variantId) {
+        requireNonNull(product, "'product' must not be null");
         return product.getAllVariants().stream().filter(v -> v.getId().equals(variantId)).findFirst();
     }
 
