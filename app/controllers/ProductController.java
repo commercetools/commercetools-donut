@@ -1,47 +1,58 @@
 package controllers;
 
-import com.google.common.base.Optional;
 import forms.SubscriptionFormData;
-import io.sphere.client.SphereClientException;
-import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Product;
-import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
 import play.Configuration;
 import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
-import sphere.Sphere;
+import services.CartService;
+import services.ProductService;
 import views.html.index;
 
+import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 import static play.data.Form.form;
 
 public class ProductController extends BaseController {
+
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
 
-    public ProductController(final Sphere sphere, final Configuration configuration, final Product product) {
-        super(sphere, configuration, product);
+    private final ProductService productService;
+    private final CartService cartService;
+
+    public ProductController(final Configuration configuration, ProductService productService, final CartService cartService) {
+        super(configuration);
+        this.productService = requireNonNull(productService, "'productService' must not be null");
+        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
     }
 
     public Result show() {
-        final Cart cart = sphere().currentCart().fetch();
-        final Optional<Variant> selectedVariant = getSelectedVariant(cart);
-        final int selectedFrequency = frequency(cart.getId());
-        final ProductPageData productPageData = new ProductPageData(selectedVariant, selectedFrequency, product());
+        Logger.debug("Display Product page");
+        final Cart currentCart = cartService.getOrCreateCart(session());
+        Logger.debug("Current Cart[cartId={}]", currentCart.getId());
+        final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
+        Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
+        final int selectedFrequency = cartService.getFrequency(currentCart.getId());
+        Logger.debug("Selected frequency: {}", selectedFrequency);
+        final ProductPageData productPageData = new ProductPageData(productService.getProduct().get(), selectedVariant, selectedFrequency);
         return ok(index.render(productPageData));
     }
 
     public Result submit() {
+        Logger.debug("Submitting Product page");
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
-            final Optional<Variant> variant = variant(boundForm.get().variantId);
-            if (variant.isPresent()) {
-                try {
-                    setProductToCart(variant.get(), boundForm.get().howOften);
-                    return redirect(routes.OrderController.show());
-                } catch (SphereClientException e) {
-                    Logger.error(e.getMessage(), e);
-                }
+            final Optional<ProductVariant> selectedVariant = productService.getVariantFromId(productService.getProduct().get(), boundForm.get().variantId);
+            Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
+            if (selectedVariant.isPresent()) {
+                final Cart currentCart = cartService.getOrCreateCart(session());
+                Logger.debug("Current Cart[cartId={}]", currentCart.getId());
+                cartService.setProductToCart(currentCart, productService.getProduct().get(), selectedVariant.get(), boundForm.get().howOften);
+                return redirect(routes.OrderController.show());
             } else {
                 flash("error", "Product not found. Please try again.");
             }
@@ -49,22 +60,5 @@ public class ProductController extends BaseController {
             flash("error", "Please select a box and how often you want it.");
         }
         return redirect(routes.ProductController.show());
-    }
-
-    private Optional<Variant> getSelectedVariant(final Cart cart) {
-        final Optional<Variant> selectedVariant;
-        if (cart.getLineItems().size() > 0) {
-            selectedVariant = Optional.of(cart.getLineItems().get(0).getVariant());
-        } else {
-            selectedVariant = Optional.absent();
-        }
-        return selectedVariant;
-    }
-
-    private void setProductToCart(final Variant variant, final int frequency) {
-        final Cart cart = sphere().currentCart().fetch();
-        clearLineItemsFromCurrentCart(cart.getLineItems());
-        final Cart updatedCart = sphere().currentCart().addLineItem(product().getId(), variant.getId(), 1);
-        sphere().customObjects().set(FREQUENCY, updatedCart.getId(), frequency).get();
     }
 }

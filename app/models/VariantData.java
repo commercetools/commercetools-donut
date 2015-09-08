@@ -1,55 +1,62 @@
 package models;
 
-import io.sphere.client.shop.model.ScaledImage;
-import io.sphere.client.shop.model.Variant;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.sphere.sdk.models.Base;
+import io.sphere.sdk.products.Image;
+import io.sphere.sdk.products.Price;
+import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.attributes.AttributeAccess;
+import utils.PriceUtils;
 
-import static io.sphere.client.shop.model.ImageSize.*;
-import static utils.PriceUtils.format;
+public class VariantData extends Base {
+    private final ProductVariant productVariant;
 
-public class VariantData {
-    private final Variant variant;
-
-    public VariantData(final Variant variant) {
-        this.variant = variant;
+    public VariantData(final ProductVariant productVariant) {
+        this.productVariant = productVariant;
     }
 
     public int id() {
-        return variant.getId();
+        return productVariant.getId();
     }
 
     public String price() {
-        if (variant.getPrice() != null) {
-            return format(variant.getPrice().getValue());
+        final Price price = productVariant.getPrices().get(0); //
+        if(price != null) {
+            final String p = PriceUtils.format(price);
+            return p;
         } else {
             return "";
         }
     }
 
     public String boxSize() {
-        return variant.getString("box");
+        return productVariant.getAttribute("box").getValue(AttributeAccess.ofString());
     }
 
     public int quantity() {
-        return variant.getInt("quantity");
+        //FIXME this is just a workaround because there's no AttributeAccess for int values in Sdk M16
+        final JsonNode quantity = productVariant.getAttribute("quantity").getValue(AttributeAccess.ofJsonNode());
+        return quantity.asInt();
     }
 
+
     public String imageUrl() {
-        return variant.getFeaturedImage().getSize(MEDIUM).getUrl();
+        return productVariant.getImages().get(0).getUrl();
     }
 
     public String stampImageUrl() {
-        if (variant.getImages().size() > 2) {
-            final ScaledImage image = variant.getImages().get(1).getSize(ORIGINAL);
+        if (productVariant.getImages().size() > 2) {
+            final Image image = productVariant.getImages().get(1);
             return "background-image: url('"+ image.getUrl() +"')";
         }
         return "";
     }
 
+
     public String addToCartImageUrl() {
-        if (variant.getImages().size() > 2) {
-            final ScaledImage image = variant.getImages().get(2).getSize(MEDIUM);
+        if (productVariant.getImages().size() > 2) {
+            final Image image = productVariant.getImages().get(2);
             return "background-image: url('"+ image.getUrl() +"')";
         }
-        return "";
-    }
+        return "";    }
 }

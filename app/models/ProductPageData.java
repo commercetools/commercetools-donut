@@ -1,19 +1,21 @@
 package models;
 
-import com.google.common.base.Optional;
-import io.sphere.client.shop.model.Product;
-import io.sphere.client.shop.model.Variant;
-import play.Logger;
+import io.sphere.sdk.models.Base;
+import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.ProductVariant;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class ProductPageData {
-    private final Optional<Variant> selectedVariant;
+public class ProductPageData extends Base {
+
+    private final Optional<ProductVariant> selectedVariant;
+    private final ProductProjection product;
     private final int selectedFrequency;
-    private final Product product;
 
-    public ProductPageData(final Optional<Variant> selectedVariant, final int selectedFrequency, final Product product) {
+    public ProductPageData(final ProductProjection product, final Optional<ProductVariant> selectedVariant,
+                           final int selectedFrequency) {
         this.selectedVariant = selectedVariant;
         this.selectedFrequency = selectedFrequency;
         this.product = product;
@@ -23,7 +25,7 @@ public class ProductPageData {
         if (selectedVariant.isPresent()) {
             return Optional.of(new VariantData(selectedVariant.get()));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
@@ -32,11 +34,8 @@ public class ProductPageData {
     }
 
     public List<VariantData> allVariants() {
-        final List<VariantData> variantDataList = new ArrayList<>();
-        for (final Variant variant : product.getVariants().asList()) {
-            variantDataList.add(new VariantData(variant));
-        }
+        final List<VariantData> variantDataList = product.getAllVariants().stream().map(VariantData::new)
+                .collect(Collectors.toList());
         return variantDataList;
     }
-
 }

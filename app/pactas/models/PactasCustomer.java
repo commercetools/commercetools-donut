@@ -1,7 +1,8 @@
 package pactas.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.sphere.client.shop.model.Address;
+import io.sphere.sdk.models.Address;
+import io.sphere.sdk.models.AddressBuilder;
 
 public class PactasCustomer {
     private final String id;
@@ -36,9 +37,7 @@ public class PactasCustomer {
     }
 
     public Address getCompleteAddress() {
-        final Address customerAddress = address.getAddress();
-        customerAddress.setFirstName(firstName);
-        customerAddress.setLastName(lastName);
+        final Address customerAddress = AddressBuilder.of(address.getAddress()).firstName(firstName).lastName(lastName).build();
         return customerAddress;
     }
 

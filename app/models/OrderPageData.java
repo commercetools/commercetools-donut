@@ -1,23 +1,26 @@
 package models;
 
-import com.google.common.base.Optional;
-import io.sphere.client.shop.model.Cart;
-import io.sphere.client.shop.model.Price;
-import io.sphere.client.shop.model.Variant;
+import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.models.Base;
+import io.sphere.sdk.products.Price;
+import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.attributes.AttributeAccess;
+import utils.PriceUtils;
 
-import static utils.PriceUtils.currencyCode;
-import static utils.PriceUtils.monetaryAmount;
-import static utils.PriceUtils.format;
+import java.util.Optional;
 
-public class OrderPageData {
-    private final Variant selectedVariant;
+import static java.util.Objects.requireNonNull;
+
+public class OrderPageData extends Base {
+
+    private final ProductVariant selectedVariant;
     private final int selectedFrequency;
     private final Cart cart;
 
-    public OrderPageData(final Variant selectedVariant, final int selectedFrequency, final Cart cart) {
-        this.selectedVariant = selectedVariant;
-        this.selectedFrequency = selectedFrequency;
-        this.cart = cart;
+    public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency, final Cart cart) {
+        this.selectedVariant = requireNonNull(selectedVariant, "'selectedVariant' must not be null");
+        this.selectedFrequency = requireNonNull(selectedFrequency, "'selectedFrequency' must not be null");
+        this.cart = requireNonNull(cart, "'cart' must not be null");
     }
 
     public VariantData selectedVariant() {
@@ -25,7 +28,7 @@ public class OrderPageData {
     }
 
     public String totalPrice() {
-        return format(cart.getTotalPrice());
+        return PriceUtils.format(cart);
     }
 
     public String frequencyName() {
@@ -43,19 +46,20 @@ public class OrderPageData {
     }
 
     public String pactasVariantId() {
-        return selectedVariant.getString("pactas" + selectedFrequency);
+        final String pactasId = selectedVariant.getAttribute("pactas" + selectedFrequency).getValue(AttributeAccess.ofString());
+        return pactasId;
     }
 
     public String currency() {
-        return currencyCode(price()).or("");
+        return PriceUtils.currencyCode(price()).orElse("");
     }
 
     public double priceAmount() {
-        return monetaryAmount(price()).or(0d);
+        return PriceUtils.monetaryAmount(price()).orElse(0d);
     }
 
     private Optional<Price> price() {
-        return Optional.fromNullable(selectedVariant.getPrice());
+        return Optional.ofNullable(selectedVariant.getPrices().get(0));
     }
 
 }

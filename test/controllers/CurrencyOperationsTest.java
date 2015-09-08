@@ -8,16 +8,18 @@ import org.junit.Before;
 import org.junit.Test;
 import play.Configuration;
 import play.mvc.Http;
+import utils.CurrencyOperations;
 
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Map;
 
-import static controllers.CurrencyOperations.CURRENCY_CONFIG;
-import static controllers.CurrencyOperations.parseCode;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static utils.CurrencyOperations.CURRENCY_CONFIG;
+import static utils.CurrencyOperations.parseCode;
 
 public class CurrencyOperationsTest {
     public static final Currency EUR = Currency.getInstance("EUR");

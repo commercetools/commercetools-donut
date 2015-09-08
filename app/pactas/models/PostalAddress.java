@@ -2,7 +2,8 @@ package pactas.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.neovisionaries.i18n.CountryCode;
-import io.sphere.client.shop.model.Address;
+import io.sphere.sdk.models.Address;
+import io.sphere.sdk.models.AddressBuilder;
 
 public class PostalAddress {
     private String addressLine;
@@ -41,17 +42,7 @@ public class PostalAddress {
     }
 
     public Address getAddress() {
-        Address address = new Address(getCountryCode());
-        if (addressLine != null) {
-            address.setStreetName(addressLine);
-        }
-        if (postalCode != null) {
-            address.setPostalCode(postalCode);
-        }
-        if (city != null) {
-            address.setCity(city);
-        }
-        return address;
+        return AddressBuilder.of(getCountryCode()).streetName(addressLine).postalCode(postalCode).city(city).build();
     }
 
     @Override
