@@ -32,14 +32,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.springframework.util.Assert.notNull;
+import static java.util.Objects.requireNonNull;
 
 public class CartServiceImpl extends AbstractShopService implements CartService {
-
-    public final static String FREQUENCY = "cart-frequency";
-    public final static String ID_MONTHLY = "pactas4";
-    public final static String ID_TWO_WEEKS = "pactas2";
-    public final static String ID_WEEKLY = "pactas1";
 
     public CartServiceImpl(final SphereClient sphereClient) {
         super(sphereClient);
@@ -47,7 +42,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public Cart getOrCreateCart(final Http.Session session) {
-        notNull(session, "Session is null, unable to create or get Cart");
+        requireNonNull(session, "'session' must not be null, unable to create or get Cart");
         return Optional.ofNullable(session.get(SessionKeys.CART_ID))
                 .map(String::valueOf)
                 .map(cardId -> {
@@ -66,6 +61,8 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public Cart clearCart(final Cart cart) {
+        requireNonNull(cart, "'cart' must not be null, unable to clear Cart");
+        Logger.debug("Clearing cart");
         final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
             final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
             return removeLineItem;
@@ -76,23 +73,26 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     private void clearFrequency(final String cartId) {
+        requireNonNull(cartId, "'cartId' must not be null, unable to clear frequency");
         Logger.debug("Clearing frequency");
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient().execute(CustomObjectByKeyGet.of(FREQUENCY, cartId)).toCompletableFuture().join());
+                sphereClient().execute(CustomObjectByKeyGet.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
             Logger.debug("Fetched existing CustomObject: {}", result);
-            final CustomObject<JsonNode> cleared =  sphereClient().execute(CustomObjectDeleteCommand.of(FREQUENCY, cartId)).toCompletableFuture().join();
+            final CustomObject<JsonNode> cleared =  sphereClient().execute(CustomObjectDeleteCommand.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join();
             Logger.debug("Cleared CustomObject: {}", cleared);
         }
     }
 
     @Override
     public void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
+        requireNonNull(cart, "'cart' must not be null");
+        requireNonNull(product, "'product' must not be null");
         final Cart clearedCart = clearCart(cart);
         final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
         final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
 
-        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(FREQUENCY, updatedCart.getId(), frequency,
+        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(ShopKeys.FREQUENCY, updatedCart.getId(), frequency,
                 new TypeReference<CustomObject<Integer>>() {
                 });
 
@@ -102,8 +102,9 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public int getFrequency(final String cartId) {
+        requireNonNull(cartId, "'cartId' must not be null");
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient().execute(CustomObjectByKeyGet.of(FREQUENCY, cartId)).toCompletableFuture().join());
+                sphereClient().execute(CustomObjectByKeyGet.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
             return result.get().getValue().asInt();
         }
@@ -112,6 +113,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public Optional<ProductVariant> getSelectedVariant(final Cart cart) {
+        requireNonNull(cart, "'cart' must not be null");
         final Optional<ProductVariant> selectedVariant =
                 (!cart.getLineItems().isEmpty())
                         ? Optional.ofNullable(cart.getLineItems().get(0).getVariant())
@@ -144,9 +146,9 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
         for (final ProductVariant variant : product.getAllVariants()) {
-            final String monthly = variant.getAttribute(ID_MONTHLY).getValue(AttributeAccess.ofString());
-            final String twoWeeks = variant.getAttribute(ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
-            final String weekly = variant.getAttribute(ID_WEEKLY).getValue(AttributeAccess.ofString());
+            final String monthly = variant.getAttribute(ShopKeys.ID_MONTHLY).getValue(AttributeAccess.ofString());
+            final String twoWeeks = variant.getAttribute(ShopKeys.ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
+            final String weekly = variant.getAttribute(ShopKeys.ID_WEEKLY).getValue(AttributeAccess.ofString());
             if (pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) {
                 return Optional.of(variant);
             }
