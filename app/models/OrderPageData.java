@@ -9,15 +9,18 @@ import utils.NewPriceUtils;
 
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
+
 public class OrderPageData extends Base {
+
     private final ProductVariant selectedVariant;
     private final int selectedFrequency;
     private final Cart cart;
 
     public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency, final Cart cart) {
-        this.selectedVariant = selectedVariant;
-        this.selectedFrequency = selectedFrequency;
-        this.cart = cart;
+        this.selectedVariant = requireNonNull(selectedVariant, "'selectedVariant' must not be null");
+        this.selectedFrequency = requireNonNull(selectedFrequency, "'selectedFrequency' must not be null");
+        this.cart = requireNonNull(cart, "'cart' must not be null");
     }
 
     public VariantData selectedVariant() {

@@ -10,8 +10,6 @@ import services.CartService;
 import views.html.order;
 import views.html.success;
 
-import java.util.Optional;
-
 import static java.util.Objects.requireNonNull;
 
 public class OrderController extends BaseController {
@@ -28,8 +26,8 @@ public class OrderController extends BaseController {
         if (!currentCart.getLineItems().isEmpty()) {
             final int selectedFrequency = cartService.getFrequency(currentCart.getId());
             if (selectedFrequency > 0) {
-                final Optional<ProductVariant> selectedVariant = Optional.of(currentCart.getLineItems().get(0).getVariant());
-                final OrderPageData orderPageData = new OrderPageData(selectedVariant.get(), selectedFrequency, currentCart);
+                final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
+                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
                 return ok(order.render(orderPageData));
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");
