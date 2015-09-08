@@ -145,14 +145,11 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
-        for (final ProductVariant variant : product.getAllVariants()) {
-            final String monthly = variant.getAttribute(ShopKeys.ID_MONTHLY).getValue(AttributeAccess.ofString());
-            final String twoWeeks = variant.getAttribute(ShopKeys.ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
-            final String weekly = variant.getAttribute(ShopKeys.ID_WEEKLY).getValue(AttributeAccess.ofString());
-            if (pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) {
-                return Optional.of(variant);
-            }
-        }
-        return Optional.empty();
+        final Optional<ProductVariant> variant = product.getAllVariants().stream()
+                .filter(v -> v.getAttribute(ShopKeys.ID_MONTHLY).getValue(AttributeAccess.ofString()).equals(pactasId))
+                .filter(v -> v.getAttribute(ShopKeys.ID_TWO_WEEKS).getValue(AttributeAccess.ofString()).equals(pactasId))
+                .filter(v -> v.getAttribute(ShopKeys.ID_WEEKLY).getValue(AttributeAccess.ofString()).equals(pactasId))
+                .findFirst();
+        return variant;
     }
 }
