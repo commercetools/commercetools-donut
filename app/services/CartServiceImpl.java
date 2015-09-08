@@ -113,7 +113,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     @Override
     public Optional<ProductVariant> getSelectedVariant(final Cart cart) {
         final Optional<ProductVariant> selectedVariant =
-                (cart.getLineItems().size() > 0)
+                (!cart.getLineItems().isEmpty())
                         ? Optional.ofNullable(cart.getLineItems().get(0).getVariant())
                         : Optional.empty();
         return selectedVariant;

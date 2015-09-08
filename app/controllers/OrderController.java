@@ -25,7 +25,7 @@ public class OrderController extends BaseController {
 
     public Result show() {
         final Cart currentCart = cartService.getOrCreateCart(session());
-        if (currentCart.getLineItems().size() > 0) {
+        if (!currentCart.getLineItems().isEmpty()) {
             final int selectedFrequency = cartService.getFrequency(currentCart.getId());
             if (selectedFrequency > 0) {
                 final Optional<ProductVariant> selectedVariant = Optional.of(currentCart.getLineItems().get(0).getVariant());
