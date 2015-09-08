@@ -1,20 +1,18 @@
 package utils;
 
-import com.google.common.base.Optional;
-import io.sphere.client.model.Money;
-import io.sphere.client.shop.model.Price;
+import io.sphere.sdk.products.Price;
+import org.javamoney.moneta.Money;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static utils.PriceUtils.currencyCode;
-import static utils.PriceUtils.format;
-import static utils.PriceUtils.monetaryAmount;
+import static org.assertj.core.api.Assertions.assertThat;
+import static utils.PriceUtils.*;
 
 public class PriceUtilsTest {
     public static final Optional<Price> PRICE = price(10.56, "EUR");
-    public static final Optional<Price> NO_PRICE = Optional.absent();
+    public static final Optional<Price> NO_PRICE = Optional.empty();
 
     @Test
     public void getsMonetaryAmount() throws Exception {
@@ -38,16 +36,15 @@ public class PriceUtilsTest {
 
     @Test
     public void formatsPrice() throws Exception {
-        assertThat(format(PRICE).get()).isEqualTo("10,56 €");
+        assertThat(format(PRICE.get())).isEqualTo("10,56 €");
     }
 
     @Test
-    public void absentFormatWhenNoPrice() throws Exception {
-        assertThat(format(NO_PRICE).isPresent()).isFalse();
+    public void formatsMonetaryAmount() throws Exception {
+        assertThat(format(PRICE.get())).isEqualTo("10,56 €");
     }
 
     private static Optional<Price> price(final double amount, final String currency) {
-        final Money money = new Money(BigDecimal.valueOf(amount), currency);
-        return Optional.of(new Price(money, null, null));
+        return Optional.of(Price.of(Money.of(BigDecimal.valueOf(amount), currency)));
     }
 }

@@ -1,55 +1,52 @@
 package utils;
 
-import com.google.common.base.Optional;
-import io.sphere.client.model.Money;
-import io.sphere.client.shop.model.Price;
+import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.products.Price;
+import io.sphere.sdk.utils.MoneyImpl;
 
-import java.text.NumberFormat;
+import javax.money.MonetaryAmount;
+import javax.money.format.MonetaryFormats;
 import java.util.Locale;
-
-import static java.math.BigDecimal.ROUND_HALF_EVEN;
-import static java.util.Currency.getInstance;
+import java.util.Optional;
 
 public final class PriceUtils {
 
     private PriceUtils() {
     }
 
-    public static String format(final Money money) {
-        final String amount = NumberFormat.getInstance(Locale.GERMANY).format(money.getAmount());
-        final String currency = getInstance(money.getCurrencyCode()).getSymbol(Locale.GERMANY);
-        return amount + " " + currency;
+    public static String format(final Price price) {
+        return format(price.getValue());
     }
 
-    public static double monetaryAmount(final Money money) {
-        return money.getAmount().setScale(2, ROUND_HALF_EVEN).doubleValue();
+    public static String format(final Cart cart) {
+        return format(cart.getTotalPrice());
     }
 
-    private static String currencyCode(final Money money) {
-        return money.getCurrencyCode();
+    private static String format(MonetaryAmount amount) {
+        return MonetaryFormats.getAmountFormat(Locale.GERMANY).format(MoneyImpl.of(amount));
     }
 
-    public static Optional<String> format(final Optional<Price> price) {
-        if (price.isPresent()) {
-            return Optional.of(format(price.get().getValue()));
-        } else {
-            return Optional.absent();
-        }
+    public static double monetaryAmount(final Price price) {
+        return price.getValue().getNumber().doubleValue();
+    }
+
+    private static String currencyCode(final Price price) {
+        return price.getValue().getCurrency().getCurrencyCode();
     }
 
     public static Optional<Double> monetaryAmount(final Optional<Price> price) {
         if (price.isPresent()) {
-            return Optional.of(monetaryAmount(price.get().getValue()));
+            return Optional.of(monetaryAmount(price.get()));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
     public static Optional<String> currencyCode(final Optional<Price> price) {
         if (price.isPresent()) {
-            return Optional.of(currencyCode(price.get().getValue()));
+            return Optional.of(currencyCode(price.get()));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 }

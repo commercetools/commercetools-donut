@@ -5,7 +5,7 @@ import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
-import utils.NewPriceUtils;
+import utils.PriceUtils;
 
 import java.util.Optional;
 
@@ -28,7 +28,7 @@ public class OrderPageData extends Base {
     }
 
     public String totalPrice() {
-        return NewPriceUtils.format(cart);
+        return PriceUtils.format(cart);
     }
 
     public String frequencyName() {
@@ -51,11 +51,11 @@ public class OrderPageData extends Base {
     }
 
     public String currency() {
-        return NewPriceUtils.currencyCode(price()).orElse("");
+        return PriceUtils.currencyCode(price()).orElse("");
     }
 
     public double priceAmount() {
-        return NewPriceUtils.monetaryAmount(price()).orElse(0d);
+        return PriceUtils.monetaryAmount(price()).orElse(0d);
     }
 
     private Optional<Price> price() {

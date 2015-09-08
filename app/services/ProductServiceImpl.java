@@ -24,7 +24,7 @@ public class ProductServiceImpl extends AbstractShopService implements ProductSe
     @Override
     public Optional<ProductVariant> getVariantFromId(ProductProjection product, int variantId) {
         requireNonNull(product, "'product' must not be null");
-        return product.getAllVariants().stream().filter(v -> v.getId().equals(variantId)).findFirst();
+        return Optional.ofNullable(product.getVariant(variantId));
     }
 
     private Optional<ProductProjection> loadProduct() {

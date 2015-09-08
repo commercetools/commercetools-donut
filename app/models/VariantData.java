@@ -6,7 +6,7 @@ import io.sphere.sdk.products.Image;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
-import utils.NewPriceUtils;
+import utils.PriceUtils;
 
 public class VariantData extends Base {
     private final ProductVariant productVariant;
@@ -22,7 +22,7 @@ public class VariantData extends Base {
     public String price() {
         final Price price = productVariant.getPrices().get(0); //
         if(price != null) {
-            final String p = NewPriceUtils.format(price);
+            final String p = PriceUtils.format(price);
             return p;
         } else {
             return "";
