@@ -42,17 +42,7 @@ public class PostalAddress {
     }
 
     public Address getAddress() {
-        AddressBuilder addressBuilder = AddressBuilder.of(getCountryCode());
-        if (addressLine != null) {
-            addressBuilder.streetName(addressLine);
-        }
-        if (postalCode != null) {
-            addressBuilder.postalCode(postalCode);
-        }
-        if (city != null) {
-            addressBuilder.city(city);
-        }
-        return addressBuilder.build();
+        return AddressBuilder.of(getCountryCode()).streetName(addressLine).postalCode(postalCode).city(city).build();
     }
 
     @Override
