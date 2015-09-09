@@ -11,6 +11,8 @@ import play.Environment;
 import play.Logger;
 import services.*;
 
+import javax.inject.Singleton;
+
 import static java.util.Objects.requireNonNull;
 
 //import pactas.PactasImpl;
@@ -19,6 +21,9 @@ public class DonutShopModule extends AbstractModule {
 
     private final Environment environment;
     private final Configuration configuration;
+
+    private static final Logger.ALogger LOG = Logger.of(DonutShopModule.class);
+
 
     public DonutShopModule(final Environment environment, final Configuration configuration) {
         this.environment = requireNonNull(environment, "'environment' must not be null");
@@ -34,13 +39,14 @@ public class DonutShopModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     public SphereClient sphereClient() {
         final String projectKey = configuration.getString("sphere.project");
         final String clientId = configuration.getString("sphere.clientId");
         final String clientSecret = configuration.getString("sphere.clientSecret");
         final SphereClientFactory factory = SphereClientFactory.of(() -> ApacheHttpClientAdapter.of(HttpAsyncClients.createDefault()));
         final SphereClient sphereClient = factory.createClient(projectKey, clientId, clientSecret);
-        Logger.debug("Created SphereClient: {}", sphereClient);
+        LOG.debug("Created SphereClient");
         return sphereClient;
     }
 }
