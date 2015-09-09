@@ -25,6 +25,8 @@ public class ProductController extends BaseController {
     private final ProductService productService;
     private final CartService cartService;
 
+    private static final Logger.ALogger LOG = Logger.of(ProductController.class);
+
     @Inject
     public ProductController(final Configuration configuration, ProductService productService, final CartService cartService) {
         super(configuration);
@@ -33,26 +35,26 @@ public class ProductController extends BaseController {
     }
 
     public Result show() {
-        Logger.debug("Display Product page");
+        LOG.debug("Display Product page");
         final Cart currentCart = cartService.getOrCreateCart(session());
-        Logger.debug("Current Cart[cartId={}]", currentCart.getId());
+        LOG.debug("Current Cart[cartId={}]", currentCart.getId());
         final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
-        Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
+        LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
         final int selectedFrequency = cartService.getFrequency(currentCart.getId());
-        Logger.debug("Selected frequency: {}", selectedFrequency);
+        LOG.debug("Selected frequency: {}", selectedFrequency);
         final ProductPageData productPageData = new ProductPageData(productService.getProduct().get(), selectedVariant, selectedFrequency);
         return ok(index.render(productPageData));
     }
 
     public Result submit() {
-        Logger.debug("Submitting Product page");
+        LOG.debug("Submitting Product page");
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
             final Optional<ProductVariant> selectedVariant = productService.getVariantFromId(productService.getProduct().get(), boundForm.get().variantId);
-            Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
+            LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
             if (selectedVariant.isPresent()) {
                 final Cart currentCart = cartService.getOrCreateCart(session());
-                Logger.debug("Current Cart[cartId={}]", currentCart.getId());
+                LOG.debug("Current Cart[cartId={}]", currentCart.getId());
                 cartService.setProductToCart(currentCart, productService.getProduct().get(), selectedVariant.get(), boundForm.get().howOften);
                 return redirect(routes.OrderController.show());
             } else {

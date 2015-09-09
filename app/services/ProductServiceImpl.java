@@ -6,6 +6,7 @@ import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.queries.ProductProjectionQuery;
 import io.sphere.sdk.queries.PagedQueryResult;
+import play.Logger;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -15,12 +16,15 @@ import static java.util.Objects.requireNonNull;
 
 public class ProductServiceImpl extends AbstractShopService implements ProductService {
 
+    private static final Logger.ALogger LOG = Logger.of(ProductServiceImpl.class);
+
     private final ProductProjection cachedProduct;
 
     @Inject
     public ProductServiceImpl(final SphereClient sphereClient) {
         super(sphereClient);
         this.cachedProduct = loadProduct().orElseThrow(ProductNotFoundException::new);
+        LOG.debug("Fetched Product from Sphere: {}", cachedProduct.getName());
     }
 
     @Override
@@ -40,6 +44,5 @@ public class ProductServiceImpl extends AbstractShopService implements ProductSe
     @Override
     public Optional<ProductProjection> getProduct() {
        return Optional.of(cachedProduct);
-
     }
 }

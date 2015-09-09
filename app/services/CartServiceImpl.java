@@ -37,6 +37,8 @@ import static java.util.Objects.requireNonNull;
 
 public class CartServiceImpl extends AbstractShopService implements CartService {
 
+    private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
+
     @Inject
     public CartServiceImpl(final SphereClient sphereClient) {
         super(sphereClient);
@@ -49,13 +51,13 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 .map(String::valueOf)
                 .map(cardId -> {
                             final Cart cart = sphereClient().execute(CartByIdGet.of(cardId)).toCompletableFuture().join();
-                            Logger.debug("Fetched existing Cart[cartId={}]", cart.getId());
+                            LOG.debug("Fetched existing Cart[cartId={}]", cart.getId());
                             return cart;
                         }
                 )
                 .orElseGet(() -> {
                     final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-                    Logger.debug("Created new Cart[cartId={}]", cart.getId());
+                    LOG.debug("Created new Cart[cartId={}]", cart.getId());
                     session.put(SessionKeys.CART_ID, cart.getId());
                     return cart;
                 });
@@ -64,25 +66,26 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     @Override
     public Cart clearCart(final Cart cart) {
         requireNonNull(cart, "'cart' must not be null, unable to clear Cart");
-        Logger.debug("Clearing cart");
+        LOG.debug("Clearing cart");
         final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
             final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
             return removeLineItem;
         }).collect(Collectors.toList());
         final Cart result = sphereClient().execute(CartUpdateCommand.of(cart, items)).toCompletableFuture().join();
         clearFrequency(result.getId());
+        LOG.debug("Cleared cart: {}", result);
         return result;
     }
 
     private void clearFrequency(final String cartId) {
         requireNonNull(cartId, "'cartId' must not be null, unable to clear frequency");
-        Logger.debug("Clearing frequency");
+        LOG.debug("Clearing frequency");
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
                 sphereClient().execute(CustomObjectByKeyGet.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
-            Logger.debug("Fetched existing CustomObject: {}", result);
+            LOG.debug("Fetched existing CustomObject: {}", result);
             final CustomObject<JsonNode> cleared =  sphereClient().execute(CustomObjectDeleteCommand.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join();
-            Logger.debug("Cleared CustomObject: {}", cleared);
+            LOG.debug("Cleared CustomObject: {}", cleared);
         }
     }
 
@@ -99,7 +102,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 });
 
         final CustomObject<Integer> customObject = sphereClient().execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
-        Logger.debug("Setting new or update CustomObject: {}", customObject);
+        LOG.debug("Setting new or update CustomObject: {}", customObject);
     }
 
     @Override
@@ -127,7 +130,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     public Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
         final ProductVariant variant = getVariantInContract(product, contract);
         final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-        Logger.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
+        LOG.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
 
         final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
         final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();

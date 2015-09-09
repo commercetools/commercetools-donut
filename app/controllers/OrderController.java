@@ -14,6 +14,8 @@ import static java.util.Objects.requireNonNull;
 
 public class OrderController extends BaseController {
 
+    private static final Logger.ALogger LOG = Logger.of(OrderController.class);
+
     private final CartService cartService;
 
     @Inject
@@ -23,11 +25,15 @@ public class OrderController extends BaseController {
     }
 
     public Result show() {
+        LOG.debug("Display Order details page");
         final Cart currentCart = cartService.getOrCreateCart(session());
+        LOG.debug("Current Cart[cartId={}]", currentCart.getId());
         if (!currentCart.getLineItems().isEmpty()) {
             final int selectedFrequency = cartService.getFrequency(currentCart.getId());
             if (selectedFrequency > 0) {
                 final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
+                LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant != null ? selectedVariant.getId() : selectedVariant);
+                LOG.debug("Selected frequency: {}", selectedFrequency);
                 final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
                 //return ok(order.render(orderPageData));
                 return ok();
@@ -40,6 +46,7 @@ public class OrderController extends BaseController {
 
     public Result submit() {
         try {
+            LOG.debug("Submitting Order details page");
             final Cart currentCart = cartService.getOrCreateCart(session());
             final Cart clearedCart = cartService.clearCart(currentCart);
             //return ok(success.render());

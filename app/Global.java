@@ -8,12 +8,14 @@ import javax.inject.Inject;
 
 public class Global extends GlobalSettings {
 
+    private static final Logger.ALogger LOG = Logger.of(Global.class);
+
     @Inject
     private SphereClient sphereClient;
 
     @Override
     public void onStart(final Application app) {
-        Logger.debug("Donut-Shop application starts...");
+        LOG.debug("Donut-Shop application starts...");
         checkProjectCurrency(app);
         super.onStart(app);
     }

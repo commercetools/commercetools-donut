@@ -19,11 +19,10 @@ import static java.util.Objects.requireNonNull;
 
 public class DonutShopModule extends AbstractModule {
 
-    private final Environment environment;
-    private final Configuration configuration;
-
     private static final Logger.ALogger LOG = Logger.of(DonutShopModule.class);
 
+    private final Environment environment;
+    private final Configuration configuration;
 
     public DonutShopModule(final Environment environment, final Configuration configuration) {
         this.environment = requireNonNull(environment, "'environment' must not be null");
