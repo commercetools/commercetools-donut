@@ -20,14 +20,6 @@ public class Global extends GlobalSettings {
         super.onStart(app);
     }
 
-    @Override
-    public void onStop(final Application app) {
-        super.onStop(app);
-        if (sphereClient != null) {
-            sphereClient.close();
-        }
-    }
-
     private void checkProjectCurrency(final Application app) {
         CurrencyOperations.of(app.configuration()).currency();
     }
