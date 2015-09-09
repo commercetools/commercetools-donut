@@ -12,6 +12,7 @@ import services.CartService;
 import services.ProductService;
 import views.html.index;
 
+import javax.inject.Inject;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -24,6 +25,7 @@ public class ProductController extends BaseController {
     private final ProductService productService;
     private final CartService cartService;
 
+    @Inject
     public ProductController(final Configuration configuration, ProductService productService, final CartService cartService) {
         super(configuration);
         this.productService = requireNonNull(productService, "'productService' must not be null");

@@ -7,8 +7,8 @@ import play.Configuration;
 import play.Logger;
 import play.mvc.Result;
 import services.CartService;
-import views.html.order;
-import views.html.success;
+
+import javax.inject.Inject;
 
 import static java.util.Objects.requireNonNull;
 
@@ -16,6 +16,7 @@ public class OrderController extends BaseController {
 
     private final CartService cartService;
 
+    @Inject
     public OrderController(final Configuration configuration, final CartService cartService) {
         super(configuration);
         this.cartService = requireNonNull(cartService, "'cartService' must not be null");
@@ -28,7 +29,8 @@ public class OrderController extends BaseController {
             if (selectedFrequency > 0) {
                 final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
                 final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
-                return ok(order.render(orderPageData));
+                //return ok(order.render(orderPageData));
+                return ok();
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");
             }
@@ -40,7 +42,8 @@ public class OrderController extends BaseController {
         try {
             final Cart currentCart = cartService.getOrCreateCart(session());
             final Cart clearedCart = cartService.clearCart(currentCart);
-            return ok(success.render());
+            //return ok(success.render());
+            return ok();
         } catch (Exception e) {
             Logger.error(e.getMessage(), e);
             return internalServerError();
