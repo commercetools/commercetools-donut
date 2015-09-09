@@ -28,6 +28,7 @@ import pactas.models.PactasCustomer;
 import play.Logger;
 import play.mvc.Http;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ import static java.util.Objects.requireNonNull;
 
 public class CartServiceImpl extends AbstractShopService implements CartService {
 
+    @Inject
     public CartServiceImpl(final SphereClient sphereClient) {
         super(sphereClient);
     }

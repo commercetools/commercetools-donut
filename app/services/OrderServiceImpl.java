@@ -8,10 +8,13 @@ import io.sphere.sdk.orders.commands.OrderFromCartCreateCommand;
 import io.sphere.sdk.orders.commands.OrderUpdateCommand;
 import io.sphere.sdk.orders.commands.updateactions.ChangePaymentState;
 
+import javax.inject.Inject;
+
 import static java.util.Objects.requireNonNull;
 
 public class OrderServiceImpl extends AbstractShopService implements OrderService{
 
+    @Inject
     public OrderServiceImpl(final SphereClient sphereClient) {
         super(sphereClient);
     }

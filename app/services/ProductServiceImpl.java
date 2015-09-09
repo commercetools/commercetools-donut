@@ -7,6 +7,7 @@ import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.queries.ProductProjectionQuery;
 import io.sphere.sdk.queries.PagedQueryResult;
 
+import javax.inject.Inject;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -16,6 +17,7 @@ public class ProductServiceImpl extends AbstractShopService implements ProductSe
 
     private final ProductProjection cachedProduct;
 
+    @Inject
     public ProductServiceImpl(final SphereClient sphereClient) {
         super(sphereClient);
         this.cachedProduct = loadProduct().orElseThrow(ProductNotFoundException::new);
