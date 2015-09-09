@@ -26,6 +26,7 @@ import io.sphere.sdk.products.attributes.AttributeAccess;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Logger;
+import play.inject.ApplicationLifecycle;
 import play.mvc.Http;
 
 import javax.inject.Inject;
@@ -40,8 +41,8 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
 
     @Inject
-    public CartServiceImpl(final SphereClient sphereClient) {
-        super(sphereClient);
+    public CartServiceImpl(final SphereClient sphereClient, final ApplicationLifecycle applicationLifecycle) {
+        super(sphereClient, applicationLifecycle);
     }
 
     @Override
@@ -81,10 +82,10 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(cartId, "'cartId' must not be null, unable to clear frequency");
         LOG.debug("Clearing frequency");
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient().execute(CustomObjectByKeyGet.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join());
+                sphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
             LOG.debug("Fetched existing CustomObject: {}", result);
-            final CustomObject<JsonNode> cleared =  sphereClient().execute(CustomObjectDeleteCommand.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join();
+            final CustomObject<JsonNode> cleared =  sphereClient().execute(CustomObjectDeleteCommand.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join();
             LOG.debug("Cleared CustomObject: {}", cleared);
         }
     }
@@ -97,7 +98,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
         final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
 
-        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(ShopKeys.FREQUENCY, updatedCart.getId(), frequency,
+        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, updatedCart.getId(), frequency,
                 new TypeReference<CustomObject<Integer>>() {
                 });
 
@@ -109,7 +110,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     public int getFrequency(final String cartId) {
         requireNonNull(cartId, "'cartId' must not be null");
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient().execute(CustomObjectByKeyGet.of(ShopKeys.FREQUENCY, cartId)).toCompletableFuture().join());
+                sphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
             return result.get().getValue().asInt();
         }
@@ -151,9 +152,9 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
         final Optional<ProductVariant> variant = product.getAllVariants().stream()
-                .filter(v -> v.getAttribute(ShopKeys.ID_MONTHLY).getValue(AttributeAccess.ofString()).equals(pactasId))
-                .filter(v -> v.getAttribute(ShopKeys.ID_TWO_WEEKS).getValue(AttributeAccess.ofString()).equals(pactasId))
-                .filter(v -> v.getAttribute(ShopKeys.ID_WEEKLY).getValue(AttributeAccess.ofString()).equals(pactasId))
+                .filter(v -> v.getAttribute(PactasKeys.ID_MONTHLY).getValue(AttributeAccess.ofString()).equals(pactasId))
+                .filter(v -> v.getAttribute(PactasKeys.ID_TWO_WEEKS).getValue(AttributeAccess.ofString()).equals(pactasId))
+                .filter(v -> v.getAttribute(PactasKeys.ID_WEEKLY).getValue(AttributeAccess.ofString()).equals(pactasId))
                 .findFirst();
         return variant;
     }

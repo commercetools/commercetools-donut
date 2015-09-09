@@ -4,7 +4,7 @@ import forms.SubscriptionFormData;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
-import play.Configuration;
+import play.Application;
 import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
@@ -20,16 +20,15 @@ import static play.data.Form.form;
 
 public class ProductController extends BaseController {
 
-    private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
+    private static final Logger.ALogger LOG = Logger.of(ProductController.class);
 
+    private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
     private final ProductService productService;
     private final CartService cartService;
 
-    private static final Logger.ALogger LOG = Logger.of(ProductController.class);
-
     @Inject
-    public ProductController(final Configuration configuration, ProductService productService, final CartService cartService) {
-        super(configuration);
+    public ProductController(final Application application, ProductService productService, final CartService cartService) {
+        super(application);
         this.productService = requireNonNull(productService, "'productService' must not be null");
         this.cartService = requireNonNull(cartService, "'cartService' must not be null");
     }

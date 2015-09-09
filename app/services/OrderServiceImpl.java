@@ -8,6 +8,7 @@ import io.sphere.sdk.orders.commands.OrderFromCartCreateCommand;
 import io.sphere.sdk.orders.commands.OrderUpdateCommand;
 import io.sphere.sdk.orders.commands.updateactions.ChangePaymentState;
 import play.Logger;
+import play.inject.ApplicationLifecycle;
 
 import javax.inject.Inject;
 
@@ -18,8 +19,8 @@ public class OrderServiceImpl extends AbstractShopService implements OrderServic
     private static final Logger.ALogger LOG = Logger.of(OrderServiceImpl.class);
 
     @Inject
-    public OrderServiceImpl(final SphereClient sphereClient) {
-        super(sphereClient);
+    public OrderServiceImpl(final SphereClient sphereClient,  final ApplicationLifecycle applicationLifecycle) {
+        super(sphereClient, applicationLifecycle);
     }
 
     @Override

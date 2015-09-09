@@ -3,7 +3,7 @@ package controllers;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductVariant;
 import models.OrderPageData;
-import play.Configuration;
+import play.Application;
 import play.Logger;
 import play.mvc.Result;
 import services.CartService;
@@ -19,8 +19,8 @@ public class OrderController extends BaseController {
     private final CartService cartService;
 
     @Inject
-    public OrderController(final Configuration configuration, final CartService cartService) {
-        super(configuration);
+    public OrderController(final Application application, final CartService cartService) {
+        super(application);
         this.cartService = requireNonNull(cartService, "'cartService' must not be null");
     }
 
