@@ -44,7 +44,7 @@ excludeFilter in (Assets, LessKeys.less) := "colors.less"  | "mixins.less"  | "o
 LessKeys.compress in Assets := true
 
 //TODO
-// no automatic js minimize in 2.4. Removed .min in template temporary
+// no automatic js minimize via sbt-coffescript plugin in 2.4. Removed .min in template temporary
 
 lazy val root = (project in file(".")).configs(IntegrationTest).settings(Defaults.itSettings:_*).enablePlugins(PlayJava, SbtWeb)
 

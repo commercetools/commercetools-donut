@@ -49,12 +49,12 @@ public class ProductController extends BaseController {
         LOG.debug("Submitting Product page");
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
-            final Optional<ProductVariant> selectedVariant = productService.getVariantFromId(productService.getProduct().get(), boundForm.get().variantId);
+            final Optional<ProductVariant> selectedVariant = productService.getVariantFromId(productService.getProduct().get(), boundForm.get().getVariantId());
             LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
             if (selectedVariant.isPresent()) {
                 final Cart currentCart = cartService.getOrCreateCart(session());
                 LOG.debug("Current Cart[cartId={}]", currentCart.getId());
-                cartService.setProductToCart(currentCart, productService.getProduct().get(), selectedVariant.get(), boundForm.get().howOften);
+                cartService.setProductToCart(currentCart, productService.getProduct().get(), selectedVariant.get(), boundForm.get().getHowOften());
                 return redirect(routes.OrderController.show());
             } else {
                 flash("error", "Product not found. Please try again.");
