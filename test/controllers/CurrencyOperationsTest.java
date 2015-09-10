@@ -2,7 +2,7 @@ package controllers;
 
 import com.google.common.base.Optional;
 import com.typesafe.config.ConfigFactory;
-import exceptions.DefaultCurrencyNotFound;
+import exceptions.DefaultCurrencyNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,8 +48,8 @@ public class CurrencyOperationsTest {
     public void throwsExceptionWhenInvalidCurrency() {
         try {
             opsWithCurrency("INVALID").currency();
-            fail("DefaultCurrencyNotFound exception expected with invalid currency");
-        } catch (DefaultCurrencyNotFound e) {
+            fail("DefaultCurrencyNotFoundException exception expected with invalid currency");
+        } catch (DefaultCurrencyNotFoundException e) {
             assertThat(e.getMessage()).isNotEmpty();
         }
     }
@@ -58,8 +58,8 @@ public class CurrencyOperationsTest {
     public void throwsExceptionWhenNoneConfigured() {
         try {
             opsWithCurrency(Optional.<String>absent()).currency();
-            fail("DefaultCurrencyNotFound exception expected with missing currency");
-        } catch (DefaultCurrencyNotFound e) {
+            fail("DefaultCurrencyNotFoundException exception expected with missing currency");
+        } catch (DefaultCurrencyNotFoundException e) {
             assertThat(e.getMessage()).isNotEmpty();
         }
     }
