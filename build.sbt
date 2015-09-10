@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
   "io.sphere.sdk.jvm" % "sphere-convenience" % "1.0.0-M16" withSources(),
   //"io.sphere.sdk.jvm" %% "sphere-play-2_4-java-client" % "1.0.0-M16" withSources(),
   "com.novocode" % "junit-interface" % "0.11" % "test,it",
-  "org.assertj" % "assertj-core" % "2.0.0" % "test,it", // change to 3.0.0 with Java 8
+  "org.assertj" % "assertj-core" % "3.0.0" % "test,it",
   "org.mockito" % "mockito-core" % "1.8.5"  % "test",
   "com.fasterxml.jackson.core" % "jackson-annotations" % "2.6.0",
   "com.fasterxml.jackson.core" % "jackson-core" % "2.6.0",
