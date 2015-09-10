@@ -6,6 +6,8 @@ import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.client.SphereClientFactory;
 import io.sphere.sdk.http.ApacheHttpClientAdapter;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
+import pactas.Pactas;
+import pactas.PactasImpl;
 import play.Configuration;
 import play.Environment;
 import play.Logger;
@@ -34,7 +36,7 @@ public class DonutShopModule extends AbstractModule {
         bind(CartService.class).to(CartServiceImpl.class);
         bind(OrderService.class).to(OrderServiceImpl.class);
         bind(ProductService.class).to(ProductServiceImpl.class);
-//        bind(Pactas.class).to(PactasImpl.class);
+        bind(Pactas.class).to(PactasImpl.class);
     }
 
     @Provides
