@@ -11,6 +11,7 @@ import play.Logger;
 import play.inject.ApplicationLifecycle;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,10 +28,10 @@ public class OrderServiceImpl extends AbstractShopService implements OrderServic
     public Order createOrder(final Cart cart) {
         requireNonNull(cart, "'cart' must not be null");
         LOG.debug("Creating Order from Cart[cartId={}]", cart.getId());
-        final Order order = sphereClient().execute(OrderFromCartCreateCommand.of(cart)).toCompletableFuture().join();
-        final ChangePaymentState action = ChangePaymentState.of(PaymentState.PAID);
-        final Order updatedOrder = sphereClient().execute(OrderUpdateCommand.of(order, action)).toCompletableFuture().join();
-        LOG.debug("Created Order: {}", updatedOrder);
-        return updatedOrder;
+        return Optional.of(sphereClient().execute(OrderFromCartCreateCommand.of(cart)).toCompletableFuture().join())
+                .map((order) -> {
+                    final ChangePaymentState action = ChangePaymentState.of(PaymentState.PAID);
+                    return sphereClient().execute(OrderUpdateCommand.of(order, action)).toCompletableFuture().join();
+                }).orElseThrow(() -> new RuntimeException("unbale to create Order"));
     }
 }
