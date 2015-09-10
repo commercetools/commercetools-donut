@@ -22,6 +22,8 @@
     <logger name="services" level="DEBUG"/>
     <logger name="pactas" level="DEBUG"/>
     <logger name="inject" level="DEBUG"/>
+    <logger name="handler" level="DEBUG"/>
+
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
