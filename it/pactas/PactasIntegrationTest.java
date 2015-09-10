@@ -6,6 +6,8 @@ import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PactasIntegrationTest {
@@ -16,13 +18,13 @@ public class PactasIntegrationTest {
 
     @Test
     public void fetchesContract() throws Exception {
-        final PactasContract contract = PACTAS.fetchContract(CONTRACT_ID).get();
+        final PactasContract contract = PACTAS.fetchContract(CONTRACT_ID).get(2000, TimeUnit.MILLISECONDS);
         assertThat(contract.getId()).isEqualTo(CONTRACT_ID);
     }
 
     @Test
     public void fetchesCustomer() throws Exception {
-        final PactasCustomer customer = PACTAS.fetchCustomer(CUSTOMER_ID).get();
+        final PactasCustomer customer = PACTAS.fetchCustomer(CUSTOMER_ID).get(2000, TimeUnit.MILLISECONDS);
         assertThat(customer.getId()).isEqualTo(CUSTOMER_ID);
     }
 
