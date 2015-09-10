@@ -7,6 +7,7 @@ import play.Application;
 import play.Logger;
 import play.mvc.Result;
 import services.CartService;
+import views.html.order;
 
 import javax.inject.Inject;
 
@@ -35,8 +36,8 @@ public class OrderController extends BaseController {
                 LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant != null ? selectedVariant.getId() : selectedVariant);
                 LOG.debug("Selected frequency: {}", selectedFrequency);
                 final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
-                //return ok(order.render(orderPageData));
-                return ok();
+                return ok(order.render(orderPageData));
+                //return ok();
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");
             }
