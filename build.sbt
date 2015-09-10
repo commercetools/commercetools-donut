@@ -1,5 +1,3 @@
-//import play.Project._
-
 organization := "io.sphere.shop"
 
 name := "sphere-donut"
@@ -10,7 +8,6 @@ libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
   javaWs,
-  "io.sphere" %% "sphere-play-sdk" % "0.67.0" withSources(),
   "io.sphere.sdk.jvm" % "sphere-models" % "1.0.0-M16" withSources(),
   "io.sphere.sdk.jvm" % "sphere-java-client-apache-async" % "1.0.0-M16" withSources(),
   "org.apache.httpcomponents" % "httpasyncclient" % "4.0.2",
@@ -26,18 +23,15 @@ libraryDependencies ++= Seq(
   //play.Project.component("play-test") % "it"
 )
 
-//javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
-//
-//javaSource in IntegrationTest := baseDirectory.value / "it"
-//
-//resourceDirectory in IntegrationTest := baseDirectory.value / "it/resources"
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
-////Template keys
-//TwirlKeys.templateImports ++= Seq(
-//  "forms._",
-//  "io.sphere.client.model._",
-//  "io.sphere.client.shop.model._"
-//)
+javaSource in IntegrationTest := baseDirectory.value / "it"
+
+resourceDirectory in IntegrationTest := baseDirectory.value / "it/resources"
+
+// Play provides two styles of routers, one expects its actions to be injected, the
+// other, legacy style, accesses its actions statically.
+routesGenerator := InjectedRoutesGenerator
 
 includeFilter in (Assets, LessKeys.less) := "*.less"
 excludeFilter in (Assets, LessKeys.less) := "colors.less"  | "mixins.less"  | "order.less"  | "product.less"
@@ -47,7 +41,3 @@ LessKeys.compress in Assets := true
 // no automatic js minimize via sbt-coffescript plugin in 2.4. Removed .min in template temporary
 
 lazy val root = (project in file(".")).configs(IntegrationTest).settings(Defaults.itSettings:_*).enablePlugins(PlayJava, SbtWeb)
-
-// Play provides two styles of routers, one expects its actions to be injected, the
-// other, legacy style, accesses its actions statically.
-routesGenerator := InjectedRoutesGenerator

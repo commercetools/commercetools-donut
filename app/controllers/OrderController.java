@@ -8,6 +8,7 @@ import play.Logger;
 import play.mvc.Result;
 import services.CartService;
 import views.html.order;
+import views.html.success;
 
 import javax.inject.Inject;
 
@@ -37,7 +38,6 @@ public class OrderController extends BaseController {
                 LOG.debug("Selected frequency: {}", selectedFrequency);
                 final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
                 return ok(order.render(orderPageData));
-                //return ok();
             } else {
                 flash("error", "Missing frequency of delivery. Please try selecting it again.");
             }
@@ -50,8 +50,7 @@ public class OrderController extends BaseController {
             LOG.debug("Submitting Order details page");
             final Cart currentCart = cartService.getOrCreateCart(session());
             final Cart clearedCart = cartService.clearCart(currentCart);
-            //return ok(success.render());
-            return ok();
+            return ok(success.render());
         } catch (Exception e) {
             Logger.error(e.getMessage(), e);
             return internalServerError();

@@ -74,7 +74,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         }).collect(Collectors.toList());
         final Cart result = sphereClient().execute(CartUpdateCommand.of(cart, items)).toCompletableFuture().join();
         clearFrequency(result.getId());
-        LOG.debug("Cleared cart: {}", result);
+        LOG.debug("Cleared Cart[cartId={}]", result.getId());
         return result;
     }
 
@@ -84,9 +84,9 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
                 sphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
-            LOG.debug("Fetched existing CustomObject: {}", result);
+            LOG.debug("Fetched existing CustomObject[container={}]", result.get().getContainer());
             final CustomObject<JsonNode> cleared =  sphereClient().execute(CustomObjectDeleteCommand.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join();
-            LOG.debug("Cleared CustomObject: {}", cleared);
+            LOG.debug("Cleared CustomObject[container={}]", cleared.getContainer());
         }
     }
 
@@ -103,7 +103,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 });
 
         final CustomObject<Integer> customObject = sphereClient().execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
-        LOG.debug("Setting new or update CustomObject: {}", customObject);
+        LOG.debug("Setting new or update CustomObject[container={}]", customObject.getContainer());
     }
 
     @Override
