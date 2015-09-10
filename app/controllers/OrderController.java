@@ -46,25 +46,15 @@ public class OrderController extends BaseController {
     }
 
     public Result submit() {
-        try {
-            LOG.debug("Submitting Order details page");
-            final Cart currentCart = cartService.getOrCreateCart(session());
-            final Cart clearedCart = cartService.clearCart(currentCart);
-            return ok(success.render());
-        } catch (Exception e) {
-            Logger.error(e.getMessage(), e);
-            return internalServerError();
-        }
+        LOG.debug("Submitting Order details page");
+        final Cart currentCart = cartService.getOrCreateCart(session());
+        cartService.clearCart(currentCart);
+        return ok(success.render());
     }
 
     public Result clear() {
-        try {
-            final Cart currentCart = cartService.getOrCreateCart(session());
-            final Cart clearedCart = cartService.clearCart(currentCart);
-            return redirect(routes.ProductController.show());
-        } catch (Exception e) {
-            Logger.error(e.getMessage(), e);
-            return internalServerError();
-        }
+        final Cart currentCart = cartService.getOrCreateCart(session());
+        cartService.clearCart(currentCart);
+        return redirect(routes.ProductController.show());
     }
 }
