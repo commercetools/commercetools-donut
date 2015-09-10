@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "io.sphere.sdk.jvm" % "sphere-java-client-apache-async" % "1.0.0-M16" withSources(),
   "org.apache.httpcomponents" % "httpasyncclient" % "4.0.2",
   "io.sphere.sdk.jvm" % "sphere-convenience" % "1.0.0-M16" withSources(),
-  "io.sphere.sdk.jvm" %% "sphere-play-2_4-java-client" % "1.0.0-M16" withSources(),
+  //"io.sphere.sdk.jvm" %% "sphere-play-2_4-java-client" % "1.0.0-M16" withSources(),
   "com.novocode" % "junit-interface" % "0.11" % "test,it",
   "org.assertj" % "assertj-core" % "2.0.0" % "test,it", // change to 3.0.0 with Java 8
   "com.fasterxml.jackson.core" % "jackson-annotations" % "2.6.0",
@@ -26,31 +26,25 @@ libraryDependencies ++= Seq(
   //play.Project.component("play-test") % "it"
 )
 
-//lessEntryPoints := baseDirectory.value / "app" / "assets" / "stylesheets" * "*.less"
-
-//templatesImport ++= Seq(
-//  "forms._",
-//  "io.sphere.client.model._",
-//  "io.sphere.client.shop.model._"
-//)
-//
 //javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 //
 //javaSource in IntegrationTest := baseDirectory.value / "it"
 //
 //resourceDirectory in IntegrationTest := baseDirectory.value / "it/resources"
 
-TwirlKeys.templateImports ++= Seq(
-  "forms._",
-  "io.sphere.client.model._",
-  "io.sphere.client.shop.model._"
-)
+////Template keys
+//TwirlKeys.templateImports ++= Seq(
+//  "forms._",
+//  "io.sphere.client.model._",
+//  "io.sphere.client.shop.model._"
+//)
 
 includeFilter in (Assets, LessKeys.less) := "*.less"
-
+excludeFilter in (Assets, LessKeys.less) := "colors.less"  | "mixins.less"  | "order.less"  | "product.less"
 LessKeys.compress in Assets := true
 
-excludeFilter in (Assets, LessKeys.less) := "colors.less"  | "mixins.less"  | "order.less"  | "product.less"
+//TODO
+// no automatic js minimize in 2.4. Removed .min in template temporary
 
 lazy val root = (project in file(".")).configs(IntegrationTest).settings(Defaults.itSettings:_*).enablePlugins(PlayJava, SbtWeb)
 
