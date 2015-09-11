@@ -17,8 +17,6 @@ import javax.inject.Singleton;
 
 import static java.util.Objects.requireNonNull;
 
-//import pactas.PactasImpl;
-
 public class DonutShopModule extends AbstractModule {
 
     private static final Logger.ALogger LOG = Logger.of(DonutShopModule.class);

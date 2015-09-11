@@ -40,12 +40,6 @@ public class DonutHttpErrorHandler extends DefaultHttpErrorHandler {
     }
 
     @Override
-    protected F.Promise<Result> onDevServerError(final Http.RequestHeader requestHeader, final UsefulException e) {
-        LOG.debug("Handle onDevServerError(), uri={}, method={}, exceptionId={}", requestHeader.uri(), requestHeader.method(), e.id);
-        return F.Promise.<Result>pure(Results.internalServerError(format("A [DEV]-Server error occurred, exceptionId=%s", e.id)));
-    }
-
-    @Override
     protected F.Promise<Result> onForbidden(final Http.RequestHeader requestHeader, final String message) {
         LOG.debug("Handle onForbidden(), uri={}, method={}", requestHeader.uri(), requestHeader.method());
         return F.Promise.<Result>pure(Results.forbidden("You're not allowed to access this resource"));

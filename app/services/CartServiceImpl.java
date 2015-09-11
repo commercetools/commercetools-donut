@@ -106,16 +106,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
             LOG.debug("Setting new or update CustomObject[container={}]", customObject.getContainer());
             return null;
         });
-//        final Cart clearedCart = clearCart(cart);
-//        final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
-//        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
-//
-//        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, updatedCart.getId(), frequency,
-//                new TypeReference<CustomObject<Integer>>() {
-//                });
-//
-//        final CustomObject<Integer> customObject = sphereClient().execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
-//        LOG.debug("Setting new or update CustomObject[container={}]", customObject.getContainer());
     }
 
     @Override
@@ -151,17 +141,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                     final Cart cartWithAddress = sphereClient().execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address))).toCompletableFuture().join();
                     return cartWithAddress;
                 }).orElseThrow(() -> new RuntimeException("Unable to create Order"));
-
-
-//        final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-//        LOG.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
-//        final ProductVariant variant = getVariantInContract(product, contract);
-//        final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
-//        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();
-//
-//        final Address address = AddressBuilder.of(customer.getCompleteAddress()).build();
-//        final Cart cartWithAddress = sphereClient().execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address))).toCompletableFuture().join();
-//        return cartWithAddress;
     }
 
     private ProductVariant getVariantInContract(final ProductProjection product, final PactasContract contract) {
