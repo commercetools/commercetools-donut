@@ -17,7 +17,7 @@ import java.util.Map;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static utils.CurrencyOperations.CURRENCY_CONFIG;
 import static utils.CurrencyOperations.parseCode;
 
@@ -44,24 +44,15 @@ public class CurrencyOperationsTest {
         assertThat(opsWithCurrency("EUR").currency()).isEqualTo(EUR);
     }
 
+
     @Test
     public void throwsExceptionWhenInvalidCurrency() {
-        try {
-            opsWithCurrency("INVALID").currency();
-            fail("DefaultCurrencyNotFoundException exception expected with invalid currency");
-        } catch (DefaultCurrencyNotFoundException e) {
-            assertThat(e.getMessage()).isNotEmpty();
-        }
+        assertThatThrownBy(() -> opsWithCurrency("INVALID").currency()).isInstanceOf(DefaultCurrencyNotFoundException.class);
     }
 
     @Test
     public void throwsExceptionWhenNoneConfigured() {
-        try {
-            opsWithCurrency(Optional.<String>absent()).currency();
-            fail("DefaultCurrencyNotFoundException exception expected with missing currency");
-        } catch (DefaultCurrencyNotFoundException e) {
-            assertThat(e.getMessage()).isNotEmpty();
-        }
+        assertThatThrownBy(() -> opsWithCurrency(Optional.<String>absent()).currency()).isInstanceOf(DefaultCurrencyNotFoundException.class);
     }
 
     @Test
