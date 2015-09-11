@@ -15,8 +15,8 @@ public abstract class BaseController extends Controller {
 
     @Inject
     public BaseController(final Application application) {
-        final Application app = requireNonNull(application, "'application' must not be null");
-        this.currencyOps = CurrencyOperations.of(requireNonNull(app.configuration(), "'configuration' must not be null"));
+        final Application app = requireNonNull(application);
+        this.currencyOps = CurrencyOperations.of(requireNonNull(app.configuration()));
     }
 
     protected Currency currency() {

@@ -47,7 +47,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public Cart getOrCreateCart(final Http.Session session) {
-        requireNonNull(session, "'session' must not be null, unable to create or get Cart");
+        requireNonNull(session);
         return Optional.ofNullable(session.get(SessionKeys.CART_ID))
                 .map(String::valueOf)
                 .map(cardId -> {
@@ -66,7 +66,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public Cart clearCart(final Cart cart) {
-        requireNonNull(cart, "'cart' must not be null, unable to clear Cart");
+        requireNonNull(cart);
         LOG.debug("Clearing cart");
         final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
             final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
@@ -79,7 +79,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     private void clearFrequency(final String cartId) {
-        requireNonNull(cartId, "'cartId' must not be null, unable to clear frequency");
+        requireNonNull(cartId);
         LOG.debug("Clearing frequency");
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
                 sphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join());
@@ -93,25 +93,21 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
-        requireNonNull(cart, "'cart' must not be null");
-        requireNonNull(product, "'product' must not be null");
-        try {
-            final Cart clearedCart = requireNonNull(clearCart(cart), "'clearedCart' must not be null");
-            final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
-            final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
-            final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, updatedCart.getId(),
-                    frequency, new TypeReference<CustomObject<Integer>>() {
-                    });
-            final CustomObject<Integer> customObject = sphereClient().execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
-            LOG.debug("Setting new or update CustomObject[container={}]", customObject.getContainer());
-        } catch (Exception e) {
-            LOG.debug("An error occured. Unable to set Product to Cart with Pactas Info");
-        }
+        requireNonNull(cart);
+        requireNonNull(product);
+        final Cart clearedCart = requireNonNull(clearCart(cart));
+        final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
+        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
+        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, updatedCart.getId(),
+                frequency, new TypeReference<CustomObject<Integer>>() {
+                });
+        final CustomObject<Integer> customObject = sphereClient().execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
+        LOG.debug("Setting new or update CustomObject[container={}]", customObject.getContainer());
     }
 
     @Override
     public int getFrequency(final String cartId) {
-        requireNonNull(cartId, "'cartId' must not be null");
+        requireNonNull(cartId);
         final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
                 sphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join());
         if (result.isPresent()) {
@@ -122,7 +118,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public Optional<ProductVariant> getSelectedVariant(final Cart cart) {
-        requireNonNull(cart, "'cart' must not be null");
+        requireNonNull(cart);
         final Optional<ProductVariant> selectedVariant =
                 (!cart.getLineItems().isEmpty())
                         ? Optional.ofNullable(cart.getLineItems().get(0).getVariant())
@@ -132,22 +128,16 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     @Override
     public Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
-        requireNonNull("'product' must not be null");
-        requireNonNull("'contract' must not be null");
-        requireNonNull("'customer' must not be null");
-        Cart cart = null;
-        try {
-            cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-            LOG.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
-            final ProductVariant variant = getVariantInContract(product, contract);
-            final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
-            final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();
-            final Address address = AddressBuilder.of(customer.getCompleteAddress()).build();
-            cart = sphereClient().execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address))).toCompletableFuture().join();
-        } catch (Exception e) {
-            LOG.debug("An error occured. Unable to create Cart with Pactas Info");
-        }
-        return cart;
+        requireNonNull(product);
+        requireNonNull(contract);
+        requireNonNull(customer);
+        final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
+        LOG.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
+        final ProductVariant variant = getVariantInContract(product, contract);
+        final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
+        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();
+        final Address address = AddressBuilder.of(customer.getCompleteAddress()).build();
+        return sphereClient().execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address))).toCompletableFuture().join();
     }
 
     private ProductVariant getVariantInContract(final ProductProjection product, final PactasContract contract) {

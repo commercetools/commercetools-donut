@@ -23,7 +23,7 @@ public class OrderController extends BaseController {
     @Inject
     public OrderController(final Application application, final CartService cartService) {
         super(application);
-        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
+        this.cartService = requireNonNull(cartService);
     }
 
     public Result show() {

@@ -26,7 +26,7 @@ public class OrderServiceImpl extends AbstractShopService implements OrderServic
 
     @Override
     public Order createOrder(final Cart cart) {
-        requireNonNull(cart, "'cart' must not be null");
+        requireNonNull(cart);
         LOG.debug("Creating Order from Cart[cartId={}]", cart.getId());
         return Optional.of(sphereClient().execute(OrderFromCartCreateCommand.of(cart)).toCompletableFuture().join())
                 .map((order) -> {

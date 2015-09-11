@@ -29,8 +29,8 @@ public class ProductController extends BaseController {
     @Inject
     public ProductController(final Application application, ProductService productService, final CartService cartService) {
         super(application);
-        this.productService = requireNonNull(productService, "'productService' must not be null");
-        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
+        this.productService = requireNonNull(productService);
+        this.cartService = requireNonNull(cartService);
     }
 
     public Result show() {

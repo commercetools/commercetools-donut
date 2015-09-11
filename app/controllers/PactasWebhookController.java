@@ -36,10 +36,10 @@ public class PactasWebhookController extends BaseController {
                                    final OrderService orderService, final ProductService productService,
                                    final Pactas pactas) {
         super(application);
-        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
-        this.orderService = requireNonNull(orderService, "'orderService' must not be null");
-        this.productService = requireNonNull(productService, "'productService' must not be null");
-        this.pactas = requireNonNull(pactas, "'pactas' must not be null");
+        this.cartService = requireNonNull(cartService);
+        this.orderService = requireNonNull(orderService);
+        this.productService = requireNonNull(productService);
+        this.pactas = requireNonNull(pactas);
     }
 
     /* Method called by Pactas every time an order must be placed (weekly, monthly...) */

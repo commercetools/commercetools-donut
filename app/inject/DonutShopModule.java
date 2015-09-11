@@ -25,8 +25,8 @@ public class DonutShopModule extends AbstractModule {
     private final Configuration configuration;
 
     public DonutShopModule(final Environment environment, final Configuration configuration) {
-        this.environment = requireNonNull(environment, "'environment' must not be null");
-        this.configuration = requireNonNull(configuration, "'configuration' must not be null");
+        this.environment = requireNonNull(environment);
+        this.configuration = requireNonNull(configuration);
     }
 
     @Override

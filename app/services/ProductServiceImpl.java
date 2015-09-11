@@ -30,7 +30,7 @@ public class ProductServiceImpl extends AbstractShopService implements ProductSe
 
     @Override
     public Optional<ProductVariant> getVariantFromId(ProductProjection product, int variantId) {
-        requireNonNull(product, "'product' must not be null");
+        requireNonNull(product);
         return Optional.ofNullable(product.getVariant(variantId));
     }
 

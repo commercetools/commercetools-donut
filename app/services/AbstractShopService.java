@@ -18,8 +18,8 @@ public abstract class AbstractShopService {
 
     @Inject
     protected AbstractShopService(final SphereClient sphereClient, final ApplicationLifecycle applicationLifecycle) {
-        this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
-        this.applicationLifecycle = requireNonNull(applicationLifecycle, "'applicationLifecycle' must not be null");
+        this.sphereClient = requireNonNull(sphereClient);
+        this.applicationLifecycle = requireNonNull(applicationLifecycle);
         this.applicationLifecycle.addStopHook(() -> {
             if (this.sphereClient != null) {
                 this.sphereClient.close();
