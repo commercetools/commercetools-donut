@@ -15,13 +15,13 @@ libraryDependencies ++= Seq(
   //"io.sphere.sdk.jvm" %% "sphere-play-2_4-java-client" % "1.0.0-M16" withSources(),
   "com.novocode" % "junit-interface" % "0.11" % "test,it",
   "org.assertj" % "assertj-core" % "3.1.0" % "test,it",
-  "org.mockito" % "mockito-core" % "1.8.5"  % "test",
+  "org.mockito" % "mockito-core" % "1.8.5"  % "test, it",
   "com.fasterxml.jackson.core" % "jackson-annotations" % "2.6.0",
   "com.fasterxml.jackson.core" % "jackson-core" % "2.6.0",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.0",
   "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % "2.6.0",
-  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.6.0"
-   //play.Project.component("play-test") % "it"
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.6.0",
+  "com.typesafe.play" %% "play-test" % "2.4.3" % "it"
 )
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
