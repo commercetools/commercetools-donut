@@ -2,6 +2,7 @@ package services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Singleton;
 import exceptions.PlanVariantNotFound;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
+@Singleton
 public class CartServiceImpl extends AbstractShopService implements CartService {
 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);

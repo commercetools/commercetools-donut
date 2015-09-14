@@ -1,6 +1,7 @@
 package pactas;
 
 import com.google.common.net.HttpHeaders;
+import com.google.inject.Singleton;
 import pactas.models.Authorization;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
@@ -14,6 +15,7 @@ import utils.JsonUtils;
 
 import javax.inject.Inject;
 
+@Singleton
 public class PactasImpl implements Pactas {
     public static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 

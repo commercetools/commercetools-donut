@@ -1,5 +1,6 @@
 package services;
 
+import com.google.inject.Singleton;
 import exceptions.ProductNotFoundException;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
@@ -15,6 +16,7 @@ import java.util.concurrent.CompletionStage;
 
 import static java.util.Objects.requireNonNull;
 
+@Singleton
 public class ProductServiceImpl extends AbstractShopService implements ProductService {
 
     private static final Logger.ALogger LOG = Logger.of(ProductServiceImpl.class);

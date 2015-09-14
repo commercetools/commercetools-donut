@@ -1,5 +1,6 @@
 package services;
 
+import com.google.inject.Singleton;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.orders.Order;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
+@Singleton
 public class OrderServiceImpl extends AbstractShopService implements OrderService {
 
     private static final Logger.ALogger LOG = Logger.of(OrderServiceImpl.class);
