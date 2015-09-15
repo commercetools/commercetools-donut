@@ -2,6 +2,7 @@ package inject;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.client.SphereClientFactory;
 import io.sphere.sdk.http.ApacheHttpClientAdapter;
@@ -47,5 +48,13 @@ public class DonutShopModule extends AbstractModule {
         final SphereClient sphereClient = factory.createClient(projectKey, clientId, clientSecret);
         LOG.debug("Created SphereClient");
         return sphereClient;
+    }
+
+    @Provides
+    @Singleton
+    public PlayJavaSphereClient playJavaSphereClient()  {
+        final PlayJavaSphereClient playJavaSphereClient = PlayJavaSphereClient.of(sphereClient());
+        LOG.debug("Created PlaySphereClient");
+        return playJavaSphereClient;
     }
 }
