@@ -1,5 +1,6 @@
 package services;
 
+import com.google.inject.Singleton;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
@@ -10,9 +11,9 @@ import io.sphere.sdk.orders.commands.OrderUpdateCommand;
 import io.sphere.sdk.orders.commands.updateactions.ChangePaymentState;
 import play.Logger;
 import play.inject.ApplicationLifecycle;
+import play.libs.F;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -36,6 +37,17 @@ public class OrderServiceImpl extends AbstractShopService implements OrderServic
                 .map((order) -> {
                     final ChangePaymentState action = ChangePaymentState.of(PaymentState.PAID);
                     return sphereClient().execute(OrderUpdateCommand.of(order, action)).toCompletableFuture().join();
-                }).orElseThrow(() -> new RuntimeException("unbale to create Order"));
+                }).orElseThrow(() -> new RuntimeException("Unbable to create Order"));
+    }
+
+    @Override
+    public F.Promise<Order> _createOrder(final Cart cart) {
+        requireNonNull(cart);
+        LOG.debug("Creating Order from Cart[cartId={}]", cart.getId());
+        final F.Promise<Order> orderPromise = playJavaSphereClient().execute(OrderFromCartCreateCommand.of(cart));
+        return orderPromise.flatMap(order -> {
+            final ChangePaymentState action = ChangePaymentState.of(PaymentState.PAID);
+            return playJavaSphereClient().execute(OrderUpdateCommand.of(order, action));
+        });
     }
 }

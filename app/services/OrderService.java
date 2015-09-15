@@ -2,6 +2,7 @@ package services;
 
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.orders.Order;
+import play.libs.F;
 
 /**
  * Business service that provides access to the SPHERE.IO Order API.
@@ -15,4 +16,6 @@ public interface OrderService {
      * @return the newly created {@code Order}, must not be null
      */
     Order createOrder(Cart cart);
+
+    F.Promise<Order> _createOrder(Cart cart);
 }

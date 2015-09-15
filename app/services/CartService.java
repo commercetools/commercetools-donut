@@ -5,6 +5,7 @@ import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
+import play.libs.F;
 import play.mvc.Http;
 
 import java.util.Optional;
@@ -24,6 +25,8 @@ public interface CartService {
      */
     Cart getOrCreateCart(Http.Session session);
 
+    F.Promise<Cart> _getOrCreateCart(Http.Session session);
+
     /**
      * Resets an existing {@code Cart}.
      * It performs two API calls, one to remove the Carts LineItems and another one to clear the {@code CustomObject}
@@ -34,6 +37,7 @@ public interface CartService {
      */
     Cart clearCart(final Cart cart);
 
+    F.Promise<Cart> _clearCart(final Cart cart);
 
     /**
      * Adds the user selected {@code ProductVariant} of the {@code ProductProjection} with a given frequency to the
@@ -46,6 +50,8 @@ public interface CartService {
      */
     void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency);
 
+    F.Promise<Cart> _setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency);
+
     /**
      * Returns the value of the {@code CustomObject} named PactasKeys.FREQUENCY, that is bound to the {@code Cart}
      * with the given cardId.
@@ -54,6 +60,8 @@ public interface CartService {
      * @return the value of the {@code CustomObject}. If no {@code CustomObject} found, it returns 0
      */
     int getFrequency(final String cartId);
+
+    F.Promise<Integer> _getFrequency(final String cartId);
 
     /**
      * Gets an optional, selected {@code ProductVariant} from the users {@code Cart}
@@ -72,4 +80,6 @@ public interface CartService {
      * @return
      */
     Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
+
+    F.Promise<Cart> _createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
 }

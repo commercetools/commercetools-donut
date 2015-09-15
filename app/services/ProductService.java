@@ -2,6 +2,7 @@ package services;
 
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
+import play.libs.F;
 
 import java.util.Optional;
 
@@ -19,7 +20,6 @@ public interface ProductService {
      */
     Optional<ProductVariant> getVariantFromId(final ProductProjection product, final int variantId);
 
-
     /**
      * Return the optional {@code ProductProjection}.
      * Because this shop is just a simple demonstration, it consists of only
@@ -30,4 +30,6 @@ public interface ProductService {
      * @return optional {@code ProductProjection}, the result of the Product API call, maybe empty
      */
     Optional<ProductProjection> getProduct();
+
+    F.Promise<Optional<ProductProjection>> _getProduct();
 }
