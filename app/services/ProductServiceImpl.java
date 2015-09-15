@@ -1,6 +1,5 @@
 package services;
 
-import com.google.inject.Singleton;
 import exceptions.ProductNotFoundException;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
@@ -11,6 +10,7 @@ import play.Logger;
 import play.inject.ApplicationLifecycle;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 

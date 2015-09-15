@@ -1,7 +1,6 @@
 package pactas;
 
 import com.google.common.net.HttpHeaders;
-import com.google.inject.Singleton;
 import pactas.models.Authorization;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
@@ -14,6 +13,7 @@ import play.mvc.Http;
 import utils.JsonUtils;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class PactasImpl implements Pactas {

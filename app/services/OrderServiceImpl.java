@@ -1,6 +1,5 @@
 package services;
 
-import com.google.inject.Singleton;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.orders.Order;
@@ -12,6 +11,7 @@ import play.Logger;
 import play.inject.ApplicationLifecycle;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;

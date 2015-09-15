@@ -2,7 +2,6 @@ package services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.inject.Singleton;
 import exceptions.PlanVariantNotFound;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
@@ -31,6 +30,7 @@ import play.inject.ApplicationLifecycle;
 import play.mvc.Http;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
