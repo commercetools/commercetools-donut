@@ -1,5 +1,6 @@
 package services;
 
+import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import play.Logger;
 import play.inject.ApplicationLifecycle;
@@ -15,11 +16,14 @@ public abstract class AbstractShopService {
 
     private final SphereClient sphereClient;
     private final ApplicationLifecycle applicationLifecycle;
+    private final PlayJavaSphereClient playJavaSphereClient;
 
     @Inject
-    protected AbstractShopService(final SphereClient sphereClient, final ApplicationLifecycle applicationLifecycle) {
+    protected AbstractShopService(final SphereClient sphereClient, final ApplicationLifecycle applicationLifecycle,
+                                  final PlayJavaSphereClient playJavaSphereClient) {
         this.sphereClient = requireNonNull(sphereClient);
         this.applicationLifecycle = requireNonNull(applicationLifecycle);
+        this.playJavaSphereClient = playJavaSphereClient;
         this.applicationLifecycle.addStopHook(() -> {
             if (this.sphereClient != null) {
                 this.sphereClient.close();
@@ -31,5 +35,9 @@ public abstract class AbstractShopService {
 
     protected SphereClient sphereClient() {
         return sphereClient;
+    }
+
+    protected PlayJavaSphereClient playJavaSphereClient() {
+        return playJavaSphereClient;
     }
 }

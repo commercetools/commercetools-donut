@@ -11,6 +11,7 @@ import io.sphere.sdk.carts.commands.updateactions.AddLineItem;
 import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
 import io.sphere.sdk.carts.commands.updateactions.SetShippingAddress;
 import io.sphere.sdk.carts.queries.CartByIdGet;
+import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.customobjects.CustomObject;
 import io.sphere.sdk.customobjects.CustomObjectDraft;
@@ -43,8 +44,9 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
 
     @Inject
-    public CartServiceImpl(final SphereClient sphereClient, final ApplicationLifecycle applicationLifecycle) {
-        super(sphereClient, applicationLifecycle);
+    public CartServiceImpl(final SphereClient sphereClient, final ApplicationLifecycle applicationLifecycle,
+                           final PlayJavaSphereClient playJavaSphereClient) {
+        super(sphereClient, applicationLifecycle, playJavaSphereClient);
     }
 
     @Override

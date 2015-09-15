@@ -1,6 +1,7 @@
 package services;
 
 import exceptions.ProductNotFoundException;
+import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
@@ -24,8 +25,9 @@ public class ProductServiceImpl extends AbstractShopService implements ProductSe
     private final ProductProjection cachedProduct;
 
     @Inject
-    public ProductServiceImpl(final SphereClient sphereClient,  final ApplicationLifecycle applicationLifecycle) {
-        super(sphereClient, applicationLifecycle);
+    public ProductServiceImpl(final SphereClient sphereClient,  final ApplicationLifecycle applicationLifecycle,
+                              final PlayJavaSphereClient playJavaSphereClient) {
+        super(sphereClient, applicationLifecycle, playJavaSphereClient);
         this.cachedProduct = loadProduct().orElseThrow(ProductNotFoundException::new);
         LOG.debug("Fetched Product from Sphere: {}", cachedProduct.getName());
     }

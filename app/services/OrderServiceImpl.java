@@ -1,6 +1,7 @@
 package services;
 
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.orders.Order;
 import io.sphere.sdk.orders.PaymentState;
@@ -22,8 +23,9 @@ public class OrderServiceImpl extends AbstractShopService implements OrderServic
     private static final Logger.ALogger LOG = Logger.of(OrderServiceImpl.class);
 
     @Inject
-    public OrderServiceImpl(final SphereClient sphereClient,  final ApplicationLifecycle applicationLifecycle) {
-        super(sphereClient, applicationLifecycle);
+    public OrderServiceImpl(final SphereClient sphereClient,  final ApplicationLifecycle applicationLifecycle,
+                            final PlayJavaSphereClient playJavaSphereClient) {
+        super(sphereClient, applicationLifecycle, playJavaSphereClient);
     }
 
     @Override
