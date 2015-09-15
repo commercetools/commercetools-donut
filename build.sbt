@@ -1,3 +1,5 @@
+import play.sbt.PlayImport
+
 organization := "io.sphere.shop"
 
 name := "sphere-donut"
@@ -21,7 +23,8 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.0",
   "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % "2.6.0",
   "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.6.0",
-  "com.typesafe.play" %% "play-test" % "2.4.3" % "it"
+   PlayImport.component("play-test") % "it"
+//  "com.typesafe.play" %% "play-test" % "2.4.3" % "it"
 )
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
