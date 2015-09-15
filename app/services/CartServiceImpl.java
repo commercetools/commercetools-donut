@@ -185,12 +185,15 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     @Override
     public F.Promise<Integer> _getFrequency(final String cartId) {
         requireNonNull(cartId);
+        final F.Promise<CustomObject<JsonNode>> customObjectPromise = playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
         //TODO question: can this be null at all?
-        final Optional<F.Promise<CustomObject<JsonNode>>> customObjectPromise = Optional.ofNullable(
-                playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)));
-        return (customObjectPromise.isPresent())
-                ? customObjectPromise.get().map((customObject) -> customObject.getValue().asInt())
-                : F.Promise.pure(0);
+        if(customObjectPromise != null) {
+            return customObjectPromise.map(customObject -> customObject.getValue().asInt());
+        }
+        return F.Promise.pure(0);
+//        return (customObjectPromise.isPresent())
+//                ? customObjectPromise.get().map(customObject -> customObject.getValue().asInt())
+//                : F.Promise.pure(0);
     }
 
     @Override

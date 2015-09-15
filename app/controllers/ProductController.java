@@ -1,12 +1,15 @@
 package controllers;
 
+import exceptions.ProductNotFoundException;
 import forms.SubscriptionFormData;
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
 import play.Application;
 import play.Logger;
 import play.data.Form;
+import play.libs.F;
 import play.mvc.Result;
 import services.CartService;
 import services.ProductService;
@@ -43,6 +46,22 @@ public class ProductController extends BaseController {
         LOG.debug("Selected frequency: {}", selectedFrequency);
         final ProductPageData productPageData = new ProductPageData(productService.getProduct().get(), selectedVariant, selectedFrequency);
         return ok(index.render(productPageData));
+    }
+
+    public F.Promise<Result> _show() {
+        LOG.debug("Display Product page");
+        return cartService._getOrCreateCart(session()).flatMap(currentCart -> {
+
+            final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
+            final F.Promise<Optional<ProductProjection>> productPromise = productService._getProduct();
+            final F.Promise<Integer> selectedFrequencyPromise = cartService._getFrequency(currentCart.getId());
+
+            return productPromise.flatMap(productProjection -> selectedFrequencyPromise.map(selectedFrequency -> {
+                final ProductPageData productPageData = new ProductPageData(productProjection.orElseThrow(ProductNotFoundException::new),
+                        selectedVariant, selectedFrequency);
+                return ok(index.render(productPageData));
+            }));
+        });
     }
 
     public Result submit() {
