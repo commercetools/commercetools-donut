@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import play.api.mvc.RequestHeader;
+import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Http.Request;
 import play.test.FakeApplication;
@@ -83,17 +84,16 @@ public class CartServiceIntegrationTest {
         assertThat(result).isEqualTo(1);
     }
 
-    //TODO: NullPointerException
-//    @Test
-//    public void _testGetFrequency() {
-//        final Cart cart = cartService._getOrCreateCart(productController.session()).get(2000);
-//        final ProductProjection product = productService._getProduct().get(2000).orElseThrow(ProductNotFoundException::new);
-//        final Cart cartWithProduct = cartService._setProductToCart(cart, product, product.getMasterVariant(), 1).get(2000);
-//        final F.Promise<Integer> result = cartService._getFrequency(cartWithProduct.getId());
-//        assertThat(result).isNotNull();
-//        assertThat(result.get(2000)).isNotNull();
-//        assertThat(result.get(2000)).isEqualTo(1);
-//    }
+    @Test
+    public void _testGetFrequency() {
+        final Cart cart = cartService._getOrCreateCart(productController.session()).get(2000);
+        final ProductProjection product = productService._getProduct().get(2000).orElseThrow(ProductNotFoundException::new);
+        final Cart cartWithProduct = cartService._setProductToCart(cart, product, product.getMasterVariant(), 1).get(2000);
+        final F.Promise<Integer> result = cartService._getFrequency(cartWithProduct.getId());
+        assertThat(result).isNotNull();
+        assertThat(result.get(2000)).isNotNull();
+        assertThat(result.get(2000)).isEqualTo(1);
+    }
 
     @Test
     public void testGetSelectedVariant() {

@@ -32,6 +32,7 @@ import play.inject.ApplicationLifecycle;
 import play.libs.F;
 import play.mvc.Http;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
@@ -76,8 +77,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 .map(cardId -> {
                             LOG.debug("Fetching existing Cart[cartId={}]", cardId);
                             return playJavaSphereClient().execute(CartByIdGet.of(cardId));
-                        }
-                )
+                        })
                 .orElseGet(() -> playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))));
         return cartPromise.map(cart -> {
             LOG.debug("Created new Cart[cartId={}]", cart.getId());
@@ -185,15 +185,16 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     @Override
     public F.Promise<Integer> _getFrequency(final String cartId) {
         requireNonNull(cartId);
-        final F.Promise<CustomObject<JsonNode>> customObjectPromise = playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
-        //TODO question: can this be null at all?
-        if(customObjectPromise != null) {
-            return customObjectPromise.map(customObject -> customObject.getValue().asInt());
-        }
-        return F.Promise.pure(0);
-//        return (customObjectPromise.isPresent())
-//                ? customObjectPromise.get().map(customObject -> customObject.getValue().asInt())
-//                : F.Promise.pure(0);
+        F.Promise<CustomObject<JsonNode>> customObjectPromise = playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
+        return customObjectPromise.map(nullableCustomObject -> extractFrequency(nullableCustomObject));
+    }
+
+    private Integer extractFrequency(@Nullable final CustomObject<JsonNode> nullableCustomObject) {
+        final int result = Optional.ofNullable(nullableCustomObject)
+                .map(customObject -> customObject.getValue().asInt())
+                .orElse(0);
+        LOG.debug("Extracted frequency: {}", result);
+        return result;
     }
 
     @Override
@@ -222,14 +223,12 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(contract);
         requireNonNull(customer);
         final F.Promise<Cart> createdCartPromise = playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
-        final F.Promise<Cart> updatedCartPromise = createdCartPromise.flatMap(createdCart -> {
+        return createdCartPromise.flatMap(createdCart -> {
             LOG.debug("Created new Cart[cartId={}] with Pactas info", createdCart.getId());
             final ProductVariant variant = getVariantInContract(product, contract);
-            final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
-            final F.Promise<Cart> updatedCart = playJavaSphereClient().execute(CartUpdateCommand.of(createdCart, action));
-            return updatedCart;
-        });
-        return updatedCartPromise.flatMap(updatedCart -> {
+            final AddLineItem action = AddLineItem.of(product, variant.getId(), 1);
+            return playJavaSphereClient().execute(CartUpdateCommand.of(createdCart, action));
+        }).flatMap(updatedCart -> {
             final Address address = AddressBuilder.of(customer.getCompleteAddress()).build();
             return playJavaSphereClient().execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address)));
         });
@@ -241,6 +240,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
+        requireNonNull(pactasId);
         return product.getAllVariants().stream().map(variant -> {
                     final String monthly = variant.getAttribute(PactasKeys.ID_MONTHLY).getValue(AttributeAccess.ofString());
                     final String twoWeeks = variant.getAttribute(PactasKeys.ID_TWO_WEEKS).getValue(AttributeAccess.ofString());

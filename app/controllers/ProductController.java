@@ -1,6 +1,7 @@
 package controllers;
 
 import exceptions.ProductNotFoundException;
+import exceptions.ProductVariantNotFoundException;
 import forms.SubscriptionFormData;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
@@ -36,51 +37,43 @@ public class ProductController extends BaseController {
         this.cartService = requireNonNull(cartService);
     }
 
-    public Result show() {
+    public F.Promise<Result> show() {
         LOG.debug("Display Product page");
-        final Cart currentCart = cartService.getOrCreateCart(session());
-        LOG.debug("Current Cart[cartId={}]", currentCart.getId());
-        final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
-        LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
-        final int selectedFrequency = cartService.getFrequency(currentCart.getId());
-        LOG.debug("Selected frequency: {}", selectedFrequency);
-        final ProductPageData productPageData = new ProductPageData(productService.getProduct().get(), selectedVariant, selectedFrequency);
-        return ok(index.render(productPageData));
+        return cartService._getOrCreateCart(session()).flatMap(
+                currentCart -> {
+                    final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
+                    final F.Promise<Optional<ProductProjection>> productPromise = productService._getProduct();
+                    final F.Promise<Integer> selectedFrequencyPromise = cartService._getFrequency(currentCart.getId());
+                    return productPromise.flatMap(productProjection -> selectedFrequencyPromise.map(selectedFrequency -> {
+                        final ProductPageData productPageData = new ProductPageData(productProjection.orElseThrow(ProductNotFoundException::new),
+                                selectedVariant, selectedFrequency);
+                        return ok(index.render(productPageData));
+                    }));
+                });
     }
 
-    public F.Promise<Result> _show() {
-        LOG.debug("Display Product page");
-        return cartService._getOrCreateCart(session()).flatMap(currentCart -> {
-
-            final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
-            final F.Promise<Optional<ProductProjection>> productPromise = productService._getProduct();
-            final F.Promise<Integer> selectedFrequencyPromise = cartService._getFrequency(currentCart.getId());
-
-            return productPromise.flatMap(productProjection -> selectedFrequencyPromise.map(selectedFrequency -> {
-                final ProductPageData productPageData = new ProductPageData(productProjection.orElseThrow(ProductNotFoundException::new),
-                        selectedVariant, selectedFrequency);
-                return ok(index.render(productPageData));
-            }));
-        });
-    }
-
-    public Result submit() {
+    public F.Promise<Result> submit() {
         LOG.debug("Submitting Product page");
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
-            final Optional<ProductVariant> selectedVariant = productService.getVariantFromId(productService.getProduct().get(), boundForm.get().getVariantId());
-            LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
-            if (selectedVariant.isPresent()) {
-                final Cart currentCart = cartService.getOrCreateCart(session());
-                LOG.debug("Current Cart[cartId={}]", currentCart.getId());
-                cartService.setProductToCart(currentCart, productService.getProduct().get(), selectedVariant.get(), boundForm.get().getHowOften());
-                return redirect(routes.OrderController.show());
-            } else {
-                flash("error", "Product not found. Please try again.");
-            }
+            final SubscriptionFormData subscriptionFormData = boundForm.get();
+            final int frequency = subscriptionFormData.getHowOften();
+            final int variantId = subscriptionFormData.getVariantId();
+            return setVariantToCart(frequency, variantId)
+                    .map(cart -> redirect(routes.OrderController.show()));
         } else {
             flash("error", "Please select a box and how often you want it.");
+            return F.Promise.pure(redirect(routes.ProductController.show()));
         }
-        return redirect(routes.ProductController.show());
+    }
+
+    private F.Promise<Cart> setVariantToCart(int frequency, int variantId) {
+        final F.Promise<Optional<ProductProjection>> productPromise = productService._getProduct();
+        final F.Promise<Cart> currentCartPromise = cartService._getOrCreateCart(session());
+        return productPromise.flatMap(productProjectionOptional -> {
+            final ProductProjection productProjection = productProjectionOptional.orElseThrow(ProductNotFoundException::new);
+            final ProductVariant selectedVariant = Optional.ofNullable(productProjection.getVariant(variantId)).orElseThrow(ProductVariantNotFoundException::new);
+            return currentCartPromise.flatMap(currentCart -> cartService._setProductToCart(currentCart, productProjection, selectedVariant, frequency));
+        });
     }
 }

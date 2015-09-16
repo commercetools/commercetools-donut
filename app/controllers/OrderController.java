@@ -5,6 +5,7 @@ import io.sphere.sdk.products.ProductVariant;
 import models.OrderPageData;
 import play.Application;
 import play.Logger;
+import play.libs.F;
 import play.mvc.Result;
 import services.CartService;
 import views.html.order;
@@ -26,35 +27,43 @@ public class OrderController extends BaseController {
         this.cartService = requireNonNull(cartService);
     }
 
-    public Result show() {
+    public F.Promise<Result> show() {
         LOG.debug("Display Order details page");
-        final Cart currentCart = cartService.getOrCreateCart(session());
-        LOG.debug("Current Cart[cartId={}]", currentCart.getId());
-        if (!currentCart.getLineItems().isEmpty()) {
-            final int selectedFrequency = cartService.getFrequency(currentCart.getId());
-            if (selectedFrequency > 0) {
-                final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
-                LOG.debug("Selected ProductVariant[variantId={}]", selectedVariant != null ? selectedVariant.getId() : selectedVariant);
-                LOG.debug("Selected frequency: {}", selectedFrequency);
-                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
-                return ok(order.render(orderPageData));
-            } else {
-                flash("error", "Missing frequency of delivery. Please try selecting it again.");
+        final F.Promise<Cart> currentCartPromise = cartService._getOrCreateCart(session());
+        return currentCartPromise.flatMap(currentCart -> {
+            if (!currentCart.getLineItems().isEmpty()) {
+                //TODO
+                //sometimes this seems to be 0 and the flash message occurs, sometimes nt
+                final F.Promise<Integer> selectedFrequencyPromise = cartService._getFrequency(currentCart.getId());
+                final F.Promise<Result> resultPromise = selectedFrequencyPromise.map(selectedFrequency -> {
+                    if (selectedFrequency > 0) {
+                        final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
+                        final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
+                        return ok(order.render(orderPageData));
+                    } else {
+                        flash("error", "Missing frequency of delivery. Please try selecting it again.");
+                        return redirect(routes.ProductController.show());
+                    }
+                });
+                return resultPromise;
             }
-        }
-        return redirect(routes.ProductController.show());
+            flash("error", "Please select a box and how often you want it.");
+            return F.Promise.pure(redirect(routes.ProductController.show()));
+        });
     }
 
-    public Result submit() {
+    //TODO check is doing nothing than clear the cart?!
+    public F.Promise<Result> submit() {
         LOG.debug("Submitting Order details page");
-        final Cart currentCart = cartService.getOrCreateCart(session());
-        cartService.clearCart(currentCart);
-        return ok(success.render());
+        final F.Promise<Cart> currentCartPromise = cartService._getOrCreateCart(session());
+        return currentCartPromise.map(currentCart -> ok(success.render()));
     }
 
-    public Result clear() {
-        final Cart currentCart = cartService.getOrCreateCart(session());
-        cartService.clearCart(currentCart);
-        return redirect(routes.ProductController.show());
+    public F.Promise<Result> clear() {
+        final F.Promise<Cart> currentCartPromise = cartService._getOrCreateCart(session());
+        return currentCartPromise.flatMap(currentCart -> {
+            final F.Promise<Cart> clearedCartPromise = cartService._clearCart(currentCart);
+            return clearedCartPromise.map(cart -> redirect(routes.ProductController.show()));
+        });
     }
 }
