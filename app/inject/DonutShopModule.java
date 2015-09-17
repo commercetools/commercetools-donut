@@ -1,12 +1,8 @@
 package inject;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
-import io.sphere.sdk.client.SphereClientFactory;
-import io.sphere.sdk.http.ApacheHttpClientAdapter;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import pactas.Pactas;
 import pactas.PactasImpl;
 import play.Configuration;
@@ -32,29 +28,11 @@ public class DonutShopModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(CartService.class).to(CartServiceImpl.class);
-        bind(OrderService.class).to(OrderServiceImpl.class);
-        bind(ProductService.class).to(ProductServiceImpl.class);
-        bind(Pactas.class).to(PactasImpl.class);
-    }
-
-    @Provides
-    @Singleton
-    public SphereClient sphereClient() {
-        final String projectKey = configuration.getString("sphere.project");
-        final String clientId = configuration.getString("sphere.clientId");
-        final String clientSecret = configuration.getString("sphere.clientSecret");
-        final SphereClientFactory factory = SphereClientFactory.of(() -> ApacheHttpClientAdapter.of(HttpAsyncClients.createDefault()));
-        final SphereClient sphereClient = factory.createClient(projectKey, clientId, clientSecret);
-        LOG.debug("Created SphereClient");
-        return sphereClient;
-    }
-
-    @Provides
-    @Singleton
-    public PlayJavaSphereClient playJavaSphereClient()  {
-        final PlayJavaSphereClient playJavaSphereClient = PlayJavaSphereClient.of(sphereClient());
-        LOG.debug("Created PlaySphereClient");
-        return playJavaSphereClient;
+        bind(SphereClient.class).toProvider(SphereClientProvider.class).in(Singleton.class);
+        bind(PlayJavaSphereClient.class).toProvider(PlayJavaSphereClientProvider.class).in(Singleton.class);
+        bind(CartService.class).to(CartServiceImpl.class).in(Singleton.class);
+        bind(OrderService.class).to(OrderServiceImpl.class).in(Singleton.class);
+        bind(ProductService.class).to(ProductServiceImpl.class).in(Singleton.class);
+        bind(Pactas.class).to(PactasImpl.class).in(Singleton.class);
     }
 }
