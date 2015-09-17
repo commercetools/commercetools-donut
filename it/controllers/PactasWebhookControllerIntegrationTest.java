@@ -18,6 +18,7 @@ import play.test.FakeApplication;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.StrictAssertions.assertThat;
 import static play.mvc.Http.Status.OK;
@@ -54,7 +55,7 @@ public class PactasWebhookControllerIntegrationTest {
     @Test(expected = PactasException.class)
     public void testCreateOrderFromSubscription() throws Exception {
         final PactasWebhookController controller =  fakeApplication.injector().instanceOf(PactasWebhookController.class);
-        final Result result = controller.createOrderFromSubscription();
+        final Result result = controller.createOrderFromSubscription().get(2000, TimeUnit.MILLISECONDS);
         assertThat(result.status()).isEqualTo(OK);
     }
 
