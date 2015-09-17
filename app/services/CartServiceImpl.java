@@ -13,7 +13,6 @@ import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
 import io.sphere.sdk.carts.commands.updateactions.SetShippingAddress;
 import io.sphere.sdk.carts.queries.CartByIdGet;
 import io.sphere.sdk.client.PlayJavaSphereClient;
-import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.customobjects.CustomObject;
 import io.sphere.sdk.customobjects.CustomObjectDraft;
 import io.sphere.sdk.customobjects.commands.CustomObjectDeleteCommand;
@@ -46,38 +45,19 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
 
     @Inject
-    public CartServiceImpl(final SphereClient sphereClient, final ApplicationLifecycle applicationLifecycle,
+    public CartServiceImpl(final ApplicationLifecycle applicationLifecycle,
                            final PlayJavaSphereClient playJavaSphereClient) {
-        super(sphereClient, applicationLifecycle, playJavaSphereClient);
+        super(applicationLifecycle, playJavaSphereClient);
     }
 
     @Override
-    public Cart getOrCreateCart(final Http.Session session) {
-        requireNonNull(session);
-        return Optional.ofNullable(session.get(SessionKeys.CART_ID))
-                .map(String::valueOf)
-                .map(cardId -> {
-                            final Cart cart = sphereClient().execute(CartByIdGet.of(cardId)).toCompletableFuture().join();
-                            LOG.debug("Fetched existing Cart[cartId={}]", cart.getId());
-                            return cart;
-                        }
-                )
-                .orElseGet(() -> {
-                    final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-                    LOG.debug("Created new Cart[cartId={}]", cart.getId());
-                    session.put(SessionKeys.CART_ID, cart.getId());
-                    return cart;
-                });
-    }
-
-    @Override
-    public F.Promise<Cart> _getOrCreateCart(final Http.Session session) {
+    public F.Promise<Cart> getOrCreateCart(final Http.Session session) {
         requireNonNull(session);
         final F.Promise<Cart> cartPromise = Optional.ofNullable(session.get(SessionKeys.CART_ID))
                 .map(cardId -> {
-                            LOG.debug("Fetching existing Cart[cartId={}]", cardId);
-                            return playJavaSphereClient().execute(CartByIdGet.of(cardId));
-                        })
+                    LOG.debug("Fetching existing Cart[cartId={}]", cardId);
+                    return playJavaSphereClient().execute(CartByIdGet.of(cardId));
+                })
                 .orElseGet(() -> playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))));
         return cartPromise.map(cart -> {
             LOG.debug("Created new Cart[cartId={}]", cart.getId());
@@ -87,24 +67,10 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override
-    public Cart clearCart(final Cart cart) {
+    public F.Promise<Cart> clearCart(final Cart cart) {
         requireNonNull(cart);
         LOG.debug("Clearing cart");
-        final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
-            final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
-            return removeLineItem;
-        }).collect(Collectors.toList());
-        final Cart result = sphereClient().execute(CartUpdateCommand.of(cart, items)).toCompletableFuture().join();
-        clearFrequency(result.getId());
-        LOG.debug("Cleared Cart[cartId={}]", result.getId());
-        return result;
-    }
-
-    @Override
-    public F.Promise<Cart> _clearCart(final Cart cart) {
-        requireNonNull(cart);
-        LOG.debug("Clearing cart");
-        _clearFrequency(cart.getId());
+        clearFrequency(cart.getId());
         final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
             final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
             return removeLineItem;
@@ -116,47 +82,19 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         });
     }
 
-    private void _clearFrequency(final String cartId) {
+    private void clearFrequency(final String cartId) {
         requireNonNull(cartId);
         LOG.debug("Clearing frequency");
         final Optional<F.Promise<CustomObject<JsonNode>>> result = Optional.ofNullable(
                 playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)));
         if (result.isPresent()) {
-            sphereClient().execute(CustomObjectDeleteCommand.of(PactasKeys.FREQUENCY, cartId));
+            playJavaSphereClient().execute(CustomObjectDeleteCommand.of(PactasKeys.FREQUENCY, cartId));
             LOG.debug("Cleared CustomObject");
         }
-
-    }
-
-    private void clearFrequency(final String cartId) {
-        requireNonNull(cartId);
-        LOG.debug("Clearing frequency");
-        final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join());
-        if (result.isPresent()) {
-            LOG.debug("Fetched existing CustomObject[container={}]", result.get().getContainer());
-            final CustomObject<JsonNode> cleared = sphereClient().execute(CustomObjectDeleteCommand.of(PactasKeys.FREQUENCY, cartId))
-                    .toCompletableFuture().join();
-            LOG.debug("Cleared CustomObject[container={}]", cleared.getContainer());
-        }
     }
 
     @Override
-    public void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
-        requireNonNull(cart);
-        requireNonNull(product);
-        final Cart clearedCart = requireNonNull(clearCart(cart));
-        final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), frequency);
-        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(clearedCart, action)).toCompletableFuture().join();
-        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, updatedCart.getId(),
-                frequency, new TypeReference<CustomObject<Integer>>() {
-                });
-        final CustomObject<Integer> customObject = sphereClient().execute(CustomObjectUpsertCommand.of(draft)).toCompletableFuture().join();
-        LOG.debug("Setting new or update CustomObject[container={}]", customObject.getContainer());
-    }
-
-    @Override
-    public F.Promise<Cart> _setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
+    public F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
         requireNonNull(cart);
         requireNonNull(product);
         requireNonNull(variant);
@@ -166,26 +104,15 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         final F.Promise<CustomObject<Integer>> customObjectPromise = playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
         customObjectPromise.onRedeem((customObject) -> LOG.debug("Set CustomObject[container={}]", customObject.getContainer()));
 
-        final F.Promise<Cart> clearedCartPromise = requireNonNull(_clearCart(cart));
+        final F.Promise<Cart> clearedCartPromise = requireNonNull(clearCart(cart));
         return clearedCartPromise.flatMap(clearedCart -> playJavaSphereClient()
                 .execute(CartUpdateCommand.of(clearedCart, AddLineItem.of(product.getId(), variant.getId(), frequency))));
     }
 
     @Override
-    public int getFrequency(final String cartId) {
+    public F.Promise<Integer> getFrequency(final String cartId) {
         requireNonNull(cartId);
-        final Optional<CustomObject<JsonNode>> result = Optional.ofNullable(
-                sphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)).toCompletableFuture().join());
-        if (result.isPresent()) {
-            return result.get().getValue().asInt();
-        }
-        return 0;
-    }
-
-    @Override
-    public F.Promise<Integer> _getFrequency(final String cartId) {
-        requireNonNull(cartId);
-        F.Promise<CustomObject<JsonNode>> customObjectPromise = playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
+        final F.Promise<CustomObject<JsonNode>> customObjectPromise = playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
         return customObjectPromise.map(nullableCustomObject -> extractFrequency(nullableCustomObject));
     }
 
@@ -204,21 +131,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override
-    public Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
-        requireNonNull(product);
-        requireNonNull(contract);
-        requireNonNull(customer);
-        final Cart cart = sphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))).toCompletableFuture().join();
-        LOG.debug("Created new Cart[cartId={}] with Pactas info", cart.getId());
-        final ProductVariant variant = getVariantInContract(product, contract);
-        final AddLineItem action = AddLineItem.of(product.getId(), variant.getId(), 1);
-        final Cart updatedCart = sphereClient().execute(CartUpdateCommand.of(cart, action)).toCompletableFuture().join();
-        final Address address = AddressBuilder.of(customer.getCompleteAddress()).build();
-        return sphereClient().execute(CartUpdateCommand.of(updatedCart, SetShippingAddress.of(address))).toCompletableFuture().join();
-    }
-
-    @Override
-    public F.Promise<Cart> _createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
+    public F.Promise<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
         requireNonNull(product);
         requireNonNull(contract);
         requireNonNull(customer);

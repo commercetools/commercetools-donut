@@ -29,12 +29,12 @@ public class OrderController extends BaseController {
 
     public F.Promise<Result> show() {
         LOG.debug("Display Order details page");
-        final F.Promise<Cart> currentCartPromise = cartService._getOrCreateCart(session());
+        final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
         return currentCartPromise.flatMap(currentCart -> {
             if (!currentCart.getLineItems().isEmpty()) {
                 //TODO
-                //sometimes this seems to be 0 and the flash message occurs, sometimes nt
-                final F.Promise<Integer> selectedFrequencyPromise = cartService._getFrequency(currentCart.getId());
+                //sometimes this seems to be 0 and the flash message occurs, sometimes not
+                final F.Promise<Integer> selectedFrequencyPromise = cartService.getFrequency(currentCart.getId());
                 final F.Promise<Result> resultPromise = selectedFrequencyPromise.map(selectedFrequency -> {
                     if (selectedFrequency > 0) {
                         final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
@@ -55,14 +55,14 @@ public class OrderController extends BaseController {
     //TODO check is doing nothing than clear the cart?!
     public F.Promise<Result> submit() {
         LOG.debug("Submitting Order details page");
-        final F.Promise<Cart> currentCartPromise = cartService._getOrCreateCart(session());
+        final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
         return currentCartPromise.map(currentCart -> ok(success.render()));
     }
 
     public F.Promise<Result> clear() {
-        final F.Promise<Cart> currentCartPromise = cartService._getOrCreateCart(session());
+        final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
         return currentCartPromise.flatMap(currentCart -> {
-            final F.Promise<Cart> clearedCartPromise = cartService._clearCart(currentCart);
+            final F.Promise<Cart> clearedCartPromise = cartService.clearCart(currentCart);
             return clearedCartPromise.map(cart -> redirect(routes.ProductController.show()));
         });
     }
