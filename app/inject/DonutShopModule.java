@@ -5,26 +5,11 @@ import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import pactas.Pactas;
 import pactas.PactasImpl;
-import play.Configuration;
-import play.Environment;
-import play.Logger;
 import services.*;
 
 import javax.inject.Singleton;
 
-import static java.util.Objects.requireNonNull;
-
 public class DonutShopModule extends AbstractModule {
-
-    private static final Logger.ALogger LOG = Logger.of(DonutShopModule.class);
-
-    private final Environment environment;
-    private final Configuration configuration;
-
-    public DonutShopModule(final Environment environment, final Configuration configuration) {
-        this.environment = requireNonNull(environment);
-        this.configuration = requireNonNull(configuration);
-    }
 
     @Override
     protected void configure() {
