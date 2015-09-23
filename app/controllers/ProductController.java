@@ -31,8 +31,9 @@ public class ProductController extends BaseController {
     private final CartService cartService;
 
     @Inject
-    public ProductController(final Application application, ProductService productService, final CartService cartService) {
-        super(application);
+    public ProductController(final Application application, ProductService productService, final CartService cartService,
+                             final ProductProjection productProjection) {
+        super(application, productProjection);
         this.productService = requireNonNull(productService);
         this.cartService = requireNonNull(cartService);
     }

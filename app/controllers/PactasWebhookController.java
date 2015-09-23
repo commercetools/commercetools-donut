@@ -36,8 +36,8 @@ public class PactasWebhookController extends BaseController {
     @Inject
     public PactasWebhookController(final Application application, final CartService cartService,
                                    final OrderService orderService, final ProductService productService,
-                                   final Pactas pactas) {
-        super(application);
+                                   final Pactas pactas, final ProductProjection productProjection) {
+        super(application, productProjection);
         this.cartService = requireNonNull(cartService);
         this.orderService = requireNonNull(orderService);
         this.productService = requireNonNull(productService);

@@ -1,6 +1,7 @@
 package controllers;
 
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.OrderPageData;
 import play.Application;
@@ -22,8 +23,9 @@ public class OrderController extends BaseController {
     private final CartService cartService;
 
     @Inject
-    public OrderController(final Application application, final CartService cartService) {
-        super(application);
+    public OrderController(final Application application, final CartService cartService,
+                           final ProductProjection productProjection) {
+        super(application, productProjection);
         this.cartService = requireNonNull(cartService);
     }
 
