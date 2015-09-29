@@ -6,7 +6,6 @@ import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import play.api.mvc.RequestHeader;
 import play.libs.F;
@@ -31,7 +30,8 @@ public class CartServiceIntegrationTest {
     private CartService cartService;
     private ProductProjection productProjection;
 
-    private static final long ALLOWED_TIMEOUT = 3000;
+    private static final long ALLOWED_TIMEOUT = 5000;
+    private static final int FREQUENCY = 1;
 
     @BeforeClass
     public static void startFakeApplication() {
@@ -62,36 +62,37 @@ public class CartServiceIntegrationTest {
     @Test
     public void testSetProductToCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection, productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection,
+                productProjection.getMasterVariant(), FREQUENCY).get(ALLOWED_TIMEOUT);
         assertThat(cartWithProduct.getLineItems().size()).isEqualTo(1);
     }
 
     @Test
     public void testClearCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection, productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection,
+                productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
         final Cart clearedCart = cartService.clearCart(cartWithProduct).get(ALLOWED_TIMEOUT);
         assertThat(clearedCart.getLineItems()).isEmpty();
     }
 
     @Test
-    @Ignore //TODO fails, always 0
     public void testGetFrequency() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection, productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection,
+                productProjection.getMasterVariant(), FREQUENCY).get(ALLOWED_TIMEOUT);
         final F.Promise<Integer> result = cartService.getFrequency(cartWithProduct.getId());
-        assertThat(result).isNotNull();
         assertThat(result.get(ALLOWED_TIMEOUT)).isNotNull();
-        assertThat(result.get(ALLOWED_TIMEOUT)).isEqualTo(1);
+        assertThat(result.get(ALLOWED_TIMEOUT)).isEqualTo(FREQUENCY);
     }
 
-    @Test
-    public void testGetSelectedVariant() {
-        //TODO
-    }
-
-    @Test
-    public void testCreateCartWithPactasInfo() {
-        //TODO
-    }
+//    @Test
+//    public void testGetSelectedVariant() {
+//        //TODO
+//    }
+//
+//    @Test
+//    public void testCreateCartWithPactasInfo() {
+//        //TODO
+//    }
 }

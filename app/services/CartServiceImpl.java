@@ -84,7 +84,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     private void clearFrequency(final String cartId) {
         requireNonNull(cartId);
-        LOG.debug("Clearing frequency");
+        LOG.debug("Clearing CustomObject");
         final Optional<F.Promise<CustomObject<JsonNode>>> result = Optional.ofNullable(
                 playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)));
         if (result.isPresent()) {
@@ -94,25 +94,36 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override
-    public F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency) {
+    public F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant,
+                                            final int frequency) {
         requireNonNull(cart);
         requireNonNull(product);
         requireNonNull(variant);
-        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, cart.getId(), frequency,
-                new TypeReference<CustomObject<Integer>>() {
-                });
-        final F.Promise<CustomObject<Integer>> customObjectPromise = playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
-        customObjectPromise.onRedeem((customObject) -> LOG.debug("Set CustomObject[container={}]", customObject.getContainer()));
+        final F.Promise<Cart> clearedCartPromise = clearCart(cart);
+        return clearedCartPromise.flatMap(clearedCart -> {
+            final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, cart.getId(),
+                    frequency, new TypeReference<CustomObject<Integer>>() {
+                    });
+            final F.Promise<CustomObject<Integer>> customObjectPromise =
+                    playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
 
-        final F.Promise<Cart> clearedCartPromise = requireNonNull(clearCart(cart));
-        return clearedCartPromise.flatMap(clearedCart -> playJavaSphereClient()
-                .execute(CartUpdateCommand.of(clearedCart, AddLineItem.of(product.getId(), variant.getId(), frequency))));
+            return customObjectPromise.flatMap(customObject -> {
+                LOG.debug("Set CustomObject[container={}, key={}, value={}]", customObject.getContainer(),
+                        customObject.getKey(), customObject.getValue());
+                return playJavaSphereClient().execute(CartUpdateCommand.of(clearedCart, AddLineItem.of(product.getId(),
+                        variant.getId(), frequency)));
+            });
+        });
     }
 
     @Override
     public F.Promise<Integer> getFrequency(final String cartId) {
         requireNonNull(cartId);
-        final F.Promise<CustomObject<JsonNode>> customObjectPromise = playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
+        final CustomObjectByKeyGet<JsonNode> of = CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId);
+        final F.Promise<CustomObject<JsonNode>> customObjectPromise =
+                playJavaSphereClient().execute(of);
+        customObjectPromise.onRedeem(customObject -> LOG.debug("Fetched CustomObject[container={}, key={}, value={}]",
+                customObject.getContainer(), customObject.getKey(), customObject.getValue()));
         return customObjectPromise.map(nullableCustomObject -> extractFrequency(nullableCustomObject));
     }
 
