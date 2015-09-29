@@ -34,9 +34,9 @@ public class OrderController extends BaseController {
         final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
         return currentCartPromise.flatMap(currentCart -> {
             if (!currentCart.getLineItems().isEmpty()) {
-                //TODO
-                //sometimes this seems to be 0 and the flash message occurs, sometimes not
+
                 final F.Promise<Integer> selectedFrequencyPromise = cartService.getFrequency(currentCart.getId());
+                selectedFrequencyPromise.onRedeem(integer -> System.out.println("OrderController received frequency: " + integer));
                 final F.Promise<Result> resultPromise = selectedFrequencyPromise.map(selectedFrequency -> {
                     if (selectedFrequency > 0) {
                         final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();

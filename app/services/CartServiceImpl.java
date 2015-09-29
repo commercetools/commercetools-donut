@@ -58,18 +58,21 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                     LOG.debug("Fetching existing Cart[cartId={}]", cardId);
                     return playJavaSphereClient().execute(CartByIdGet.of(cardId));
                 })
-                .orElseGet(() -> playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR))));
+                .orElseGet(() -> {
+                    LOG.debug("Creating new Cart");
+                    return playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
+                });
         return cartPromise.map(cart -> {
-            LOG.debug("Created new Cart[cartId={}]", cart.getId());
+            LOG.debug("Putting new cartId[{}] into Session", cart.getId());
             session.put(SessionKeys.CART_ID, cart.getId());
             return cart;
         });
     }
 
+
     @Override
     public F.Promise<Cart> clearCart(final Cart cart) {
         requireNonNull(cart);
-        LOG.debug("Clearing cart");
         clearFrequency(cart.getId());
         final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
             final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
@@ -84,7 +87,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     private void clearFrequency(final String cartId) {
         requireNonNull(cartId);
-        LOG.debug("Clearing CustomObject");
         final Optional<F.Promise<CustomObject<JsonNode>>> result = Optional.ofNullable(
                 playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)));
         if (result.isPresent()) {
@@ -119,11 +121,8 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     @Override
     public F.Promise<Integer> getFrequency(final String cartId) {
         requireNonNull(cartId);
-        final CustomObjectByKeyGet<JsonNode> of = CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId);
         final F.Promise<CustomObject<JsonNode>> customObjectPromise =
-                playJavaSphereClient().execute(of);
-        customObjectPromise.onRedeem(customObject -> LOG.debug("Fetched CustomObject[container={}, key={}, value={}]",
-                customObject.getContainer(), customObject.getKey(), customObject.getValue()));
+                playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
         return customObjectPromise.map(nullableCustomObject -> extractFrequency(nullableCustomObject));
     }
 
@@ -148,7 +147,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(customer);
         final F.Promise<Cart> createdCartPromise = playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
         return createdCartPromise.flatMap(createdCart -> {
-            LOG.debug("Created new Cart[cartId={}] with Pactas info", createdCart.getId());
+            LOG.debug("Created new Cart with Pactas info[cartId={}] with Pactas info", createdCart.getId());
             final ProductVariant variant = getVariantInContract(product, contract);
             final AddLineItem action = AddLineItem.of(product, variant.getId(), 1);
             return playJavaSphereClient().execute(CartUpdateCommand.of(createdCart, action));

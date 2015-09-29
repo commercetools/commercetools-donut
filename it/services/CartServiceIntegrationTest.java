@@ -56,7 +56,8 @@ public class CartServiceIntegrationTest {
     @Test
     public void testGetOrCreateCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        assertThat(cart.getId()).isNotNull();
+        final Cart existing = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
+        assertThat(cart.getId()).isEqualTo(existing.getId());
     }
 
     @Test
@@ -71,7 +72,7 @@ public class CartServiceIntegrationTest {
     public void testClearCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
         final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection,
-                productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
+                productProjection.getMasterVariant(), FREQUENCY).get(ALLOWED_TIMEOUT);
         final Cart clearedCart = cartService.clearCart(cartWithProduct).get(ALLOWED_TIMEOUT);
         assertThat(clearedCart.getLineItems()).isEmpty();
     }
