@@ -1,6 +1,5 @@
 package controllers;
 
-import exceptions.ProductNotFoundException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.orders.Order;
 import io.sphere.sdk.products.ProductProjection;
@@ -16,7 +15,6 @@ import play.mvc.Http;
 import play.mvc.Result;
 import services.CartService;
 import services.OrderService;
-import services.ProductService;
 import utils.JsonUtils;
 
 import javax.inject.Inject;
@@ -31,16 +29,14 @@ public class PactasWebhookController extends BaseController {
     private final Pactas pactas;
     private final OrderService orderService;
     private final CartService cartService;
-    private final ProductService productService;
 
     @Inject
     public PactasWebhookController(final Application application, final CartService cartService,
-                                   final OrderService orderService, final ProductService productService,
-                                   final Pactas pactas, final ProductProjection productProjection) {
+                                   final OrderService orderService, final Pactas pactas,
+                                   final ProductProjection productProjection) {
         super(application, productProjection);
         this.cartService = requireNonNull(cartService);
         this.orderService = requireNonNull(orderService);
-        this.productService = requireNonNull(productService);
         this.pactas = requireNonNull(pactas);
     }
 
@@ -49,7 +45,6 @@ public class PactasWebhookController extends BaseController {
         final Optional<String> contractId = parseContractId(request());
         if (contractId.isPresent()) {
             final F.Promise<PactasContract> pactasContractPromise = pactas.fetchContract(contractId.get());
-            final F.Promise<Optional<ProductProjection>> productPromise = productService.getProduct();
 
             return pactasContractPromise.flatMap(pactasContract -> {
                 LOG.debug("Fetched Pactas contract: {}", pactasContract);
@@ -58,20 +53,20 @@ public class PactasWebhookController extends BaseController {
                 return customerPromise.flatMap(pactasCustomer -> {
                     LOG.debug("Fetched Pactas customer: {}", pactasCustomer);
 
-                    return productPromise.flatMap(productProjection -> {
-                        final F.Promise<Cart> cartPromise = cartService.createCartWithPactasInfo(productProjection.orElseThrow(ProductNotFoundException::new),
-                                pactasContract, pactasCustomer);
 
-                        return cartPromise.flatMap(cart -> {
-                            LOG.debug("Current Cart[cartId={}]", cart.getId());
+                    final F.Promise<Cart> cartPromise = cartService.createCartWithPactasInfo(productProjection(), pactasContract,
+                            pactasCustomer);
 
-                            final F.Promise<Order> orderPromise = orderService.createOrder(cart);
-                            return orderPromise.map(order -> {
-                                LOG.debug("Order created: {}", order);
-                                return ok();
-                            });
+                    return cartPromise.flatMap(cart -> {
+                        LOG.debug("Current Cart[cartId={}]", cart.getId());
+
+                        final F.Promise<Order> orderPromise = orderService.createOrder(cart);
+                        return orderPromise.map(order -> {
+                            LOG.debug("Order created: {}", order);
+                            return ok();
                         });
                     });
+
                 });
             });
         }

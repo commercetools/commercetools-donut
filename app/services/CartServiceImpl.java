@@ -3,7 +3,7 @@ package services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Singleton;
-import exceptions.PlanVariantNotFound;
+import exceptions.PlanVariantNotFoundException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
 import io.sphere.sdk.carts.commands.CartCreateCommand;
@@ -149,7 +149,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     private ProductVariant getVariantInContract(final ProductProjection product, final PactasContract contract) {
         final String planVariantId = contract.getPlanVariantId();
-        return variant(product, planVariantId).orElseThrow(() -> new PlanVariantNotFound(planVariantId));
+        return variant(product, planVariantId).orElseThrow(() -> new PlanVariantNotFoundException(planVariantId));
     }
 
     private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {

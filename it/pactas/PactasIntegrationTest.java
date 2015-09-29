@@ -16,6 +16,8 @@ public class PactasIntegrationTest extends WithApplication {
     private static final String CUSTOMER_ID = "554b2eb051f45beaec6400b2";
     private static final String CONTRACT_ID = "554b2eb051f45beaec6400b4";
 
+    private static final long ALLOWED_TIMEOUT = 3000;
+
     @Override
     protected Application provideApplication() {
         return new GuiceApplicationBuilder().build();
@@ -25,7 +27,7 @@ public class PactasIntegrationTest extends WithApplication {
     @Test(expected = PactasException.class)
     public void fetchesContract() throws Exception {
         final Pactas pactas = app.injector().instanceOf(Pactas.class);
-        final PactasContract contract = pactas.fetchContract(CONTRACT_ID).get(2000, TimeUnit.MILLISECONDS);
+        final PactasContract contract = pactas.fetchContract(CONTRACT_ID).get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS);
         assertThat(contract.getId()).isEqualTo(CONTRACT_ID);
     }
 
@@ -33,7 +35,7 @@ public class PactasIntegrationTest extends WithApplication {
     @Test(expected = PactasException.class)
     public void fetchesCustomer() throws Exception {
         final Pactas pactas = app.injector().instanceOf(Pactas.class);
-        final PactasCustomer customer = pactas.fetchCustomer(CUSTOMER_ID).get(2000, TimeUnit.MILLISECONDS);
+        final PactasCustomer customer = pactas.fetchCustomer(CUSTOMER_ID).get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS);
         assertThat(customer.getId()).isEqualTo(CUSTOMER_ID);
     }
 

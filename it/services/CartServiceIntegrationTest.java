@@ -2,7 +2,6 @@ package services;
 
 
 import controllers.ProductController;
-import exceptions.ProductNotFoundException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
 import org.junit.Before;
@@ -30,7 +29,9 @@ public class CartServiceIntegrationTest {
 
     private ProductController productController;
     private CartService cartService;
-    private ProductService productService;
+    private ProductProjection productProjection;
+
+    private static final long ALLOWED_TIMEOUT = 3000;
 
     @BeforeClass
     public static void startFakeApplication() {
@@ -49,42 +50,39 @@ public class CartServiceIntegrationTest {
 
         productController = fakeApplication.injector().instanceOf(ProductController.class);
         cartService = fakeApplication.injector().instanceOf(CartService.class);
-        productService = fakeApplication.injector().instanceOf(ProductService.class);
+        productProjection = fakeApplication.injector().instanceOf(ProductProjection.class);
     }
 
     @Test
     public void testGetOrCreateCart() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(2000);
+        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
         assertThat(cart.getId()).isNotNull();
     }
 
     @Test
     public void testSetProductToCart() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(2000);
-        final ProductProjection product = productService.getProduct().get(2000).orElseThrow(ProductNotFoundException::new);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, product, product.getMasterVariant(), 1).get(2000);
+        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection, productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
         assertThat(cartWithProduct.getLineItems().size()).isEqualTo(1);
     }
 
     @Test
     public void testClearCart() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(2000);
-        final ProductProjection product = productService.getProduct().get(2000).orElseThrow(ProductNotFoundException::new);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, product, product.getMasterVariant(), 1).get(2000);
-        final Cart clearedCart = cartService.clearCart(cartWithProduct).get(2000);
+        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection, productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
+        final Cart clearedCart = cartService.clearCart(cartWithProduct).get(ALLOWED_TIMEOUT);
         assertThat(clearedCart.getLineItems()).isEmpty();
     }
 
     @Test
     @Ignore //TODO fails, always 0
     public void testGetFrequency() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(2000);
-        final ProductProjection product = productService.getProduct().get(2000).orElseThrow(ProductNotFoundException::new);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, product, product.getMasterVariant(), 1).get(2000);
+        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection, productProjection.getMasterVariant(), 1).get(ALLOWED_TIMEOUT);
         final F.Promise<Integer> result = cartService.getFrequency(cartWithProduct.getId());
         assertThat(result).isNotNull();
-        assertThat(result.get(2000)).isNotNull();
-        assertThat(result.get(2000)).isEqualTo(1);
+        assertThat(result.get(ALLOWED_TIMEOUT)).isNotNull();
+        assertThat(result.get(ALLOWED_TIMEOUT)).isEqualTo(1);
     }
 
     @Test

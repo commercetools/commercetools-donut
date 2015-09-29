@@ -1,7 +1,5 @@
 package controllers;
 
-import exceptions.ProductNotFoundException;
-import exceptions.ProductVariantNotFoundException;
 import forms.SubscriptionFormData;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
@@ -13,7 +11,6 @@ import play.data.Form;
 import play.libs.F;
 import play.mvc.Result;
 import services.CartService;
-import services.ProductService;
 import views.html.index;
 
 import javax.inject.Inject;
@@ -27,14 +24,12 @@ public class ProductController extends BaseController {
     private static final Logger.ALogger LOG = Logger.of(ProductController.class);
 
     private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
-    private final ProductService productService;
     private final CartService cartService;
 
     @Inject
-    public ProductController(final Application application, ProductService productService, final CartService cartService,
+    public ProductController(final Application application, final CartService cartService,
                              final ProductProjection productProjection) {
         super(application, productProjection);
-        this.productService = requireNonNull(productService);
         this.cartService = requireNonNull(cartService);
     }
 
@@ -43,13 +38,12 @@ public class ProductController extends BaseController {
         return cartService.getOrCreateCart(session()).flatMap(
                 currentCart -> {
                     final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
-                    final F.Promise<Optional<ProductProjection>> productPromise = productService.getProduct();
                     final F.Promise<Integer> selectedFrequencyPromise = cartService.getFrequency(currentCart.getId());
-                    return productPromise.flatMap(productProjection -> selectedFrequencyPromise.map(selectedFrequency -> {
-                        final ProductPageData productPageData = new ProductPageData(productProjection.orElseThrow(ProductNotFoundException::new),
-                                selectedVariant, selectedFrequency);
+                    return selectedFrequencyPromise.map(selectedFrequency -> {
+                        final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant, selectedFrequency);
                         return ok(index.render(productPageData));
-                    }));
+
+                    });
                 });
     }
 
@@ -60,21 +54,16 @@ public class ProductController extends BaseController {
             final SubscriptionFormData subscriptionFormData = boundForm.get();
             final int frequency = subscriptionFormData.getHowOften();
             final int variantId = subscriptionFormData.getVariantId();
-            return setVariantToCart(frequency, variantId)
-                    .map(cart -> redirect(routes.OrderController.show()));
+            final ProductVariant selectedVariant = productProjection().getVariant(variantId);
+            final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
+
+            return currentCartPromise.map(currentCart -> {
+                cartService.setProductToCart(currentCart, productProjection(), selectedVariant, frequency);
+                return redirect(routes.OrderController.show());
+            });
         } else {
             flash("error", "Please select a box and how often you want it.");
             return F.Promise.pure(redirect(routes.ProductController.show()));
         }
-    }
-
-    private F.Promise<Cart> setVariantToCart(int frequency, int variantId) {
-        final F.Promise<Optional<ProductProjection>> productPromise = productService.getProduct();
-        final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
-        return productPromise.flatMap(productProjectionOptional -> {
-            final ProductProjection productProjection = productProjectionOptional.orElseThrow(ProductNotFoundException::new);
-            final ProductVariant selectedVariant = Optional.ofNullable(productProjection.getVariant(variantId)).orElseThrow(ProductVariantNotFoundException::new);
-            return currentCartPromise.flatMap(currentCart -> cartService.setProductToCart(currentCart, productProjection, selectedVariant, frequency));
-        });
     }
 }
