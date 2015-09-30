@@ -61,7 +61,11 @@ public interface CartService {
      * @param cart the {@code Cart} object to get the selected variant from, must not be null
      * @return optional {@code ProductVariant}, maybe empty if there's no selection made
      */
-    Optional<ProductVariant> getSelectedVariant(final Cart cart);
+    Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart);
+
+    Integer getSelectedFrequencyFromSession(final Http.Session session);
+
+    Optional<Integer> getSelectedVariantIdFromSession(final Http.Session session);
 
     /**
      * Creates a {@code Cart} object with the required data from Pactas.

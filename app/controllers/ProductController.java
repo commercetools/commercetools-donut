@@ -1,7 +1,6 @@
 package controllers;
 
 import forms.SubscriptionFormData;
-import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
@@ -11,6 +10,8 @@ import play.data.Form;
 import play.libs.F;
 import play.mvc.Result;
 import services.CartService;
+import services.CartSessionUtils;
+import services.SessionKeys;
 import views.html.index;
 
 import javax.inject.Inject;
@@ -35,32 +36,42 @@ public class ProductController extends BaseController {
 
     public F.Promise<Result> show() {
         LOG.debug("Display Product page");
-        return cartService.getOrCreateCart(session()).flatMap(
-                currentCart -> {
-                    final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
-                    final F.Promise<Integer> selectedFrequencyPromise = cartService.getFrequency(currentCart.getId());
-                    return selectedFrequencyPromise.map(selectedFrequency -> {
-                        final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant, selectedFrequency);
-                        return ok(index.render(productPageData));
-
-                    });
-                });
+        Optional<ProductVariant> selectedVariant = Optional.empty();
+        final Optional<Integer> selectedVariantId = CartSessionUtils.getSelectedVariantIdFromSession(session());
+        if (selectedVariantId.isPresent()) {
+            selectedVariant = Optional.of(productProjection().getVariant(selectedVariantId.get()));
+        }
+        LOG.debug("Selected variant from session: {}", selectedVariant);
+        final int selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
+        LOG.debug("Selected frequency from session: {}", selectedFrequency);
+        final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant, selectedFrequency);
+        return F.Promise.promise(() -> ok(index.render(productPageData)));
     }
 
     public F.Promise<Result> submit() {
         LOG.debug("Submitting Product page");
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
+            //TODO
+            session().clear();
+            //CartSessionUtils.clearSession(session());
+            //session().put(SessionKeys.VARIANT_ID, null);
+            //session().put(SessionKeys.FREQUENCY, null);
             final SubscriptionFormData subscriptionFormData = boundForm.get();
             final int frequency = subscriptionFormData.getHowOften();
             final int variantId = subscriptionFormData.getVariantId();
             final ProductVariant selectedVariant = productProjection().getVariant(variantId);
-            final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
 
-            return currentCartPromise.map(currentCart -> {
-                cartService.setProductToCart(currentCart, productProjection(), selectedVariant, frequency);
-                return redirect(routes.OrderController.show());
-            });
+            session().put(SessionKeys.VARIANT_ID, String.valueOf(selectedVariant.getId()));
+            LOG.debug("Add variantId[{}] to session", selectedVariant.getId());
+            session().put(SessionKeys.FREQUENCY, String.valueOf(selectedVariant.getId()));
+            LOG.debug("Add frequency[{}] to session", frequency);
+
+
+            return cartService.getOrCreateCart(session())
+                    .flatMap(cart -> cartService.setProductToCart(cart, productProjection(), selectedVariant, frequency))
+                    .map(updatedCart -> redirect(routes.OrderController.show()));
+
         } else {
             flash("error", "Please select a box and how often you want it.");
             return F.Promise.pure(redirect(routes.ProductController.show()));

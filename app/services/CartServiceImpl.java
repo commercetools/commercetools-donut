@@ -50,6 +50,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         super(applicationLifecycle, playJavaSphereClient);
     }
 
+
     @Override
     public F.Promise<Cart> getOrCreateCart(final Http.Session session) {
         requireNonNull(session);
@@ -63,7 +64,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                     return playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
                 });
         return cartPromise.map(cart -> {
-            LOG.debug("Putting new cartId[{}] into Session", cart.getId());
+            LOG.debug("Putting cartId[{}] into Session", cart.getId());
             session.put(SessionKeys.CART_ID, cart.getId());
             return cart;
         });
@@ -85,6 +86,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         });
     }
 
+
     private void clearFrequency(final String cartId) {
         requireNonNull(cartId);
         final Optional<F.Promise<CustomObject<JsonNode>>> result = Optional.ofNullable(
@@ -95,27 +97,50 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         }
     }
 
+
     @Override
     public F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant,
                                             final int frequency) {
         requireNonNull(cart);
         requireNonNull(product);
         requireNonNull(variant);
-        final F.Promise<Cart> clearedCartPromise = clearCart(cart);
-        return clearedCartPromise.flatMap(clearedCart -> {
-            final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, cart.getId(),
-                    frequency, new TypeReference<CustomObject<Integer>>() {
-                    });
-            final F.Promise<CustomObject<Integer>> customObjectPromise =
-                    playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
 
-            return customObjectPromise.flatMap(customObject -> {
-                LOG.debug("Set CustomObject[container={}, key={}, value={}]", customObject.getContainer(),
-                        customObject.getKey(), customObject.getValue());
-                return playJavaSphereClient().execute(CartUpdateCommand.of(clearedCart, AddLineItem.of(product.getId(),
-                        variant.getId(), frequency)));
-            });
+//        final F.Promise<Cart> clearedCartPromise = clearCart(cart);
+//        return clearedCartPromise.flatMap(clearedCart -> playJavaSphereClient().execute(CartUpdateCommand.of(clearedCart,
+//                AddLineItem.of(product.getId(), variant.getId(), frequency))));
+//
+
+
+
+
+        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(SessionKeys.FREQUENCY, cart.getId(),
+                frequency, new TypeReference<CustomObject<Integer>>() {
+                });
+        final F.Promise<CustomObject<Integer>> customObjectPromise =
+                playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
+
+        return customObjectPromise.flatMap(customObject -> {
+            LOG.debug("Set CustomObject[container={}, key={}, value={}]", customObject.getContainer(), customObject.getKey(), customObject.getValue());
+            return playJavaSphereClient().execute(CartUpdateCommand.of(cart, AddLineItem.of(product.getId(),
+                    variant.getId(), frequency)));
         });
+
+
+//        final F.Promise<Cart> clearedCartPromise = clearCart(cart);
+//        return clearedCartPromise.flatMap(clearedCart -> {
+//            final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, cart.getId(),
+//                    frequency, new TypeReference<CustomObject<Integer>>() {
+//                    });
+//            final F.Promise<CustomObject<Integer>> customObjectPromise =
+//                    playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
+//
+//            return customObjectPromise.flatMap(customObject -> {
+//                LOG.debug("Set CustomObject[container={}, key={}, value={}]", customObject.getContainer(),
+//                        customObject.getKey(), customObject.getValue());
+//                return playJavaSphereClient().execute(CartUpdateCommand.of(clearedCart, AddLineItem.of(product.getId(),
+//                        variant.getId(), frequency)));
+//            });
+//        });
     }
 
     @Override
@@ -135,9 +160,27 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override
-    public Optional<ProductVariant> getSelectedVariant(final Cart cart) {
+    public Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart) {
         requireNonNull(cart);
         return (!cart.getLineItems().isEmpty()) ? Optional.ofNullable(cart.getLineItems().get(0).getVariant()) : Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> getSelectedVariantIdFromSession(final Http.Session session) {
+        try {
+            return Optional.of(Integer.parseInt(session.get(SessionKeys.VARIANT_ID)));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Integer getSelectedFrequencyFromSession(final Http.Session session) {
+        try {
+            return Integer.parseInt(session.get(SessionKeys.FREQUENCY));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @Override
