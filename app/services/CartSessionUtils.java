@@ -1,6 +1,5 @@
 package services;
 
-import io.sphere.sdk.carts.Cart;
 import play.Logger;
 import play.mvc.Http;
 import play.mvc.Http.Session;
@@ -29,16 +28,11 @@ public final class CartSessionUtils {
         }
     }
 
-    public static void writeCartSessionData(final Cart cart, final Session session) {
-        requireNonNull(cart);
+    public static void writeCartSessionData(final Session session, final String cartId, final int variantId, final int frequency) {
         requireNonNull(session);
-        session.put(SessionKeys.CART_ID, cart.getId());
-        if (!cart.getLineItems().isEmpty()) {
-            final long frequency = cart.getLineItems().get(0).getQuantity();
-            session.put(SessionKeys.FREQUENCY, String.valueOf(frequency));
-            final int variantId = cart.getLineItems().get(0).getVariant().getId();
-            session.put(SessionKeys.VARIANT_ID, String.valueOf(variantId));
-        }
+        session.put(SessionKeys.CART_ID, cartId);
+        session.put(SessionKeys.VARIANT_ID, String.valueOf(variantId));
+        session.put(SessionKeys.FREQUENCY, String.valueOf(frequency));
         LOG.debug("Wrote session data: {}", session.toString());
     }
 
@@ -46,5 +40,6 @@ public final class CartSessionUtils {
     public static void clearProductFromSession(final Session session) {
         session.remove(SessionKeys.FREQUENCY);
         session.remove(SessionKeys.VARIANT_ID);
+        LOG.debug("Cleared product data from session");
     }
 }

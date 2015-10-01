@@ -57,15 +57,15 @@ public class ProductController extends BaseController {
             final SubscriptionFormData subscriptionFormData = boundForm.get();
             final int frequency = subscriptionFormData.getHowOften();
             final int variantId = subscriptionFormData.getVariantId();
+            LOG.debug("Received form data: frequency[{}], variantId[{}]", frequency, variantId);
             final ProductVariant selectedVariant = productProjection().getVariant(variantId);
-
             final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
             final F.Promise<Cart> clearedCartPromise = currentCartPromise.flatMap(cartService::clearCart);
             final F.Promise<Cart> updatedCartPromise = clearedCartPromise.flatMap(clearedCart ->
                     cartService.setProductToCart(clearedCart, productProjection(), selectedVariant, frequency));
 
             return updatedCartPromise.map(updatedCart -> {
-                CartSessionUtils.writeCartSessionData(updatedCart, session());
+                CartSessionUtils.writeCartSessionData(session(), updatedCart.getId(), variantId, frequency);
                 return redirect(routes.OrderController.show());});
         } else {
             flash("error", "Please select a box and how often you want it.");
