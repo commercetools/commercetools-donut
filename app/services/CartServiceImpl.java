@@ -65,7 +65,8 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 });
         return cartPromise.map(cart -> {
             LOG.debug("Putting cartId[{}] into Session", cart.getId());
-            session.put(SessionKeys.CART_ID, cart.getId());
+            //session.put(SessionKeys.CART_ID, cart.getId());
+            CartSessionUtils.writeCartSessionData(cart, session);
             return cart;
         });
     }
@@ -104,14 +105,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(cart);
         requireNonNull(product);
         requireNonNull(variant);
-
-//        final F.Promise<Cart> clearedCartPromise = clearCart(cart);
-//        return clearedCartPromise.flatMap(clearedCart -> playJavaSphereClient().execute(CartUpdateCommand.of(clearedCart,
-//                AddLineItem.of(product.getId(), variant.getId(), frequency))));
-//
-
-
-
 
         final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(SessionKeys.FREQUENCY, cart.getId(),
                 frequency, new TypeReference<CustomObject<Integer>>() {
@@ -163,24 +156,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     public Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart) {
         requireNonNull(cart);
         return (!cart.getLineItems().isEmpty()) ? Optional.ofNullable(cart.getLineItems().get(0).getVariant()) : Optional.empty();
-    }
-
-    @Override
-    public Optional<Integer> getSelectedVariantIdFromSession(final Http.Session session) {
-        try {
-            return Optional.of(Integer.parseInt(session.get(SessionKeys.VARIANT_ID)));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Integer getSelectedFrequencyFromSession(final Http.Session session) {
-        try {
-            return Integer.parseInt(session.get(SessionKeys.FREQUENCY));
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
     @Override

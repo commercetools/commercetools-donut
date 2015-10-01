@@ -63,10 +63,6 @@ public interface CartService {
      */
     Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart);
 
-    Integer getSelectedFrequencyFromSession(final Http.Session session);
-
-    Optional<Integer> getSelectedVariantIdFromSession(final Http.Session session);
-
     /**
      * Creates a {@code Cart} object with the required data from Pactas.
      *
