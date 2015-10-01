@@ -50,11 +50,10 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         super(applicationLifecycle, playJavaSphereClient);
     }
 
-
     @Override
     public F.Promise<Cart> getOrCreateCart(final Http.Session session) {
         requireNonNull(session);
-        final F.Promise<Cart> cartPromise = Optional.ofNullable(session.get(SessionKeys.CART_ID))
+        return Optional.ofNullable(session.get(SessionKeys.CART_ID))
                 .map(cardId -> {
                     LOG.debug("Fetching existing Cart[cartId={}]", cardId);
                     return playJavaSphereClient().execute(CartByIdGet.of(cardId));
@@ -63,12 +62,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                     LOG.debug("Creating new Cart");
                     return playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
                 });
-        return cartPromise.map(cart -> {
-            LOG.debug("Putting cartId[{}] into Session", cart.getId());
-            //session.put(SessionKeys.CART_ID, cart.getId());
-            CartSessionUtils.writeCartSessionData(cart, session);
-            return cart;
-        });
     }
 
 
@@ -117,23 +110,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
             return playJavaSphereClient().execute(CartUpdateCommand.of(cart, AddLineItem.of(product.getId(),
                     variant.getId(), frequency)));
         });
-
-
-//        final F.Promise<Cart> clearedCartPromise = clearCart(cart);
-//        return clearedCartPromise.flatMap(clearedCart -> {
-//            final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(PactasKeys.FREQUENCY, cart.getId(),
-//                    frequency, new TypeReference<CustomObject<Integer>>() {
-//                    });
-//            final F.Promise<CustomObject<Integer>> customObjectPromise =
-//                    playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
-//
-//            return customObjectPromise.flatMap(customObject -> {
-//                LOG.debug("Set CustomObject[container={}, key={}, value={}]", customObject.getContainer(),
-//                        customObject.getKey(), customObject.getValue());
-//                return playJavaSphereClient().execute(CartUpdateCommand.of(clearedCart, AddLineItem.of(product.getId(),
-//                        variant.getId(), frequency)));
-//            });
-//        });
     }
 
     @Override
