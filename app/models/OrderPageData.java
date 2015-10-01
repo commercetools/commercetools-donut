@@ -3,6 +3,7 @@ package models;
 import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.attributes.Attribute;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 import utils.PriceUtils;
 
@@ -43,7 +44,11 @@ public class OrderPageData extends Base {
     }
 
     public String pactasVariantId() {
-        final String pactasId = selectedVariant.getAttribute("pactas" + selectedFrequency).getValue(AttributeAccess.ofString());
+        final Attribute attribute = selectedVariant.getAttribute("pactas" + selectedFrequency);
+        if(attribute == null) {
+            throw new RuntimeException("Unable to access Pactas frequency Attribute");
+        }
+        final String pactasId = attribute.getValue(AttributeAccess.ofString());
         return pactasId;
     }
 
