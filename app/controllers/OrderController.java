@@ -36,7 +36,7 @@ public class OrderController extends BaseController {
             if (!currentCart.getLineItems().isEmpty()) {
 
                 final F.Promise<Integer> selectedFrequencyPromise = cartService.getFrequency(currentCart.getId());
-                selectedFrequencyPromise.onRedeem(integer -> System.out.println("OrderController received frequency: " + integer));
+                selectedFrequencyPromise.onRedeem(frequency -> LOG.debug("OrderController received frequency: {}", frequency));
                 final F.Promise<Result> resultPromise = selectedFrequencyPromise.map(selectedFrequency -> {
                     if (selectedFrequency > 0) {
                         final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
