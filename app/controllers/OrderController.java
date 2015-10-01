@@ -9,10 +9,12 @@ import play.Logger;
 import play.libs.F;
 import play.mvc.Result;
 import services.CartService;
+import services.CartSessionUtils;
 import views.html.order;
 import views.html.success;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,27 +33,23 @@ public class OrderController extends BaseController {
 
     public F.Promise<Result> show() {
         LOG.debug("Display Order details page");
-        final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
-        return currentCartPromise.flatMap(currentCart -> {
-            if (!currentCart.getLineItems().isEmpty()) {
-
-                final F.Promise<Integer> selectedFrequencyPromise = cartService.getFrequency(currentCart.getId());
-                selectedFrequencyPromise.onRedeem(frequency -> LOG.debug("OrderController received frequency: {}", frequency));
-                final F.Promise<Result> resultPromise = selectedFrequencyPromise.map(selectedFrequency -> {
-                    if (selectedFrequency > 0) {
-                        final ProductVariant selectedVariant = currentCart.getLineItems().get(0).getVariant();
-                        final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency, currentCart);
-                        return ok(order.render(orderPageData));
-                    } else {
-                        flash("error", "Missing frequency of delivery. Please try selecting it again.");
-                        return redirect(routes.ProductController.show());
-                    }
-                });
-                return resultPromise;
+        final Optional<Integer> optionalSelectedVariantId = CartSessionUtils.getSelectedVariantIdFromSession(session());
+        if(optionalSelectedVariantId.isPresent()) {
+            final Integer selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
+            LOG.debug("OrderController received variantId[{}], frequency[{}]: ",
+                    CartSessionUtils.getSelectedVariantIdFromSession(session()), selectedFrequency);
+            if (selectedFrequency > 0) {
+                final ProductVariant selectedVariant = productProjection().getVariant(optionalSelectedVariantId.get());
+                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency);
+                return F.Promise.pure(ok(order.render(orderPageData)));
+            } else {
+                flash("error", "Missing frequency of delivery. Please try selecting it again.");
+                return F.Promise.pure(redirect(routes.ProductController.show()));
             }
+        } else {
             flash("error", "Please select a box and how often you want it.");
             return F.Promise.pure(redirect(routes.ProductController.show()));
-        });
+        }
     }
 
     //TODO check is doing nothing than clear the cart?!

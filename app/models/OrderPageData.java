@@ -1,6 +1,5 @@
 package models;
 
-import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
@@ -15,12 +14,10 @@ public class OrderPageData extends Base {
 
     private final ProductVariant selectedVariant;
     private final int selectedFrequency;
-    private final Cart cart;
 
-    public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency, final Cart cart) {
+    public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency) {
         this.selectedVariant = requireNonNull(selectedVariant);
         this.selectedFrequency = requireNonNull(selectedFrequency);
-        this.cart = requireNonNull(cart);
     }
 
     public VariantData selectedVariant() {
@@ -28,7 +25,7 @@ public class OrderPageData extends Base {
     }
 
     public String totalPrice() {
-        return PriceUtils.format(cart);
+        return PriceUtils.format(selectedVariant.getPrices().get(0));
     }
 
     public String frequencyName() {
@@ -61,5 +58,4 @@ public class OrderPageData extends Base {
     private Optional<Price> price() {
         return Optional.ofNullable(selectedVariant.getPrices().get(0));
     }
-
 }
