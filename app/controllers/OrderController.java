@@ -33,23 +33,46 @@ public class OrderController extends BaseController {
 
     public F.Promise<Result> show() {
         LOG.debug("Display Order details page");
+        F.Promise<Result> resultPromise;
+
         final Optional<Integer> optionalSelectedVariantId = CartSessionUtils.getSelectedVariantIdFromSession(session());
-        if(optionalSelectedVariantId.isPresent()) {
-            final Integer selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
-            LOG.debug("OrderController received variantId[{}], frequency[{}]: ",
-                    CartSessionUtils.getSelectedVariantIdFromSession(session()), selectedFrequency);
-            if (selectedFrequency > 0) {
-                final ProductVariant selectedVariant = productProjection().getVariant(optionalSelectedVariantId.get());
-                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency);
-                return F.Promise.pure(ok(order.render(orderPageData)));
-            } else {
-                flash("error", "Missing frequency of delivery. Please try selecting it again.");
-                return F.Promise.pure(redirect(routes.ProductController.show()));
-            }
-        } else {
+        final Integer selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
+
+        if (!optionalSelectedVariantId.isPresent()) {
             flash("error", "Please select a box and how often you want it.");
-            return F.Promise.pure(redirect(routes.ProductController.show()));
+            resultPromise = F.Promise.pure(redirect(routes.ProductController.show()));
+        } else if (selectedFrequency < 1) {
+            flash("error", "Missing frequency of delivery. Please try selecting it again.");
+            resultPromise = F.Promise.pure(redirect(routes.ProductController.show()));
+        } else {
+            final ProductVariant selectedVariant = productProjection().getVariant(optionalSelectedVariantId.get());
+            final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency);
+            resultPromise = F.Promise.pure(ok(order.render(orderPageData)));
         }
+        LOG.debug("OrderController received variantId[{}], frequency[{}]: ", optionalSelectedVariantId, selectedFrequency);
+        return resultPromise;
+
+
+//
+//
+//        F.Promise<Result> resultPromise;
+//        if(optionalSelectedVariantId.isPresent()) {
+//            final Integer selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
+//            LOG.debug("OrderController received variantId[{}], frequency[{}]: ",
+//                    CartSessionUtils.getSelectedVariantIdFromSession(session()), selectedFrequency);
+//            if (selectedFrequency > 0) {
+//                final ProductVariant selectedVariant = productProjection().getVariant(optionalSelectedVariantId.get());
+//                final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency);
+//                resultPromise = F.Promise.pure(ok(order.render(orderPageData)));
+//            } else {
+//                flash("error", "Missing frequency of delivery. Please try selecting it again.");
+//                resultPromise = F.Promise.pure(redirect(routes.ProductController.show()));
+//            }
+//        } else {
+//            flash("error", "Please select a box and how often you want it.");
+//            resultPromise = F.Promise.pure(redirect(routes.ProductController.show()));
+//        }
+//        return resultPromise;
     }
 
     //TODO check is doing nothing than clear the cart?!
