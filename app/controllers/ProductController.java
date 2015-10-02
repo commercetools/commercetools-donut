@@ -42,10 +42,9 @@ public class ProductController extends BaseController {
         if (selectedVariantId.isPresent()) {
             selectedVariant = Optional.of(productProjection().getVariant(selectedVariantId.get()));
         }
-        LOG.debug("Selected variantId from session: {}", selectedVariantId);
         final int selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
-        LOG.debug("Selected frequency from session: {}", selectedFrequency);
-        final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant, selectedFrequency);
+        final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant,
+                selectedFrequency);
         return F.Promise.promise(() -> ok(index.render(productPageData)));
     }
 
