@@ -27,7 +27,6 @@ import io.sphere.sdk.products.attributes.AttributeAccess;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Logger;
-import play.inject.ApplicationLifecycle;
 import play.libs.F;
 import play.mvc.Http;
 
@@ -45,9 +44,8 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
 
     @Inject
-    public CartServiceImpl(final ApplicationLifecycle applicationLifecycle,
-                           final PlayJavaSphereClient playJavaSphereClient) {
-        super(applicationLifecycle, playJavaSphereClient);
+    public CartServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
+        super(playJavaSphereClient);
     }
 
     @Override
