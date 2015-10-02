@@ -42,4 +42,11 @@ public final class CartSessionUtils {
         session.remove(SessionKeys.VARIANT_ID);
         LOG.debug("Cleared product data from session");
     }
+
+    public static void resetSession(final Session session) {
+        session.remove(SessionKeys.CART_ID);
+        session.remove(SessionKeys.FREQUENCY);
+        session.remove(SessionKeys.VARIANT_ID);
+        LOG.debug("Cleared all data from session");
+    }
 }

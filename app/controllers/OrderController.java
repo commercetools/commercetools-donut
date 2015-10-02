@@ -50,18 +50,25 @@ public class OrderController extends BaseController {
         return resultPromise;
     }
 
-    //TODO check is doing nothing than clear the cart?!
     public F.Promise<Result> submit() {
         LOG.debug("Submitting Order details page");
         final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
-        return currentCartPromise.map(currentCart -> ok(success.render()));
+        final F.Promise<Cart> clearedCartPromise = currentCartPromise.flatMap(cartService::clearCart);
+        return clearedCartPromise.map(cart -> {
+            CartSessionUtils.resetSession(session());
+            return ok(success.render());
+        });
     }
 
     public F.Promise<Result> clear() {
+        LOG.debug("Clearing");
         final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
         return currentCartPromise.flatMap(currentCart -> {
             final F.Promise<Cart> clearedCartPromise = cartService.clearCart(currentCart);
-            return clearedCartPromise.map(cart -> redirect(routes.ProductController.show()));
+            return clearedCartPromise.map(cart -> {
+                CartSessionUtils.resetSession(session());
+                return redirect(routes.ProductController.show());
+            });
         });
     }
 }
