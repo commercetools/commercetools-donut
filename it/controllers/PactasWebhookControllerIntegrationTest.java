@@ -30,6 +30,9 @@ import static utils.JsonUtils.readObjectFromResource;
 public class PactasWebhookControllerIntegrationTest {
 
     public static final JsonNode WEBHOOK = readJsonFromResource("pactas-webhook-account.json");
+
+    private static final long ALLOWED_TIMEOUT = 5000;
+
     public static final PactasContract CONTRACT = readObjectFromResource("pactas-contract.json", PactasContract.class);
     public static final PactasCustomer CUSTOMER = readObjectFromResource("pactas-customer.json", PactasCustomer.class);
 
@@ -55,7 +58,7 @@ public class PactasWebhookControllerIntegrationTest {
     @Test(expected = PactasException.class)
     public void testCreateOrderFromSubscription() throws Exception {
         final PactasWebhookController controller =  fakeApplication.injector().instanceOf(PactasWebhookController.class);
-        final Result result = controller.createOrderFromSubscription().get(2000, TimeUnit.MILLISECONDS);
+        final Result result = controller.createOrderFromSubscription().get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS);
         assertThat(result.status()).isEqualTo(OK);
     }
 

@@ -16,7 +16,7 @@ public class PactasIntegrationTest extends WithApplication {
     private static final String CUSTOMER_ID = "554b2eb051f45beaec6400b2";
     private static final String CONTRACT_ID = "554b2eb051f45beaec6400b4";
 
-    private static final long ALLOWED_TIMEOUT = 3000;
+    private static final long ALLOWED_TIMEOUT = 5000;
 
     @Override
     protected Application provideApplication() {
