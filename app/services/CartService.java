@@ -72,4 +72,6 @@ public interface CartService {
      * @return
      */
     F.Promise<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
+
+    F.Promise<Cart> deleteCart(final Cart cart);
 }

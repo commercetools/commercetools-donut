@@ -7,6 +7,7 @@ import exceptions.PlanVariantNotFoundException;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.CartDraft;
 import io.sphere.sdk.carts.commands.CartCreateCommand;
+import io.sphere.sdk.carts.commands.CartDeleteCommand;
 import io.sphere.sdk.carts.commands.CartUpdateCommand;
 import io.sphere.sdk.carts.commands.updateactions.AddLineItem;
 import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
@@ -108,6 +109,12 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
             return playJavaSphereClient().execute(CartUpdateCommand.of(cart, AddLineItem.of(product.getId(),
                     variant.getId(), frequency)));
         });
+    }
+
+    @Override
+    public F.Promise<Cart> deleteCart(final Cart cart) {
+        requireNonNull(cart);
+        return playJavaSphereClient().execute(CartDeleteCommand.of(cart));
     }
 
     @Override

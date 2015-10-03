@@ -53,8 +53,9 @@ public class OrderController extends BaseController {
     public F.Promise<Result> submit() {
         LOG.debug("Submitting Order details page");
         final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
-        final F.Promise<Cart> clearedCartPromise = currentCartPromise.flatMap(cartService::clearCart);
-        return clearedCartPromise.map(cart -> {
+        final F.Promise<Cart> deletedCartPromise = currentCartPromise.flatMap(cartService::deleteCart);
+        return deletedCartPromise.map(cart -> {
+            LOG.debug("Deleted Cart[{}]", cart.getId());
             CartSessionUtils.resetSession(session());
             return ok(success.render());
         });
@@ -64,8 +65,9 @@ public class OrderController extends BaseController {
         LOG.debug("Clearing");
         final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
         return currentCartPromise.flatMap(currentCart -> {
-            final F.Promise<Cart> clearedCartPromise = cartService.clearCart(currentCart);
-            return clearedCartPromise.map(cart -> {
+            final F.Promise<Cart> deletedCartPromise = cartService.clearCart(currentCart);
+            return deletedCartPromise.map(cart -> {
+                LOG.debug("Deleted Cart[{}]", cart.getId());
                 CartSessionUtils.resetSession(session());
                 return redirect(routes.ProductController.show());
             });
