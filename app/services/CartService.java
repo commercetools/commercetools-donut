@@ -5,6 +5,7 @@ import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
+import play.libs.F;
 import play.mvc.Http;
 
 import java.util.Optional;
@@ -22,7 +23,7 @@ public interface CartService {
      * @param session the Play session object, must not be null
      * @return the newly created, or fetched {@code Cart} object, must not be null
      */
-    Cart getOrCreateCart(Http.Session session);
+    F.Promise<Cart> getOrCreateCart(Http.Session session);
 
     /**
      * Resets an existing {@code Cart}.
@@ -32,8 +33,7 @@ public interface CartService {
      * @param cart the {@code Cart} object to clear, must not be null
      * @return the updated {@code Cart} object as result from the update command to Sphere API, must not be null
      */
-    Cart clearCart(final Cart cart);
-
+    F.Promise<Cart> clearCart(final Cart cart);
 
     /**
      * Adds the user selected {@code ProductVariant} of the {@code ProductProjection} with a given frequency to the
@@ -44,16 +44,16 @@ public interface CartService {
      * @param variant the selected {@code ProductVariant}, must not be null
      * @param frequency the selected delivery frequency
      */
-    void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency);
+    F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency);
 
     /**
-     * Returns the value of the {@code CustomObject} named ShopKeys.FREQUENCY, that is bound to the {@code Cart}
+     * Returns the value of the {@code CustomObject} named PactasKeys.FREQUENCY, that is bound to the {@code Cart}
      * with the given cardId.
      *
      * @param cartId the identifier of the {@code Cart} object, the {@code CustomObject} is bound to
      * @return the value of the {@code CustomObject}. If no {@code CustomObject} found, it returns 0
      */
-    int getFrequency(final String cartId);
+    F.Promise<Integer> getFrequency(final String cartId);
 
     /**
      * Gets an optional, selected {@code ProductVariant} from the users {@code Cart}
@@ -61,7 +61,7 @@ public interface CartService {
      * @param cart the {@code Cart} object to get the selected variant from, must not be null
      * @return optional {@code ProductVariant}, maybe empty if there's no selection made
      */
-    Optional<ProductVariant> getSelectedVariant(final Cart cart);
+    Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart);
 
     /**
      * Creates a {@code Cart} object with the required data from Pactas.
@@ -71,5 +71,7 @@ public interface CartService {
      * @param customer the {@code PactasCustomer}
      * @return
      */
-    Cart createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
+    F.Promise<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
+
+    F.Promise<Cart> deleteCart(final Cart cart);
 }

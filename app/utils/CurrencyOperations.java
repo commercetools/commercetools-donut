@@ -1,7 +1,7 @@
 package utils;
 
 import com.google.common.base.Optional;
-import exceptions.DefaultCurrencyNotFound;
+import exceptions.DefaultCurrencyNotFoundException;
 import play.Configuration;
 import play.Logger;
 
@@ -29,7 +29,7 @@ public class CurrencyOperations {
         if (currencyCode.isPresent()) {
             return currencyCode.get();
         } else {
-            throw new DefaultCurrencyNotFound();
+            throw new DefaultCurrencyNotFoundException();
         }
     }
 

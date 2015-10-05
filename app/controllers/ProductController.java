@@ -2,16 +2,19 @@ package controllers;
 
 import forms.SubscriptionFormData;
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import models.ProductPageData;
-import play.Configuration;
+import play.Application;
 import play.Logger;
 import play.data.Form;
+import play.libs.F;
 import play.mvc.Result;
 import services.CartService;
-import services.ProductService;
+import services.CartSessionUtils;
 import views.html.index;
 
+import javax.inject.Inject;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -19,46 +22,53 @@ import static play.data.Form.form;
 
 public class ProductController extends BaseController {
 
-    private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
+    private static final Logger.ALogger LOG = Logger.of(ProductController.class);
 
-    private final ProductService productService;
+    private final static Form<SubscriptionFormData> ADD_TO_CART_FORM = form(SubscriptionFormData.class);
     private final CartService cartService;
 
-    public ProductController(final Configuration configuration, ProductService productService, final CartService cartService) {
-        super(configuration);
-        this.productService = requireNonNull(productService, "'productService' must not be null");
-        this.cartService = requireNonNull(cartService, "'cartService' must not be null");
+    @Inject
+    public ProductController(final Application application, final CartService cartService,
+                             final ProductProjection productProjection) {
+        super(application, productProjection);
+        this.cartService = requireNonNull(cartService);
     }
 
-    public Result show() {
-        Logger.debug("Display Product page");
-        final Cart currentCart = cartService.getOrCreateCart(session());
-        Logger.debug("Current Cart[cartId={}]", currentCart.getId());
-        final Optional<ProductVariant> selectedVariant = cartService.getSelectedVariant(currentCart);
-        Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
-        final int selectedFrequency = cartService.getFrequency(currentCart.getId());
-        Logger.debug("Selected frequency: {}", selectedFrequency);
-        final ProductPageData productPageData = new ProductPageData(productService.getProduct().get(), selectedVariant, selectedFrequency);
-        return ok(index.render(productPageData));
+    public F.Promise<Result> show() {
+        LOG.debug("Display Product page");
+        Optional<ProductVariant> selectedVariant = Optional.empty();
+
+        final Optional<Integer> selectedVariantId = CartSessionUtils.getSelectedVariantIdFromSession(session());
+        if (selectedVariantId.isPresent()) {
+            selectedVariant = Optional.of(productProjection().getVariant(selectedVariantId.get()));
+        }
+        final int selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
+        final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant,
+                selectedFrequency);
+        return F.Promise.promise(() -> ok(index.render(productPageData)));
     }
 
-    public Result submit() {
-        Logger.debug("Submitting Product page");
+    public F.Promise<Result> submit() {
+        LOG.debug("Submitting Product page");
         final Form<SubscriptionFormData> boundForm = ADD_TO_CART_FORM.bindFromRequest();
         if (!boundForm.hasErrors()) {
-            final Optional<ProductVariant> selectedVariant = productService.getVariantFromId(productService.getProduct().get(), boundForm.get().variantId);
-            Logger.debug("Selected ProductVariant[variantId={}]", selectedVariant.isPresent() ? selectedVariant.get().getId() : selectedVariant);
-            if (selectedVariant.isPresent()) {
-                final Cart currentCart = cartService.getOrCreateCart(session());
-                Logger.debug("Current Cart[cartId={}]", currentCart.getId());
-                cartService.setProductToCart(currentCart, productService.getProduct().get(), selectedVariant.get(), boundForm.get().howOften);
-                return redirect(routes.OrderController.show());
-            } else {
-                flash("error", "Product not found. Please try again.");
-            }
+            CartSessionUtils.clearProductFromSession(session());
+            final SubscriptionFormData subscriptionFormData = boundForm.get();
+            final int frequency = subscriptionFormData.getHowOften();
+            final int variantId = subscriptionFormData.getVariantId();
+            LOG.debug("Received form data: frequency[{}], variantId[{}]", frequency, variantId);
+            final ProductVariant selectedVariant = productProjection().getVariant(variantId);
+            final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
+            final F.Promise<Cart> clearedCartPromise = currentCartPromise.flatMap(cartService::clearCart);
+            final F.Promise<Cart> updatedCartPromise = clearedCartPromise.flatMap(clearedCart ->
+                    cartService.setProductToCart(clearedCart, productProjection(), selectedVariant, frequency));
+
+            return updatedCartPromise.map(updatedCart -> {
+                CartSessionUtils.writeCartSessionData(session(), updatedCart.getId(), variantId, frequency);
+                return redirect(routes.OrderController.show());});
         } else {
             flash("error", "Please select a box and how often you want it.");
+            return F.Promise.pure(redirect(routes.ProductController.show()));
         }
-        return redirect(routes.ProductController.show());
     }
 }

@@ -1,17 +1,21 @@
 package pactas;
 
 import com.google.common.net.HttpHeaders;
-import com.ning.http.client.Realm;
 import pactas.models.Authorization;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Configuration;
 import play.Logger;
 import play.libs.F;
-import play.libs.WS;
+import play.libs.ws.WS;
+import play.libs.ws.WSAuthScheme;
 import play.mvc.Http;
 import utils.JsonUtils;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class PactasImpl implements Pactas {
     public static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
@@ -21,6 +25,7 @@ public class PactasImpl implements Pactas {
     private final String clientSecret;
     private final F.Promise<Authorization> authorizationPromise;
 
+    @Inject
     public PactasImpl(final Configuration configuration) {
         this.configuration = configuration;
         this.authUrl = configuration.getString("pactas.auth");
@@ -74,7 +79,7 @@ public class PactasImpl implements Pactas {
         Logger.debug("Fetching pactas access token");
         return WS.url(authUrl)
                 .setContentType(CONTENT_TYPE)
-                .setAuth(clientId, clientSecret, Realm.AuthScheme.BASIC)
+                .setAuth(clientId, clientSecret, WSAuthScheme.BASIC)
                 .post("grant_type=client_credentials").map(response -> {
                     Logger.info(response.getBody());
                     if (response.getStatus() == Http.Status.OK) {

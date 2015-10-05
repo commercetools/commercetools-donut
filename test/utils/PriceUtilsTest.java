@@ -36,12 +36,12 @@ public class PriceUtilsTest {
 
     @Test
     public void formatsPrice() throws Exception {
-        assertThat(format(PRICE.get())).isEqualTo("10,56 €");
+        assertThat(format(PRICE.get())).isEqualTo("10,56 EUR");
     }
 
     @Test
     public void formatsMonetaryAmount() throws Exception {
-        assertThat(format(PRICE.get())).isEqualTo("10,56 €");
+        assertThat(format(PRICE.get())).isEqualTo("10,56 EUR");
     }
 
     private static Optional<Price> price(final double amount, final String currency) {

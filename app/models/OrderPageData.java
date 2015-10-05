@@ -1,9 +1,9 @@
 package models;
 
-import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.attributes.Attribute;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 import utils.PriceUtils;
 
@@ -15,12 +15,10 @@ public class OrderPageData extends Base {
 
     private final ProductVariant selectedVariant;
     private final int selectedFrequency;
-    private final Cart cart;
 
-    public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency, final Cart cart) {
-        this.selectedVariant = requireNonNull(selectedVariant, "'selectedVariant' must not be null");
-        this.selectedFrequency = requireNonNull(selectedFrequency, "'selectedFrequency' must not be null");
-        this.cart = requireNonNull(cart, "'cart' must not be null");
+    public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency) {
+        this.selectedVariant = requireNonNull(selectedVariant);
+        this.selectedFrequency = requireNonNull(selectedFrequency);
     }
 
     public VariantData selectedVariant() {
@@ -28,7 +26,7 @@ public class OrderPageData extends Base {
     }
 
     public String totalPrice() {
-        return PriceUtils.format(cart);
+        return PriceUtils.format(selectedVariant.getPrices().get(0));
     }
 
     public String frequencyName() {
@@ -46,7 +44,11 @@ public class OrderPageData extends Base {
     }
 
     public String pactasVariantId() {
-        final String pactasId = selectedVariant.getAttribute("pactas" + selectedFrequency).getValue(AttributeAccess.ofString());
+        final Attribute attribute = selectedVariant.getAttribute("pactas" + selectedFrequency);
+        if(attribute == null) {
+            throw new RuntimeException("Unable to access Pactas frequency Attribute");
+        }
+        final String pactasId = attribute.getValue(AttributeAccess.ofString());
         return pactasId;
     }
 
@@ -61,5 +63,4 @@ public class OrderPageData extends Base {
     private Optional<Price> price() {
         return Optional.ofNullable(selectedVariant.getPrices().get(0));
     }
-
 }

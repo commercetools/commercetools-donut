@@ -5,14 +5,29 @@ import play.data.validation.Constraints;
 public class SubscriptionFormData {
 
     @Constraints.Required(message = "Product required")
-    public int variantId;
+    private int variantId;
 
     @Constraints.Required(message = "Frequency required")
     @Constraints.Min(value = 1, message = "Frequency cannot be less than weekly")
     @Constraints.Max(value = 4, message = "Frequency cannot be more than monthly")
-    public int howOften;
+    private int howOften;
 
     public SubscriptionFormData() {
     }
 
+    public int getVariantId() {
+        return variantId;
+    }
+
+    public void setVariantId(final int variantId) {
+        this.variantId = variantId;
+    }
+
+    public int getHowOften() {
+        return howOften;
+    }
+
+    public void setHowOften(final int howOften) {
+        this.howOften = howOften;
+    }
 }

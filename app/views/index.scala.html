@@ -1,8 +1,8 @@
 @(data: ProductPageData)
 
 @scripts = {
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/lib-form.min.js")"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/products.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.versioned("javascripts/lib-form.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.versioned("javascripts/products.js")"></script>
 }
 
 @main("I want donuts!", "product", scripts){
@@ -13,8 +13,8 @@
         <div class="space">
             <div class="inner">
                 <div class="body">
-                    <img id="image-header" alt="I want donuts!" src="@routes.Assets.at("images/header.png")"/>
-                    <img class="separator" src="@routes.Assets.at("images/separator-grey.png")" alt="-" />
+                    <img id="image-header" alt="I want donuts!" src="@routes.Assets.versioned("images/header.png")"/>
+                    <img class="separator" src="@routes.Assets.versioned("images/separator-grey.png")" alt="-" />
                     <h2>THE GREATEST DONUT SHOP EVER</h2>
                 </div>
             </div>
@@ -25,7 +25,7 @@
         <div class="space">
             <div class="inner">
                 <div class="head">
-                    <img class="separator" src="@routes.Assets.at("images/separator-black.png")" alt="-" />
+                    <img class="separator" src="@routes.Assets.versioned("images/separator-black.png")" alt="-" />
                     <h2>CHOOSE YOUR <span class="highlight">taaasty</span> PASSION</h2>
                 </div>
                 <div class="body clearfix">
@@ -36,7 +36,7 @@
                                 <label>
                                     <input type="radio" name="variantId" id="product-variantId-@variant.id" required
                                            value="@variant.id" @if(data.selectedVariant.isPresent && variant.id == data.selectedVariant.get.id){checked} />
-                                    <div class="checked"><img src="@routes.Assets.at("images/checked.png")" ></div>
+                                    <div class="checked"><img src="@routes.Assets.versioned("images/checked.png")"></div>
                                     @partials.variantDetail(variant)
                                     <div class="add-to-cart">
                                         <div class="button" style="@variant.addToCartImageUrl()"></div>
@@ -57,7 +57,7 @@
         <div class="space">
             <div class="inner">
                 <div class="head">
-                    <img class="separator" src="@routes.Assets.at("images/separator-white.png")" alt="-" />
+                    <img class="separator" src="@routes.Assets.versioned("images/separator-white.png")" alt="-" />
                     <h2>CHOOSE HOW OFTEN</h2>
                 </div>
                 <div class="body clearfix">

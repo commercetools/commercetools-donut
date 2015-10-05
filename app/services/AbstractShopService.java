@@ -1,18 +1,21 @@
 package services;
 
-import io.sphere.sdk.client.SphereClient;
+import io.sphere.sdk.client.PlayJavaSphereClient;
+
+import javax.inject.Inject;
 
 import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractShopService {
 
-    private final SphereClient sphereClient;
+    private final PlayJavaSphereClient playJavaSphereClient;
 
-    protected AbstractShopService(final SphereClient sphereClient) {
-        this.sphereClient = requireNonNull(sphereClient, "'sphereClient' must not be null");
+    @Inject
+    protected AbstractShopService(final PlayJavaSphereClient playJavaSphereClient) {
+        this.playJavaSphereClient = requireNonNull(playJavaSphereClient);
     }
 
-    protected SphereClient sphereClient() {
-        return sphereClient;
+    protected PlayJavaSphereClient playJavaSphereClient() {
+        return playJavaSphereClient;
     }
 }
