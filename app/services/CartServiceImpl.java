@@ -97,7 +97,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(cart);
         requireNonNull(product);
         requireNonNull(variant);
-
         final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(SessionKeys.FREQUENCY, cart.getId(),
                 frequency, new TypeReference<CustomObject<Integer>>() {
                 });
