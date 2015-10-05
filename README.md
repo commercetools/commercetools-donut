@@ -3,8 +3,8 @@
 
 This is not a real **donut** store. This is a _free template_ for subscription ecommerce sites and it's built on top of the APIs of [SPHERE.IO](http://sphere.io), [Pactas](http://www.pactas.com) and [Paymill](https://www.paymill.com).
 
-:warning: This template is built based on the [SPHERE Play SDK](https://github.com/commercetools/sphere-play-sdk) that is now DEPRECATED! :warning:   
-If you are looking for a template built using the new [SPHERE JVM SDK](https://github.com/sphereio/sphere-jvm-sdk) please have a look at [Sunrise](https://github.com/sphereio/sphere-sunrise) instead.
+This template is based on the [SPHERE JVM SDK](https://github.com/sphereio/sphere-jvm-sdk).
+If you are looking for a regular web-shop template using the SPHERE JVM SDK, please have a look at [Sunrise](https://github.com/sphereio/sphere-sunrise) instead.
 
 ## Live demo
 Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdonuts.com).
@@ -12,9 +12,9 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 ## Getting started [![Build Status](https://secure.travis-ci.org/commercetools/sphere-donut.png?branch=master)](http://travis-ci.org/commercetools/sphere-donut)
 
 ### Set it up
-- Install [Play 2.1.5](http://www.playframework.com/documentation/2.1.x/Installing).
-- [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-donut project from GitHub. or download it as [zip file](https://github.com/commercetools/sphere-donut/archive/master.zip).
-- Run `play run` command in root project directory.
+- Install [Play 2.4.3](http://www.playframework.com/documentation/2.4.x/Installing).
+- [Clone](http://git-scm.com/book/en/Git-Basics-Getting-a-Git-Repository#Cloning-an-Existing-Repository) sphere-donut project from GitHub, or download it as [zip file](https://github.com/commercetools/sphere-donut/archive/master.zip).
+- Run `sbt run` command in root project directory.
 - Open your browser and point it to [http://localhost:9000](http://localhost:9000).
 
 ### Configure it
@@ -37,8 +37,8 @@ More about recurring billing with Pactas at http://www.pactas.com.
 
 #### PAYMILL keys
 - [Register at PAYMILL](https://app.paymill.com/en-gb/auth/register) to get the (test) API keys.
-- Go to `PAYMILL Cockpit -> My account -> Settings -> API keys` to retrieve your keys.
-- In your Pactas backend, head to `Settings -> Payments -> Payment Providers` and edit the Paymill settings. Enter your public and private PAYMILL keys and hit 'Save'.
+- Go to `PAYMILL Dashboard -> Development -> API keys` to retrieve your keys.
+- In your Pactas backend, head to `Settings -> Payment Settings -> Payment Providers` and edit the Paymill settings. Enter your public and private PAYMILL keys and hit 'Save'.
 ![PactasPaymill](https://raw.github.com/commercetools/sphere-donut/master/public/images/pactas-paymill.png)
 
 More information about doing payments with PAYMILL at http://www.paymill.com.
@@ -54,10 +54,9 @@ To run this SPHERE.IO example web shop on [heroku](https://www.heroku.com) just 
 ### Develop it
 
 - Install your favourite IDE (preferably IntelliJ, Eclipse or Netbeans).
-- Generate configuration files for your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.1.x/IDE).
-- Run `play` command in root project directory.
-- Inside Play Shell, type `clean test` for compiling and testing it.
+- Import the project into your chosen IDE, following [these instructions](http://www.playframework.com/documentation/2.4.x/IDE).
+- Run `sbt clean test` command in root project directory for compiling and testing it.
 
-> This app is a [Play Framework](http://www.playframework.com/documentation/2.1.x/Home) app and uses the [SPHERE Play SDK](http://sphere.io/dev/play-sdk.html).
+> This app is a [Play Framework](http://www.playframework.com/documentation/2.4.x/Home) app and uses the [SPHERE JVM SDK](https://github.com/sphereio/sphere-jvm-sdk).
 
 Have fun!

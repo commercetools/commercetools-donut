@@ -47,7 +47,7 @@ public interface CartService {
     void setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency);
 
     /**
-     * Returns the value of the {@code CustomObject} named ShopKeys.FREQUENCY, that is bound to the {@code Cart}
+     * Returns the value of the {@code CustomObject} named PactasKeys.FREQUENCY, that is bound to the {@code Cart}
      * with the given cardId.
      *
      * @param cartId the identifier of the {@code Cart} object, the {@code CustomObject} is bound to

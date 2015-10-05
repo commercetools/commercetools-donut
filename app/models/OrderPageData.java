@@ -18,9 +18,9 @@ public class OrderPageData extends Base {
     private final Cart cart;
 
     public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency, final Cart cart) {
-        this.selectedVariant = requireNonNull(selectedVariant, "'selectedVariant' must not be null");
-        this.selectedFrequency = requireNonNull(selectedFrequency, "'selectedFrequency' must not be null");
-        this.cart = requireNonNull(cart, "'cart' must not be null");
+        this.selectedVariant = requireNonNull(selectedVariant);
+        this.selectedFrequency = requireNonNull(selectedFrequency);
+        this.cart = requireNonNull(cart);
     }
 
     public VariantData selectedVariant() {
