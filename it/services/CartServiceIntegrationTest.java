@@ -4,6 +4,7 @@ package services;
 import controllers.ProductController;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.types.CustomFields;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,6 +58,11 @@ public class CartServiceIntegrationTest {
     public void testGetOrCreateCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
         assertThat(cart).isNotNull();
+        final CustomFields customFields = cart.getCustom();
+        assertThat(customFields).isNotNull();
+        final Integer frequency = customFields.getFieldAsInteger("frequency");
+        assertThat(frequency).isNotNull();
+        assertThat(frequency).isEqualTo(0);
     }
 
     @Test

@@ -25,6 +25,7 @@ import io.sphere.sdk.models.DefaultCurrencyUnits;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
+import io.sphere.sdk.types.CustomFieldsDraft;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Logger;
@@ -33,8 +34,7 @@ import play.mvc.Http;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -59,9 +59,18 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 })
                 .orElseGet(() -> {
                     LOG.debug("Creating new Cart");
-                    return playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
+                    final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR)
+                            .witCustom(CustomFieldsDraft.ofTypeKeyAndObjects("cart-frequency-key", INITIAL_FREQUENCY));
+                    return playJavaSphereClient().execute(CartCreateCommand.of(cartDraft));
                 });
     }
+
+    private final static Map<String, Object> INITIAL_FREQUENCY =
+            Collections.unmodifiableMap(new HashMap<String, Object>() {
+                {
+                    put("frequency", "0");
+                }
+            });
 
 
     @Override
