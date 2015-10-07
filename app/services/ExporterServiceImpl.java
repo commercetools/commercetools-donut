@@ -8,6 +8,7 @@ import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.types.*;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
+import play.Logger;
 import play.libs.F;
 
 import javax.inject.Inject;
@@ -15,6 +16,8 @@ import java.util.*;
 
 @Singleton
 public class ExporterServiceImpl extends AbstractShopService implements ExporterService {
+
+    private static final Logger.ALogger LOG = Logger.of(ExporterServiceImpl.class);
 
     @Inject
     public ExporterServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
@@ -24,7 +27,9 @@ public class ExporterServiceImpl extends AbstractShopService implements Exporter
     @Override
     public F.Promise<Type> createCustomType() {
         final TypeDraft customTypeDraft = frequencyTypeDefinition();
-        return playJavaSphereClient().execute(TypeCreateCommand.of(customTypeDraft));
+        final F.Promise<Type> customTypePromise = playJavaSphereClient().execute(TypeCreateCommand.of(customTypeDraft));
+        customTypePromise.onRedeem(type -> LOG.debug("Created custom Type: {}", type));
+        return customTypePromise;
     }
 
     @Override
