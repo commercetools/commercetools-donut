@@ -32,6 +32,6 @@ public class ProductProvider implements Provider<ProductProjection> {
                 playJavaSphereClient.execute(request);
         //blocking on application startup, fail fast
         return productProjectionPagedQueryResultPromise.get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS).head()
-                .orElseThrow(() -> new ProductNotFoundException());
+                .orElseThrow(ProductNotFoundException::new);
     }
 }
