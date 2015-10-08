@@ -25,23 +25,22 @@ import static play.test.Helpers.running;
 public class ExporterServiceIntegrationTest {
 
     private Application application;
-    private ExporterService exporterService;
+    private ExportService exportService;
     private PlayJavaSphereClient sphereClient;
 
     private static final long ALLOWED_TIMEOUT = 5000;
 
-
     @Before
     public void setUp() {
         application = new GuiceApplicationBuilder().build();
-        exporterService = application.injector().instanceOf(ExporterService.class);
+        exportService = application.injector().instanceOf(ExportService.class);
         sphereClient = application.injector().instanceOf(PlayJavaSphereClient.class);
     }
 
     //@Test
     public void testCreateCustomType() {
         running(application, () -> {
-            final Type customType = exporterService.createCustomType().get(ALLOWED_TIMEOUT);
+            final Type customType = exportService.createCustomType().get(ALLOWED_TIMEOUT);
             assertThat(customType).isNotNull();
         });
     }

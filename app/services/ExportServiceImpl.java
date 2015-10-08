@@ -5,9 +5,15 @@ import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
-import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.Product;
+import io.sphere.sdk.products.ProductDraft;
+import io.sphere.sdk.products.commands.ProductCreateCommand;
+import io.sphere.sdk.producttypes.ProductType;
+import io.sphere.sdk.producttypes.ProductTypeDraft;
+import io.sphere.sdk.producttypes.commands.ProductTypeCreateCommand;
 import io.sphere.sdk.types.*;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
+import models.export.ShopData;
 import play.Logger;
 import play.libs.F;
 
@@ -15,12 +21,12 @@ import javax.inject.Inject;
 import java.util.*;
 
 @Singleton
-public class ExporterServiceImpl extends AbstractShopService implements ExporterService {
+public class ExportServiceImpl extends AbstractShopService implements ExportService {
 
-    private static final Logger.ALogger LOG = Logger.of(ExporterServiceImpl.class);
+    private static final Logger.ALogger LOG = Logger.of(ExportServiceImpl.class);
 
     @Inject
-    public ExporterServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
+    public ExportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
         super(playJavaSphereClient);
     }
 
@@ -33,8 +39,15 @@ public class ExporterServiceImpl extends AbstractShopService implements Exporter
     }
 
     @Override
-    public F.Promise<ProductProjection> createProductModel() {
-        throw new UnsupportedOperationException("ExporterService.createProductModel() not implemented yet");
+    public F.Promise<Product> createProductModel() {
+        final ProductTypeDraft productTypeDraft = ShopData.productTypeDraft();
+        final F.Promise<ProductType> productTypePromise = playJavaSphereClient()
+                .execute(ProductTypeCreateCommand.of(productTypeDraft));
+
+        return productTypePromise.flatMap(productType -> {
+            final ProductDraft productDraft = ShopData.productDraft(productType);
+            return playJavaSphereClient().execute(ProductCreateCommand.of(productDraft));
+        });
     }
 
     private static TypeDraft frequencyTypeDefinition() {
