@@ -6,24 +6,32 @@ name := "sphere-donut"
 
 version := "1.0-SNAPSHOT"
 
+scalaVersion := "2.10.5"
+
 libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
   javaWs,
-  "io.sphere.sdk.jvm" % "sphere-models" % "1.0.0-M18" withSources(),
-  "io.sphere.sdk.jvm" % "sphere-java-client-apache-async" % "1.0.0-M18" withSources(),
+  "io.sphere.sdk.jvm" % "sphere-models" % "1.0.0-M16" withSources(),
+  "io.sphere.sdk.jvm" % "sphere-java-client-apache-async" % "1.0.0-M16" withSources(),
+  "io.sphere.sdk.jvm" % "sphere-convenience" % "1.0.0-M16" withSources(),
+  "io.sphere.sdk.jvm" %% "sphere-play-2_4-java-client" % "1.0.0-M16" withSources(),
   "org.apache.httpcomponents" % "httpasyncclient" % "4.0.2",
-  "io.sphere.sdk.jvm" % "sphere-convenience" % "1.0.0-M18" withSources(),
-  "io.sphere.sdk.jvm" %% "sphere-play-2_4-java-client" % "1.0.0-M18" withSources(),
   "com.novocode" % "junit-interface" % "0.11" % "test,it",
   "org.assertj" % "assertj-core" % "3.1.0" % "test,it",
   "org.mockito" % "mockito-core" % "1.8.5"  % "test, it",
+   PlayImport.component("play-test") % "it"
+)
+
+dependencyOverrides ++= Set (
+  "com.google.guava" % "guava" % "18.0",
+  "commons-io" % "commons-io" % "2.4",
   "com.fasterxml.jackson.core" % "jackson-annotations" % "2.6.0",
   "com.fasterxml.jackson.core" % "jackson-core" % "2.6.0",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.0",
   "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % "2.6.0",
   "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.6.0",
-   PlayImport.component("play-test") % "it"
+  "junit" % "junit" % "4.12"
 )
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
