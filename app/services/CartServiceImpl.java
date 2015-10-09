@@ -25,7 +25,6 @@ import io.sphere.sdk.models.DefaultCurrencyUnits;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.AttributeAccess;
-import io.sphere.sdk.types.CustomFieldsDraft;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Logger;
@@ -59,8 +58,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 })
                 .orElseGet(() -> {
                     LOG.debug("Creating new Cart");
-                    final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR)
-                            .witCustom(CustomFieldsDraft.ofTypeKeyAndObjects("cart-frequency-key", INITIAL_FREQUENCY));
+                    final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR);
                     return playJavaSphereClient().execute(CartCreateCommand.of(cartDraft));
                 });
     }
