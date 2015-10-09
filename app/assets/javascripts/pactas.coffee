@@ -1,7 +1,7 @@
 $ ->
     checkoutForm = $("#form-checkout")
 
-    paymentConfig = { publicApiKey: "532846f751f459b0d07df5fd" }
+    paymentConfig = { publicApiKey: $("#pactas-public-key").val() }
 
     iteroJS = new IteroJS.Signup()
     iteroJSPayment = new IteroJS.Payment( paymentConfig
