@@ -7,6 +7,7 @@ import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.types.CustomFields;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import play.api.mvc.RequestHeader;
 import play.libs.F;
@@ -54,6 +55,7 @@ public class CartServiceIntegrationTest {
         productProjection = fakeApplication.injector().instanceOf(ProductProjection.class);
     }
 
+    @Ignore
     @Test
     public void testGetOrCreateCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
@@ -65,6 +67,7 @@ public class CartServiceIntegrationTest {
         assertThat(frequency).isEqualTo(0);
     }
 
+    @Ignore
     @Test
     public void testSetProductToCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
@@ -73,6 +76,7 @@ public class CartServiceIntegrationTest {
         assertThat(cartWithProduct.getLineItems().size()).isEqualTo(1);
     }
 
+    @Ignore
     @Test
     public void testClearCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
@@ -82,6 +86,7 @@ public class CartServiceIntegrationTest {
         assertThat(clearedCart.getLineItems()).isEmpty();
     }
 
+    @Ignore
     @Test
     public void testGetFrequency() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
@@ -92,11 +97,13 @@ public class CartServiceIntegrationTest {
         assertThat(result.get(ALLOWED_TIMEOUT)).isEqualTo(FREQUENCY);
     }
 
+    @Ignore
     @Test
     public void testGetSelectedVariant() {
         //TODO
     }
 
+    @Ignore
     @Test
     public void testCreateCartWithPactasInfo() {
         //TODO

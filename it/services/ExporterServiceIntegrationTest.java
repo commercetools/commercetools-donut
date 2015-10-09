@@ -4,20 +4,18 @@ import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.carts.commands.CartDeleteCommand;
 import io.sphere.sdk.carts.queries.CartQuery;
 import io.sphere.sdk.client.PlayJavaSphereClient;
-import io.sphere.sdk.products.ProductProjection;
-import io.sphere.sdk.products.queries.ProductProjectionQuery;
+import io.sphere.sdk.products.Product;
 import io.sphere.sdk.queries.PagedQueryResult;
 import io.sphere.sdk.types.Type;
 import io.sphere.sdk.types.commands.TypeDeleteCommand;
 import io.sphere.sdk.types.queries.TypeQuery;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
-import play.libs.F;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static play.test.Helpers.running;
@@ -37,43 +35,16 @@ public class ExporterServiceIntegrationTest {
         sphereClient = application.injector().instanceOf(PlayJavaSphereClient.class);
     }
 
-    //@Test
-    public void testCreateCustomType() {
-        running(application, () -> {
-            final Type customType = exportService.createCustomType().get(ALLOWED_TIMEOUT);
-            assertThat(customType).isNotNull();
-        });
+
+    @Ignore
+    @Test
+    public void testCreateProductType() {
+        final Product productType = exportService.createProductModel().get(ALLOWED_TIMEOUT);
+
     }
 
-    //@Test
-    public void deleteCustomType() {
-        running(application, () -> {
-            final TypeQuery query = TypeQuery.of();
-            final List<Type> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
-            results.forEach(type -> {
-                Type execute = sphereClient.execute(TypeDeleteCommand.of(type)).get(ALLOWED_TIMEOUT);
-                System.err.println("####" + type.getKey());
-            });
-        });
-    }
-
-    //@Test
-    public void deleteCarts() throws InterruptedException {
-        final CartQuery query = CartQuery.of();
-        List<Cart> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
-        System.err.println("#### Before delete " + results.size());
-        assertThat(results.isEmpty()).isFalse();
-        results.forEach(cart -> {
-            final Cart execute = sphereClient.execute(CartDeleteCommand.of(cart)).get(ALLOWED_TIMEOUT);
-            System.err.println("#### Deleted Cart " + cart.getId());
-
-        });
-        Thread.sleep(10000);
-        results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
-        System.err.println("#### After delete " + results.size());
-    }
-
-    //@Test
+    @Ignore
+    @Test
     public void getCustomTypes() {
         running(application, () -> {
             final TypeQuery query = TypeQuery.of();
@@ -83,18 +54,41 @@ public class ExporterServiceIntegrationTest {
         });
     }
 
+    @Ignore
     @Test
-    public void testGetProduct() {
+    public void testCreateCustomType() {
         running(application, () -> {
-            final ProductProjectionQuery query = ProductProjectionQuery.ofCurrent();
-            final F.Promise<PagedQueryResult<ProductProjection>> productProjectionPagedQueryResultPromise =
-                    sphereClient.execute(query);
-
-            final List<ProductProjection> results =
-                    productProjectionPagedQueryResultPromise.get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS).getResults();
-            assertThat(results.isEmpty()).isFalse();
-
+            final Type customType = exportService.createCustomType().get(ALLOWED_TIMEOUT);
+            assertThat(customType).isNotNull();
         });
+    }
+
+    @Ignore
+    @Test
+    public void deleteCustomType() {
+        running(application, () -> {
+            final TypeQuery query = TypeQuery.of();
+            final List<Type> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
+            results.forEach(type -> {
+                final Type execute = sphereClient.execute(TypeDeleteCommand.of(type)).get(ALLOWED_TIMEOUT);
+                System.err.println("####" + type.getKey());
+            });
+        });
+    }
+
+    @Ignore
+    @Test
+    public void deleteCarts() throws InterruptedException {
+        final CartQuery query = CartQuery.of();
+        PagedQueryResult<Cart> cartPagedQueryResult = sphereClient.execute(query).get(ALLOWED_TIMEOUT);
+        System.err.println("#### Before delete " + cartPagedQueryResult.getTotal());
+        assertThat(cartPagedQueryResult.getResults().isEmpty()).isFalse();
+        cartPagedQueryResult.getResults().forEach(cart -> {
+            final Cart execute = sphereClient.execute(CartDeleteCommand.of(cart)).get(ALLOWED_TIMEOUT);
+            System.err.println("#### Deleted Cart " + cart.getId());
+        });
+        cartPagedQueryResult = sphereClient.execute(query).get(ALLOWED_TIMEOUT);
+        System.err.println("#### After delete " + cartPagedQueryResult.getTotal());
     }
 }
 
