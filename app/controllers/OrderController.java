@@ -23,12 +23,15 @@ public class OrderController extends BaseController {
     private static final Logger.ALogger LOG = Logger.of(OrderController.class);
 
     private final CartService cartService;
+    private final String pactasPublicKey;
+
 
     @Inject
     public OrderController(final Application application, final CartService cartService,
                            final ProductProjection productProjection) {
         super(application, productProjection);
         this.cartService = requireNonNull(cartService);
+        this.pactasPublicKey = requireNonNull(application.configuration().getString("pactas.publicKey"));
     }
 
     public F.Promise<Result> show() {
@@ -45,7 +48,7 @@ public class OrderController extends BaseController {
         } else {
             final ProductVariant selectedVariant = productProjection().getVariant(optionalSelectedVariantId.get());
             final OrderPageData orderPageData = new OrderPageData(selectedVariant, selectedFrequency);
-            resultPromise = F.Promise.pure(ok(order.render(orderPageData)));
+            resultPromise = F.Promise.pure(ok(order.render(orderPageData, pactasPublicKey)));
         }
         return resultPromise;
     }
