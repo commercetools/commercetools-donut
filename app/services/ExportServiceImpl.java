@@ -7,10 +7,13 @@ import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.producttypes.ProductType;
+import io.sphere.sdk.producttypes.commands.ProductTypeCreateCommand;
 import io.sphere.sdk.types.*;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
+import models.export.ProductTypeDraftWrapper;
 import play.Logger;
 import play.libs.F;
+import utils.JsonUtils;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -55,6 +58,10 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
 
     @Override
     public F.Promise<ProductType> createProductTypeModel() {
-        return null;
+        final ProductTypeDraftWrapper productTypeDraftWrapper =
+                JsonUtils.readObjectFromResource("data/product-type-draft.json", ProductTypeDraftWrapper.class);
+        final F.Promise<ProductType> productTypePromise = playJavaSphereClient()
+                .execute(ProductTypeCreateCommand.of(productTypeDraftWrapper.createProductTypeDraft()));
+        return productTypePromise;
     }
 }

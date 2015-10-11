@@ -1,0 +1,274 @@
+{
+  "id": "f188a9d2-febf-451e-818f-2e54e5762caf",
+  "version": 298,
+  "productType": {
+    "typeId": "product-type",
+    "id": "f7b7fb37-bc11-4ed5-bbe0-b3b70c7cb13b"
+  },
+  "name": {
+    "en": "Classic box"
+  },
+  "description": {
+    "en": "Box with classic flavours."
+  },
+  "categories": [],
+  "categoryOrderHints": {},
+  "slug": {
+    "en": "donut-box"
+  },
+  "masterVariant": {
+    "id": 1,
+    "sku": "box6",
+    "prices": [
+      {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 699
+        },
+        "id": "46b5e250-67df-421d-be56-fd62ee080540"
+      }
+    ],
+    "images": [
+      {
+        "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-WuuDavUS.png",
+        "dimensions": {
+          "w": 264,
+          "h": 190
+        }
+      },
+      {
+        "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-green-C3OqK9-I.png",
+        "dimensions": {
+          "w": 404,
+          "h": 800
+        }
+      },
+      {
+        "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-green-AfNyfCRG.png",
+        "dimensions": {
+          "w": 213,
+          "h": 100
+        }
+      }
+    ],
+    "attributes": [
+      {
+        "name": "quantity",
+        "value": 6
+      },
+      {
+        "name": "box",
+        "value": "Small box"
+      },
+      {
+        "name": "pactas1",
+        "value": "5231dfec1d8dd00f389dc547"
+      },
+      {
+        "name": "pactas2",
+        "value": "5232c8731d8dd00f38c5adbc"
+      },
+      {
+        "name": "pactas4",
+        "value": "5232c8821d8dd00f38c5adbd"
+      }
+    ],
+    "availability": {
+      "isOnStock": true
+    }
+  },
+  "variants": [
+    {
+      "id": 4,
+      "sku": "box12",
+      "prices": [
+        {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 1299
+          },
+          "id": "bb919c8c-7e8a-4fa9-a3f6-dbd436713b9b"
+        }
+      ],
+      "images": [
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-PS4UxrYk.png",
+          "dimensions": {
+            "w": 264,
+            "h": 190
+          }
+        },
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-brown-7SthyUtd.png",
+          "dimensions": {
+            "w": 404,
+            "h": 800
+          }
+        },
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-brown-vUVfO0A3.png",
+          "dimensions": {
+            "w": 213,
+            "h": 100
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "quantity",
+          "value": 12
+        },
+        {
+          "name": "box",
+          "value": "Medium box"
+        },
+        {
+          "name": "pactas4",
+          "value": "5232c9be1d8dd00f38c5addd"
+        },
+        {
+          "name": "pactas2",
+          "value": "5232c9b51d8dd00f38c5addc"
+        },
+        {
+          "name": "pactas1",
+          "value": "5232c9981d8dd00f38c5addb"
+        }
+      ],
+      "availability": {
+        "isOnStock": true
+      }
+    },
+    {
+      "id": 5,
+      "sku": "box24",
+      "prices": [
+        {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 2399
+          },
+          "id": "cb148eb1-0564-4a11-bb56-35ea137f90f3"
+        }
+      ],
+      "images": [
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-GpC-P4Ta.png",
+          "dimensions": {
+            "w": 264,
+            "h": 190
+          }
+        },
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-pink-VrwHTJ4u.png",
+          "dimensions": {
+            "w": 404,
+            "h": 800
+          }
+        },
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-pink-LiQCHu5K.png",
+          "dimensions": {
+            "w": 213,
+            "h": 100
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "quantity",
+          "value": 24
+        },
+        {
+          "name": "box",
+          "value": "Large box"
+        },
+        {
+          "name": "pactas4",
+          "value": "5232c9621d8dd00f38c5adcb"
+        },
+        {
+          "name": "pactas2",
+          "value": "5232c9571d8dd00f38c5adc9"
+        },
+        {
+          "name": "pactas1",
+          "value": "5232c93d1d8dd00f38c5adc7"
+        }
+      ],
+      "availability": {
+        "isOnStock": true
+      }
+    },
+    {
+      "id": 6,
+      "sku": "box36",
+      "prices": [
+        {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 3499
+          },
+          "id": "ac8a882e-84d4-4be6-9341-5e3ec875705b"
+        }
+      ],
+      "images": [
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-C1jwvNhm.png",
+          "dimensions": {
+            "w": 264,
+            "h": 190
+          }
+        },
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-gold-XPyAYcrR.png",
+          "dimensions": {
+            "w": 404,
+            "h": 800
+          }
+        },
+        {
+          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-gold-hT_VyC_A.png",
+          "dimensions": {
+            "w": 213,
+            "h": 100
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "quantity",
+          "value": 36
+        },
+        {
+          "name": "box",
+          "value": "Huge box"
+        },
+        {
+          "name": "pactas4",
+          "value": "5232c90b1d8dd00f38c5adc4"
+        },
+        {
+          "name": "pactas2",
+          "value": "5232c8ca1d8dd00f38c5adc1"
+        },
+        {
+          "name": "pactas1",
+          "value": "5232c8a81d8dd00f38c5adbf"
+        }
+      ],
+      "availability": {
+        "isOnStock": true
+      }
+    }
+  ],
+  "searchKeywords": {},
+  "hasStagedChanges": false,
+  "published": true,
+  "taxCategory": {
+    "typeId": "tax-category",
+    "id": "3b2fbecb-c702-48ba-a755-5d2fa3e3fa6e"
+  },
+  "createdAt": "1970-01-01T00:00:00.001Z",
+  "lastModifiedAt": "2015-10-09T12:02:01.156Z"
+}
