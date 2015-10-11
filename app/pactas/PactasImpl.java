@@ -62,7 +62,6 @@ public class PactasImpl implements Pactas {
                 .setContentType(CONTENT_TYPE)
                 .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authorization.getAccessToken())
                 .get().map(response -> {
-                    Logger.info(response.getBody());
                     if (response.getStatus() == Http.Status.OK) {
                         return JsonUtils.readObject(clazz, response.getBody());
                     } else {
@@ -81,7 +80,6 @@ public class PactasImpl implements Pactas {
                 .setContentType(CONTENT_TYPE)
                 .setAuth(clientId, clientSecret, WSAuthScheme.BASIC)
                 .post("grant_type=client_credentials").map(response -> {
-                    Logger.info(response.getBody());
                     if (response.getStatus() == Http.Status.OK) {
                         return JsonUtils.readObject(Authorization.class, response.getBody());
                     } else {
