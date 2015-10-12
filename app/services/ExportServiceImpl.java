@@ -6,16 +6,22 @@ import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.Product;
+import io.sphere.sdk.products.commands.ProductCreateCommand;
 import io.sphere.sdk.producttypes.ProductType;
 import io.sphere.sdk.producttypes.commands.ProductTypeCreateCommand;
 import io.sphere.sdk.types.*;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
+import models.export.ProductDraftWrapper;
 import models.export.ProductTypeDraftWrapper;
 import play.Logger;
 import play.libs.F;
 import utils.JsonUtils;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 @Singleton
@@ -25,11 +31,14 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
 
     private static final String PRODUCT_TYPE_JSON_RESOURCE = "data/product-type-draft.json";
     private static final String PRODUCT_JSON_RESOURCE = "data/product-draft.json";
+    private static final Path PATH = FileSystems.getDefault().getPath("conf/data", "product-draft.json");
 
     private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
     private static final String CUSTOM_TYPE_LABEL = "custom type for delivery frequency";
     private static final String FREQUENCY_FIELD_NAME = "frequency";
     private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
+
+    private static final String PRODUCT_TYPE_ID_KEY = "PRODUCT-TYPE-ID";
 
     @Inject
     public ExportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
@@ -37,7 +46,7 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
     }
 
     @Override
-    public F.Promise<Type> createCustomType() {
+    public F.Promise<Type> exportCustomType() {
         final TypeDraft customTypeDraft = frequencyTypeDefinition();
         final F.Promise<Type> customTypePromise = playJavaSphereClient().execute(TypeCreateCommand.of(customTypeDraft));
         customTypePromise.onRedeem(type -> LOG.debug("Created custom Type: {}", type));
@@ -59,12 +68,27 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
     }
 
     @Override
-    public F.Promise<Product> createProductModel() {
-        return null;
+    public F.Promise<Product> exportProductModel() {
+        final F.Promise<ProductType> productTypePromise = createProductTypeModel();
+        return productTypePromise.flatMap(productType -> {
+            writeProductTypeId(productType.getId());
+            final ProductDraftWrapper productDraftWrapper = JsonUtils.readObjectFromResource(PRODUCT_JSON_RESOURCE,
+                    ProductDraftWrapper.class);
+            return playJavaSphereClient().execute(ProductCreateCommand.of(productDraftWrapper.createProductDraft(productType)));
+        });
     }
 
-    @Override
-    public F.Promise<ProductType> createProductTypeModel() {
+    private void writeProductTypeId(final String id) {
+        final String data;
+        try {
+            data = new String(Files.readAllBytes(PATH)).replace(PRODUCT_TYPE_ID_KEY, id);
+            Files.write(PATH, data.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write resource file");
+        }
+    }
+
+    private F.Promise<ProductType> createProductTypeModel() {
         final ProductTypeDraftWrapper productTypeDraftWrapper =
                 JsonUtils.readObjectFromResource(PRODUCT_TYPE_JSON_RESOURCE, ProductTypeDraftWrapper.class);
         return playJavaSphereClient().execute(ProductTypeCreateCommand.of(productTypeDraftWrapper.createProductTypeDraft()));

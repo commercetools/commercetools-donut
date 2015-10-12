@@ -1,7 +1,7 @@
 {
   "productType": {
     "typeId": "product-type",
-    "id": "f7b7fb37-bc11-4ed5-bbe0-b3b70c7cb13b"
+    "id": "PRODUCT-TYPE-ID"
   },
   "name": {
     "en": "Classic box"
@@ -15,15 +15,13 @@
     "en": "donut-box"
   },
   "masterVariant": {
-    "id": 1,
     "sku": "box6",
     "prices": [
       {
         "value": {
           "currencyCode": "EUR",
           "centAmount": 699
-        },
-        "id": "46b5e250-67df-421d-be56-fd62ee080540"
+        }
       }
     ],
     "images": [
@@ -77,15 +75,13 @@
   },
   "variants": [
     {
-      "id": 4,
       "sku": "box12",
       "prices": [
         {
           "value": {
             "currencyCode": "EUR",
             "centAmount": 1299
-          },
-          "id": "bb919c8c-7e8a-4fa9-a3f6-dbd436713b9b"
+          }
         }
       ],
       "images": [
@@ -138,15 +134,13 @@
       }
     },
     {
-      "id": 5,
       "sku": "box24",
       "prices": [
         {
           "value": {
             "currencyCode": "EUR",
             "centAmount": 2399
-          },
-          "id": "cb148eb1-0564-4a11-bb56-35ea137f90f3"
+          }
         }
       ],
       "images": [
@@ -199,15 +193,13 @@
       }
     },
     {
-      "id": 6,
       "sku": "box36",
       "prices": [
         {
           "value": {
             "currencyCode": "EUR",
             "centAmount": 3499
-          },
-          "id": "ac8a882e-84d4-4be6-9341-5e3ec875705b"
+          }
         }
       ],
       "images": [
