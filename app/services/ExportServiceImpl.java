@@ -23,6 +23,12 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
 
     private static final Logger.ALogger LOG = Logger.of(ExportServiceImpl.class);
 
+    private static final String PRODUCT_TYPE_JSON_RESOURCE = "data/product-type-draft.json";
+    private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
+    private static final String CUSTOM_TYPE_LABEL = "custom type for delivery frequency";
+    private static final String FREQUENCY_FIELD_NAME = "frequency";
+    private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
+
     @Inject
     public ExportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
         super(playJavaSphereClient);
@@ -37,18 +43,17 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
     }
 
     private static TypeDraft frequencyTypeDefinition() {
-        final LocalizedString typeName = LocalizedString.of(Locale.ENGLISH, "custom type for delivery frequency");
-        final String key = "cart-frequency-key";
+        final LocalizedString typeName = LocalizedString.of(Locale.ENGLISH, CUSTOM_TYPE_LABEL);
         final String cartResourceTypeId = Cart.resourceTypeId();
         final Set<String> resourceTypeIds = Collections.singleton(cartResourceTypeId);
         final List<FieldDefinition> fieldDefinitions = Arrays.asList(frequencyFieldDefinition());
 
-        return TypeDraftBuilder.of(key, typeName, resourceTypeIds).fieldDefinitions(fieldDefinitions).build();
+        return TypeDraftBuilder.of(CUSTOM_TYPE_KEY, typeName, resourceTypeIds).fieldDefinitions(fieldDefinitions).build();
     }
 
     private static FieldDefinition frequencyFieldDefinition() {
-        final LocalizedString frequencyFieldLabel = LocalizedString.of(Locale.ENGLISH, "selected frequency");
-        return FieldDefinition.of(StringType.of(), "frequency", frequencyFieldLabel, false, TextInputHint.SINGLE_LINE);
+        final LocalizedString frequencyFieldLabel = LocalizedString.of(Locale.ENGLISH, FREQUENCY_FIELD_LABEL);
+        return FieldDefinition.of(StringType.of(), FREQUENCY_FIELD_NAME, frequencyFieldLabel, false, TextInputHint.SINGLE_LINE);
     }
 
     @Override
@@ -59,9 +64,7 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
     @Override
     public F.Promise<ProductType> createProductTypeModel() {
         final ProductTypeDraftWrapper productTypeDraftWrapper =
-                JsonUtils.readObjectFromResource("data/product-type-draft.json", ProductTypeDraftWrapper.class);
-        final F.Promise<ProductType> productTypePromise = playJavaSphereClient()
-                .execute(ProductTypeCreateCommand.of(productTypeDraftWrapper.createProductTypeDraft()));
-        return productTypePromise;
+                JsonUtils.readObjectFromResource(PRODUCT_TYPE_JSON_RESOURCE, ProductTypeDraftWrapper.class);
+        return playJavaSphereClient().execute(ProductTypeCreateCommand.of(productTypeDraftWrapper.createProductTypeDraft()));
     }
 }
