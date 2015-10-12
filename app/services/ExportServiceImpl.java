@@ -24,6 +24,8 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
     private static final Logger.ALogger LOG = Logger.of(ExportServiceImpl.class);
 
     private static final String PRODUCT_TYPE_JSON_RESOURCE = "data/product-type-draft.json";
+    private static final String PRODUCT_JSON_RESOURCE = "data/product-draft.json";
+
     private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
     private static final String CUSTOM_TYPE_LABEL = "custom type for delivery frequency";
     private static final String FREQUENCY_FIELD_NAME = "frequency";
