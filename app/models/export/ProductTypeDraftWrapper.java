@@ -116,6 +116,18 @@ public class ProductTypeDraftWrapper extends Base {
         return result;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<AttributeDefinitionWrapper> getAttributes() {
+        return attributes;
+    }
+
     public static class AttributeDefinitionWrapper extends Base {
 
         private final AttributeTypeWrapper type;
