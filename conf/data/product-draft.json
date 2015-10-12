@@ -1,6 +1,4 @@
 {
-  "id": "f188a9d2-febf-451e-818f-2e54e5762caf",
-  "version": 298,
   "productType": {
     "typeId": "product-type",
     "id": "f7b7fb37-bc11-4ed5-bbe0-b3b70c7cb13b"
@@ -268,7 +266,5 @@
   "taxCategory": {
     "typeId": "tax-category",
     "id": "3b2fbecb-c702-48ba-a755-5d2fa3e3fa6e"
-  },
-  "createdAt": "1970-01-01T00:00:00.001Z",
-  "lastModifiedAt": "2015-10-09T12:02:01.156Z"
+  }
 }
