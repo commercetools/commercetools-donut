@@ -2,7 +2,6 @@ package models.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.sphere.sdk.models.Base;
-import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.attributes.*;
 import io.sphere.sdk.producttypes.ProductTypeDraft;
@@ -19,7 +18,8 @@ public class ProductTypeDraftWrapper extends Base {
     private final String description;
     private final List<AttributeDefinitionWrapper> attributes;
 
-    public ProductTypeDraftWrapper(@JsonProperty("name") final String name, @JsonProperty("description") final String description,
+    public ProductTypeDraftWrapper(@JsonProperty("name") final String name,
+                                   @JsonProperty("description") final String description,
                                    @JsonProperty("attributes") final List<AttributeDefinitionWrapper> attributes) {
         this.name = requireNonNull(name);
         this.description = requireNonNull(description);
@@ -35,33 +35,33 @@ public class ProductTypeDraftWrapper extends Base {
         final AttributeDefinitionWrapper quantityAttributeWrapper =
                 attributes.stream().filter(predicate).findAny().orElseThrow(() -> new RuntimeException());
 
-        return AttributeDefinitionBuilder.of(quantityAttributeWrapper.name, quantityAttributeWrapper.label,
-                mapAttributeType(quantityAttributeWrapper.type))
-                .isRequired(quantityAttributeWrapper.isRequired)
-                .isSearchable(quantityAttributeWrapper.isSearchable)
-                .attributeConstraint(mapAttributeConstraint(quantityAttributeWrapper.attributeConstraint))
-                .inputHint(mapTextInputHint(quantityAttributeWrapper.inputHint))
+        return AttributeDefinitionBuilder.of(quantityAttributeWrapper.getName(), quantityAttributeWrapper.getLabel(),
+                mapAttributeType(quantityAttributeWrapper.getType()))
+                .isRequired(quantityAttributeWrapper.getIsRequired())
+                .isSearchable(quantityAttributeWrapper.getIsSearchable())
+                .attributeConstraint(mapAttributeConstraint(quantityAttributeWrapper.getAttributeConstraint()))
+                .inputHint(mapTextInputHint(quantityAttributeWrapper.getInputHint()))
                 .build();
     }
 
     private AttributeDefinition quantityAttributeDefinition() {
-        return getAttributeDefinition(attributeDefinitionWrapper -> "quantity".equals(attributeDefinitionWrapper.name));
+        return getAttributeDefinition(attributeDefinitionWrapper -> "quantity".equals(attributeDefinitionWrapper.getName()));
     }
 
     private AttributeDefinition boxAttributeDefinition() {
-        return getAttributeDefinition(attributeDefinitionWrapper -> "box".equals(attributeDefinitionWrapper.name));
+        return getAttributeDefinition(attributeDefinitionWrapper -> "box".equals(attributeDefinitionWrapper.getName()));
     }
 
     private AttributeDefinition pactasMonthlyAttributeDefinition() {
-        return getAttributeDefinition(attributeDefinitionWrapper -> "pactas1".equals(attributeDefinitionWrapper.name));
+        return getAttributeDefinition(attributeDefinitionWrapper -> "pactas1".equals(attributeDefinitionWrapper.getName()));
     }
 
     private AttributeDefinition pactasTwoWeeklyAttributeDefinition() {
-        return getAttributeDefinition(attributeDefinitionWrapper -> "pactas2".equals(attributeDefinitionWrapper.name));
+        return getAttributeDefinition(attributeDefinitionWrapper -> "pactas2".equals(attributeDefinitionWrapper.getName()));
     }
 
     private AttributeDefinition pactasWeeklyAttributeDefinition() {
-        return getAttributeDefinition(attributeDefinitionWrapper -> "pactas4".equals(attributeDefinitionWrapper.name));
+        return getAttributeDefinition(attributeDefinitionWrapper -> "pactas4".equals(attributeDefinitionWrapper.getName()));
     }
 
     private AttributeConstraint mapAttributeConstraint(final AttributeConstraintWrapper attributeConstraintWrapper) {
@@ -87,7 +87,7 @@ public class ProductTypeDraftWrapper extends Base {
 
     private AttributeType mapAttributeType(final AttributeTypeWrapper attributeTypeWrapper) {
         final AttributeType result;
-        switch (attributeTypeWrapper.name) {
+        switch (attributeTypeWrapper.name()) {
             case "text":
                 result = StringType.of();
                 break;
@@ -95,7 +95,7 @@ public class ProductTypeDraftWrapper extends Base {
                 result = NumberType.of();
                 break;
             default:
-                throw new RuntimeException("Unknown AttributeType: " + attributeTypeWrapper.name);
+                throw new RuntimeException("Unknown AttributeType: " + attributeTypeWrapper.name());
         }
         return result;
     }
@@ -125,51 +125,5 @@ public class ProductTypeDraftWrapper extends Base {
 
     public List<AttributeDefinitionWrapper> getAttributes() {
         return attributes;
-    }
-
-    public static class AttributeDefinitionWrapper extends Base {
-
-        private final AttributeTypeWrapper type;
-        private final String name;
-        private final LocalizedString label;
-        private final Boolean isRequired;
-        private final AttributeConstraintWrapper attributeConstraint;
-        private final Boolean isSearchable;
-        private final TextInputHintWrapper inputHint;
-
-        public AttributeDefinitionWrapper(@JsonProperty("type") AttributeTypeWrapper type, @JsonProperty("name") String name,
-                                          @JsonProperty("label") LocalizedString label, @JsonProperty("isRequired") Boolean isRequired,
-                                          @JsonProperty("attributeConstraint") AttributeConstraintWrapper attributeConstraint,
-                                          @JsonProperty("isSearchable") Boolean isSearchable,
-                                          @JsonProperty("inputHint") TextInputHintWrapper inputHint) {
-            this.type = type;
-            this.name = name;
-            this.label = label;
-            this.isRequired = isRequired;
-            this.attributeConstraint = attributeConstraint;
-            this.isSearchable = isSearchable;
-            this.inputHint = inputHint;
-        }
-    }
-
-    public static class AttributeTypeWrapper {
-        private final String name;
-
-        public AttributeTypeWrapper(@JsonProperty("name") final String name) {
-            this.name = name;
-        }
-    }
-
-    enum AttributeConstraintWrapper {
-        NONE,
-        UNIQUE,
-        COMBINATION_UNIQUE,
-        SAME_FOR_ALL;
-    }
-
-
-    enum TextInputHintWrapper {
-        SINGLE_LINE,
-        MULTI_LINE;
     }
 }

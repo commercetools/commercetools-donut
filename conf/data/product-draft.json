@@ -64,10 +64,7 @@
         "name": "pactas4",
         "value": "5232c8821d8dd00f38c5adbd"
       }
-    ],
-    "availability": {
-      "isOnStock": true
-    }
+    ]
   },
   "variants": [
     {
@@ -124,10 +121,7 @@
           "name": "pactas1",
           "value": "5232c9981d8dd00f38c5addb"
         }
-      ],
-      "availability": {
-        "isOnStock": true
-      }
+      ]
     },
     {
       "sku": "box24",
@@ -183,10 +177,7 @@
           "name": "pactas1",
           "value": "5232c93d1d8dd00f38c5adc7"
         }
-      ],
-      "availability": {
-        "isOnStock": true
-      }
+      ]
     },
     {
       "sku": "box36",
@@ -242,10 +233,7 @@
           "name": "pactas1",
           "value": "5232c8a81d8dd00f38c5adbf"
         }
-      ],
-      "availability": {
-        "isOnStock": true
-      }
+      ]
     }
   ],
   "searchKeywords": {}
