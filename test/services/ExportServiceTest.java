@@ -8,11 +8,11 @@ import org.mockito.Mockito;
 public class ExportServiceTest {
 
     private PlayJavaSphereClient playJavaSphereClient;
-    private ExportService exportService;
+    private ImportService importService;
 
     @Before
     public void setUp() {
         playJavaSphereClient = Mockito.mock(PlayJavaSphereClient.class);
-        exportService = new ExportServiceImpl(playJavaSphereClient);
+        importService = new ImportServiceImpl(playJavaSphereClient);
     }
 }

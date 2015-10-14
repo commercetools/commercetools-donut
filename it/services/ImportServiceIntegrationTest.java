@@ -6,15 +6,15 @@ import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
 
-public class ExportServiceIntegrationTest {
+public class ImportServiceIntegrationTest {
 
     private Application application;
-    private ExportService exportService;
+    private ImportService importService;
 
     @Before
     public void setUp() {
         application = new GuiceApplicationBuilder().build();
-        exportService = application.injector().instanceOf(ExportService.class);
+        importService = application.injector().instanceOf(ImportService.class);
     }
 
     @Test

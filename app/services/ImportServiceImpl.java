@@ -25,9 +25,9 @@ import java.nio.file.Path;
 import java.util.*;
 
 @Singleton
-public class ExportServiceImpl extends AbstractShopService implements ExportService {
+public class ImportServiceImpl extends AbstractShopService implements ImportService {
 
-    private static final Logger.ALogger LOG = Logger.of(ExportServiceImpl.class);
+    private static final Logger.ALogger LOG = Logger.of(ImportServiceImpl.class);
 
     private static final String PRODUCT_TYPE_JSON_RESOURCE = "data/product-type-draft.json";
     private static final String PRODUCT_JSON_RESOURCE = "data/product-draft.json";
@@ -41,7 +41,7 @@ public class ExportServiceImpl extends AbstractShopService implements ExportServ
     private static final String PRODUCT_TYPE_ID_KEY = "PRODUCT-TYPE-ID";
 
     @Inject
-    public ExportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
+    public ImportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
         super(playJavaSphereClient);
     }
 
