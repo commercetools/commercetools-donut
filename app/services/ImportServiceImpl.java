@@ -7,9 +7,14 @@ import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductDraft;
+import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.commands.ProductCreateCommand;
+import io.sphere.sdk.products.commands.ProductUpdateCommand;
+import io.sphere.sdk.products.commands.updateactions.Publish;
+import io.sphere.sdk.products.queries.ProductProjectionQuery;
 import io.sphere.sdk.producttypes.ProductType;
 import io.sphere.sdk.producttypes.commands.ProductTypeCreateCommand;
+import io.sphere.sdk.queries.PagedQueryResult;
 import io.sphere.sdk.taxcategories.TaxCategory;
 import io.sphere.sdk.taxcategories.commands.TaxCategoryCreateCommand;
 import io.sphere.sdk.types.*;
@@ -17,6 +22,7 @@ import io.sphere.sdk.types.commands.TypeCreateCommand;
 import models.export.ProductDraftWrapper;
 import models.export.ProductTypeDraftWrapper;
 import models.export.TaxCategoryWrapper;
+import play.Configuration;
 import play.Logger;
 import play.libs.F;
 import utils.JsonUtils;
@@ -26,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import static java.util.Objects.requireNonNull;
 
 @Singleton
 public class ImportServiceImpl extends AbstractShopService implements ImportService {
@@ -42,8 +50,31 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
 
     @Inject
-    public ImportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
+    public ImportServiceImpl(final PlayJavaSphereClient playJavaSphereClient, final Configuration configuration) {
         super(playJavaSphereClient);
+        requireNonNull(configuration);
+        final Boolean importEnabled = configuration.getBoolean("fixtures.import.enabled", false);
+
+        if(importEnabled) {
+            LOG.debug("Import is ENABLED");
+            productExists().flatMap(productExits -> {
+                LOG.debug("Existing Product found: {}", productExits);
+                return (productExits) ?
+                        F.Promise.pure(null) :
+                        exportProductModel().map(product -> {
+                            LOG.debug("Finished Product import");
+                            return null;
+                        });
+            }).get(5000);
+        }
+    }
+
+    private F.Promise<Boolean> productExists() {
+        final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
+        final F.Promise<PagedQueryResult<ProductProjection>> productProjectionResultPromise =
+                playJavaSphereClient().execute(request);
+        return productProjectionResultPromise.map(productProjectionPagedQueryResult ->
+                !productProjectionPagedQueryResult.getResults().isEmpty());
     }
 
     @Override
@@ -77,7 +108,8 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
             final ProductDraftWrapper productDraftWrapper = JsonUtils.readObjectFromResource(PRODUCT_JSON_RESOURCE,
                     ProductDraftWrapper.class);
             final ProductDraft productDraft = productDraftWrapper.createProductDraft(productType, taxCategory);
-            return playJavaSphereClient().execute(ProductCreateCommand.of(productDraft));
+            return playJavaSphereClient().execute(ProductCreateCommand.of(productDraft))
+                    .flatMap(product -> playJavaSphereClient().execute(ProductUpdateCommand.of(product, Publish.of())));
         }));
     }
 

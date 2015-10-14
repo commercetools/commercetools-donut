@@ -50,7 +50,7 @@ public class ProductDraftWrapper extends Base {
     private ProductVariantDraft smallBox() {
         final List<PriceWrapper> pricesWrappers = masterVariant.prices;
         final List<Price> prices = pricesWrappers.stream().map(priceWrapper ->
-                PriceBuilder.of(Money.of(priceWrapper.value.centAmount, priceWrapper.value.currencyCode))
+                PriceBuilder.of(Money.of(priceWrapper.value.amount, priceWrapper.value.currencyCode))
                         .build()).collect(Collectors.toList());
 
         final List<ImageWrapper> imageWrappers = masterVariant.images;
@@ -189,12 +189,12 @@ public class ProductDraftWrapper extends Base {
 
     public static class PriceValueWrapper {
 
-        private final Long centAmount;
+        private final Double amount;
         private final String currencyCode;
 
-        public PriceValueWrapper(@JsonProperty("centAmount") final Long centAmount,
+        public PriceValueWrapper(@JsonProperty("amount") final Double amount,
                                  @JsonProperty("currencyCode") final String currencyCode) {
-            this.centAmount = requireNonNull(centAmount);
+            this.amount = requireNonNull(amount);
             this.currencyCode = requireNonNull(currencyCode);
         }
     }

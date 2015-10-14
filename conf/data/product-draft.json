@@ -16,7 +16,7 @@
       {
         "value": {
           "currencyCode": "EUR",
-          "centAmount": 699
+          "amount": 6.99
         }
       }
     ],
@@ -76,7 +76,7 @@
         {
           "value": {
             "currencyCode": "EUR",
-            "centAmount": 1299
+            "amount": 12.99
           }
         }
       ],
@@ -135,7 +135,7 @@
         {
           "value": {
             "currencyCode": "EUR",
-            "centAmount": 2399
+            "amount": 23.99
           }
         }
       ],
@@ -194,7 +194,7 @@
         {
           "value": {
             "currencyCode": "EUR",
-            "centAmount": 3499
+            "amount": 34.99
           }
         }
       ],
