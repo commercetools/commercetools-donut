@@ -19,9 +19,9 @@ import io.sphere.sdk.taxcategories.TaxCategory;
 import io.sphere.sdk.taxcategories.commands.TaxCategoryCreateCommand;
 import io.sphere.sdk.types.*;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
-import models.export.ProductDraftWrapper;
-import models.export.ProductTypeDraftWrapper;
-import models.export.TaxCategoryWrapper;
+import models.wrapper.ProductDraftWrapper;
+import models.wrapper.ProductTypeDraftWrapper;
+import models.wrapper.TaxCategoryWrapper;
 import play.Configuration;
 import play.Logger;
 import play.libs.F;
@@ -110,7 +110,9 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
         return taxCategoryPromise.flatMap(taxCategory -> productTypePromise.flatMap(productType -> {
             final ProductDraftWrapper productDraftWrapper = JsonUtils.readObjectFromResource(PRODUCT_JSON_RESOURCE,
                     ProductDraftWrapper.class);
-            final ProductDraft productDraft = productDraftWrapper.createProductDraft(productType, taxCategory);
+
+            final ProductDraft productDraft = productDraftWrapper.createProductDraft(productType.toReference(),
+                            taxCategory.toReference());
             return playJavaSphereClient().execute(ProductCreateCommand.of(productDraft))
                     .flatMap(product -> playJavaSphereClient().execute(ProductUpdateCommand.of(product, Publish.of())));
         }));

@@ -38,9 +38,8 @@ public class ProductDraftWrapper extends Base {
         this.variants.add(masterVariant);
     }
 
-    public ProductDraft createProductDraft(final ProductType productType, final TaxCategory taxCategory) {
-        final Reference<ProductType> productTypeReference = productType.toReference();
-        final Reference<TaxCategory> taxCategoryReference = taxCategory.toReference();
+    public ProductDraft createProductDraft(final Reference<ProductType> productTypeReference,
+                                           final Reference<TaxCategory> taxCategoryReference) {
 
         return ProductDraftBuilder.of(productTypeReference, getName(), getSlug(), smallBox())
                 .description(getDescription())
