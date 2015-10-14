@@ -10,7 +10,9 @@ import io.sphere.sdk.producttypes.ProductType;
 import io.sphere.sdk.taxcategories.TaxCategory;
 import org.javamoney.moneta.Money;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -28,42 +30,69 @@ public class ProductDraftWrapper extends Base {
                                @JsonProperty("slug") final LocalizedString slug,
                                @JsonProperty("masterVariant") final ProductVariantDraftWrapper masterVariant,
                                @JsonProperty("variants") final List<ProductVariantDraftWrapper> variants) {
-
         this.name = requireNonNull(name);
         this.description = requireNonNull(description);
         this.slug = requireNonNull(slug);
         this.masterVariant = requireNonNull(masterVariant);
         this.variants = requireNonNull(variants);
-
+        this.variants.add(masterVariant);
     }
 
     public ProductDraft createProductDraft(final ProductType productType, final TaxCategory taxCategory) {
         final Reference<ProductType> productTypeReference = productType.toReference();
         final Reference<TaxCategory> taxCategoryReference = taxCategory.toReference();
 
-        return ProductDraftBuilder.of(productTypeReference, name, slug, smallBox())
-                .description(description).taxCategory(taxCategoryReference)
-                        //.variants(Arrays.asList(mediumBox(), largeBox(), hugeBox()))
+        return ProductDraftBuilder.of(productTypeReference, getName(), getSlug(), smallBox())
+                .description(getDescription())
+                .taxCategory(taxCategoryReference)
+                .variants(Arrays.asList(mediumBox(), largeBox(), hugeBox()))
                 .build();
     }
 
     private ProductVariantDraft smallBox() {
-        final List<PriceWrapper> pricesWrappers = masterVariant.prices;
+        return createVariant(productVariantDraftWrapper -> "box6".equals(productVariantDraftWrapper.getSku()));
+    }
+
+    private ProductVariantDraft mediumBox() {
+        return createVariant(productVariantDraftWrapper -> "box12".equals(productVariantDraftWrapper.getSku()));
+    }
+
+    private ProductVariantDraft largeBox() {
+        return createVariant(productVariantDraftWrapper -> "box24".equals(productVariantDraftWrapper.getSku()));
+    }
+
+    private ProductVariantDraft hugeBox() {
+        return createVariant(productVariantDraftWrapper -> "box36".equals(productVariantDraftWrapper.getSku()));
+    }
+
+    private ProductVariantDraft createVariant(final Predicate<ProductVariantDraftWrapper> boxPredicate) {
+        final ProductVariantDraftWrapper variantWrapper = getVariants().stream()
+                .filter(boxPredicate).findFirst()
+                .orElseThrow(() -> new RuntimeException("Unable to find variant"));
+
+        final List<PriceWrapper> pricesWrappers = variantWrapper.getPrices();
         final List<Price> prices = pricesWrappers.stream().map(priceWrapper ->
-                PriceBuilder.of(Money.of(priceWrapper.value.amount, priceWrapper.value.currencyCode))
+                PriceBuilder.of(Money.of(priceWrapper.getValue().getAmount(), priceWrapper.getValue().getCurrencyCode()))
                         .build()).collect(Collectors.toList());
 
-        final List<ImageWrapper> imageWrappers = masterVariant.images;
+        final List<ImageWrapper> imageWrappers = variantWrapper.getImages();
         final List<Image> images = imageWrappers.stream().map(imageWrapper ->
-                Image.ofWidthAndHeight(imageWrapper.url, imageWrapper.dimensions.width, imageWrapper.dimensions.height,
+                Image.ofWidthAndHeight(imageWrapper.url, imageWrapper.getDimensions().getWidth(),
+                        imageWrapper.getDimensions().getHeight(),
                         "donuts image label")).collect(Collectors.toList());
 
-        final List<AttributeDraftWrapper> attributeDraftWrappers = masterVariant.attributes;
+        final List<AttributeDraftWrapper> attributeDraftWrappers = variantWrapper.getAttributes();
         final List<AttributeDraft> attributes = attributeDraftWrappers.stream()
-                .map(attributeDraftWrapper -> AttributeDraft.of(attributeDraftWrapper.name, attributeDraftWrapper.value))
+                .map(attributeDraftWrapper -> AttributeDraft.of(attributeDraftWrapper.getName(),
+                        attributeDraftWrapper.getValue()))
                 .collect(Collectors.toList());
 
-        return ProductVariantDraftBuilder.of().prices(prices).images(images).sku(masterVariant.sku).attributes(attributes).build();
+        return ProductVariantDraftBuilder.of().prices(prices).images(images).sku(variantWrapper.getSku())
+                .attributes(attributes).build();
+    }
+
+    public LocalizedString getDescription() {
+        return description;
     }
 
     public LocalizedString getName() {
@@ -133,6 +162,14 @@ public class ProductDraftWrapper extends Base {
             this.url = requireNonNull(url);
             this.dimensions = requireNonNull(dimensions);
         }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public ImageDimensionsWrapper getDimensions() {
+            return dimensions;
+        }
     }
 
     public static class ImageDimensionsWrapper {
@@ -144,6 +181,14 @@ public class ProductDraftWrapper extends Base {
             this.width = requireNonNull(width);
             this.height = requireNonNull(height);
         }
+
+        public Integer getWidth() {
+            return width;
+        }
+
+        public Integer getHeight() {
+            return height;
+        }
     }
 
     public static class AttributeDraftWrapper {
@@ -154,6 +199,14 @@ public class ProductDraftWrapper extends Base {
         public AttributeDraftWrapper(@JsonProperty("name") final String name, @JsonProperty("value") final Object value) {
             this.name = requireNonNull(name);
             this.value = requireNonNull(value);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Object getValue() {
+            return value;
         }
     }
 
@@ -185,6 +238,10 @@ public class ProductDraftWrapper extends Base {
         public PriceWrapper(@JsonProperty("value") final PriceValueWrapper value) {
             this.value = requireNonNull(value);
         }
+
+        public PriceValueWrapper getValue() {
+            return value;
+        }
     }
 
     public static class PriceValueWrapper {
@@ -196,6 +253,14 @@ public class ProductDraftWrapper extends Base {
                                  @JsonProperty("currencyCode") final String currencyCode) {
             this.amount = requireNonNull(amount);
             this.currencyCode = requireNonNull(currencyCode);
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public String getCurrencyCode() {
+            return currencyCode;
         }
     }
 }

@@ -48,6 +48,6 @@ public class ProductDraftWrapperTest {
         assertThat(productDraft.getProductType().getTypeId()).isEqualTo(productType.toReference().getTypeId());
         assertThat(productDraft.getSlug()).isEqualTo(LocalizedString.of(Locale.ENGLISH, "donut-box"));
         assertThat(productDraft.getMasterVariant().getSku()).isEqualTo("box6");
-        assertThat(productDraft.getVariants().isEmpty()).isTrue();
+        assertThat(productDraft.getVariants().size()).isEqualTo(3);
     }
 }
