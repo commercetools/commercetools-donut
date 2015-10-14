@@ -1,4 +1,4 @@
-package models.export;
+package models.wrapper;
 
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.Reference;

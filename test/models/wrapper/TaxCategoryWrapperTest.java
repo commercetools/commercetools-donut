@@ -1,4 +1,4 @@
-package models.export;
+package models.wrapper;
 
 import com.neovisionaries.i18n.CountryCode;
 import io.sphere.sdk.taxcategories.TaxCategoryDraft;

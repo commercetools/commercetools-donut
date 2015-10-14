@@ -21,10 +21,6 @@ public class ProductProvider implements Provider<ProductProjection> {
     private final PlayJavaSphereClient playJavaSphereClient;
     private static final long ALLOWED_TIMEOUT = 3000;
 
-    /*
-     *
-    *
-    */
     @Inject
     public ProductProvider(final PlayJavaSphereClient playJavaSphereClient, final ImportService importService) {
         /*

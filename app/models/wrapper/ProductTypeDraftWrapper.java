@@ -1,5 +1,4 @@
-package models.export;
-
+package models.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.sphere.sdk.models.Base;
