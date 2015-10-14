@@ -21,13 +21,22 @@ public class ProductProvider implements Provider<ProductProjection> {
     private final PlayJavaSphereClient playJavaSphereClient;
     private static final long ALLOWED_TIMEOUT = 3000;
 
+    /*
+     *
+    *
+    */
     @Inject
     public ProductProvider(final PlayJavaSphereClient playJavaSphereClient, final ImportService importService) {
+        /*
+        ImportService is necessary here because it needs to be initialized
+        before the Product can be provided via dependency injection to the controllers
+        */
+        requireNonNull(importService);
         this.playJavaSphereClient = requireNonNull(playJavaSphereClient);
     }
 
     @Override
-    public  ProductProjection get() {
+    public ProductProjection get() {
         final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
         final F.Promise<PagedQueryResult<ProductProjection>> productProjectionPagedQueryResultPromise =
                 playJavaSphereClient.execute(request);
