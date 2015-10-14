@@ -6,7 +6,6 @@ import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.Product;
-import io.sphere.sdk.products.commands.ProductCreateCommand;
 import io.sphere.sdk.producttypes.ProductType;
 import io.sphere.sdk.producttypes.commands.ProductTypeCreateCommand;
 import io.sphere.sdk.types.*;
@@ -74,9 +73,11 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
             writeProductTypeId(productType.getId());
             final ProductDraftWrapper productDraftWrapper = JsonUtils.readObjectFromResource(PRODUCT_JSON_RESOURCE,
                     ProductDraftWrapper.class);
-            return playJavaSphereClient().execute(ProductCreateCommand.of(productDraftWrapper.createProductDraft(productType)));
+            return null;//playJavaSphereClient().execute(ProductCreateCommand.of(productDraftWrapper.createProductDraft(productType)));
         });
     }
+
+
 
     private void writeProductTypeId(final String id) {
         final String data;

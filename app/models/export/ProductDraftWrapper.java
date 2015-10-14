@@ -7,6 +7,7 @@ import io.sphere.sdk.models.Reference;
 import io.sphere.sdk.products.*;
 import io.sphere.sdk.products.attributes.AttributeDraft;
 import io.sphere.sdk.producttypes.ProductType;
+import io.sphere.sdk.taxcategories.TaxCategory;
 import org.javamoney.moneta.Money;
 
 import java.util.List;
@@ -22,26 +23,31 @@ public class ProductDraftWrapper extends Base {
     private final LocalizedString slug;
     private final ProductVariantDraftWrapper masterVariant;
     private final List<ProductVariantDraftWrapper> variants;
+    private final TaxCategoryWrapper taxCategory;
 
     public ProductDraftWrapper(@JsonProperty("name") final LocalizedString name,
                                @JsonProperty("description") final LocalizedString description,
                                @JsonProperty("slug") final LocalizedString slug,
                                @JsonProperty("masterVariant") final ProductVariantDraftWrapper masterVariant,
-                               @JsonProperty("variants") final List<ProductVariantDraftWrapper> variants) {
+                               @JsonProperty("variants") final List<ProductVariantDraftWrapper> variants,
+                               @JsonProperty("taxCategory") final TaxCategoryWrapper taxCategory) {
 
         this.name = requireNonNull(name);
         this.description = requireNonNull(description);
         this.slug = requireNonNull(slug);
         this.masterVariant = requireNonNull(masterVariant);
         this.variants = requireNonNull(variants);
+        this.taxCategory = requireNonNull(taxCategory);
+
     }
 
-    public ProductDraft createProductDraft(final ProductType productType) {
-       final Reference<ProductType> productTypeReference = productType.toReference();
+    public ProductDraft createProductDraft(final ProductType productType, final TaxCategory taxCategory) {
+        final Reference<ProductType> productTypeReference = productType.toReference();
+        final Reference<TaxCategory> taxCategoryReference = taxCategory.toReference();
 
         return ProductDraftBuilder.of(productTypeReference, name, slug, smallBox())
-                .description(description)
-                //.variants(Arrays.asList(mediumBox(), largeBox(), hugeBox()))
+                .description(description).taxCategory(taxCategoryReference)
+                        //.variants(Arrays.asList(mediumBox(), largeBox(), hugeBox()))
                 .build();
     }
 

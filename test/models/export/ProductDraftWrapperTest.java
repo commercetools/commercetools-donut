@@ -33,7 +33,7 @@ public class ProductDraftWrapperTest {
                 JsonUtils.readObjectFromResource(PRODUCT_JSON_RESOURCE, ProductDraftWrapper.class);
         assertThat(productDraftWrapper).isNotNull();
 
-        final ProductDraft productDraft = productDraftWrapper.createProductDraft(productType);
+        final ProductDraft productDraft = productDraftWrapper.createProductDraft(productType, null);
         System.err.println(productDraft);
         assertThat(productDraft).isNotNull();
         assertThat(productDraft.getName()).isEqualTo(productDraftWrapper.getName());
