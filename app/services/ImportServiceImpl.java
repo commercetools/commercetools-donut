@@ -22,9 +22,10 @@ import play.libs.F;
 import utils.JsonUtils;
 
 import javax.inject.Inject;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Singleton
 public class ImportServiceImpl extends AbstractShopService implements ImportService {
@@ -35,18 +36,10 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final String TAX_CATEGORY_JSON_RESOURCE = "data/tax-category-draft.json";
     private static final String PRODUCT_JSON_RESOURCE = "data/product-draft.json";
 
-
-    private static final Path PRODUCT_PATH = FileSystems.getDefault().getPath("conf/data", "product-draft.json");
-    private static final Path TAX_CATEGORY_PATH = FileSystems.getDefault().getPath("conf/data", "tax-category-draft.json");
-
-
     private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
     private static final String CUSTOM_TYPE_LABEL = "custom type for delivery frequency";
     private static final String FREQUENCY_FIELD_NAME = "frequency";
     private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
-
-    private static final String PRODUCT_TYPE_ID_KEY = "PRODUCT-TYPE-ID";
-    private static final String TAX_CATEGORY_ID_KEY = "TAX_CATEGORY-ID";
 
     @Inject
     public ImportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
@@ -65,7 +58,7 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
         final LocalizedString typeName = LocalizedString.of(Locale.ENGLISH, CUSTOM_TYPE_LABEL);
         final String cartResourceTypeId = Cart.resourceTypeId();
         final Set<String> resourceTypeIds = Collections.singleton(cartResourceTypeId);
-        final List<FieldDefinition> fieldDefinitions = Arrays.asList(frequencyFieldDefinition());
+        final List<FieldDefinition> fieldDefinitions = Collections.singletonList(frequencyFieldDefinition());
 
         return TypeDraftBuilder.of(CUSTOM_TYPE_KEY, typeName, resourceTypeIds).fieldDefinitions(fieldDefinitions).build();
     }
