@@ -54,19 +54,22 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
         super(playJavaSphereClient);
         requireNonNull(configuration);
         final Boolean importEnabled = configuration.getBoolean("fixtures.import.enabled", false);
-
+        LOG.debug("Import enabled: {}", importEnabled);
         if(importEnabled) {
-            LOG.debug("Import is ENABLED");
-            productExists().flatMap(productExits -> {
-                LOG.debug("Existing Product found: {}", productExits);
-                return (productExits) ?
-                        F.Promise.pure(null) :
-                        exportProductModel().map(product -> {
-                            LOG.debug("Finished Product import");
-                            return null;
-                        });
-            }).get(5000);
+            importData();
         }
+    }
+
+    private void importData() {
+        productExists().flatMap(productExits -> {
+            LOG.debug("Existing Product found: {}", productExits);
+            return (productExits) ?
+                    F.Promise.pure(null) :
+                    exportProductModel().map(product -> {
+                        LOG.debug("Finished Product import");
+                        return null;
+                    });
+        }).get(5000);
     }
 
     private F.Promise<Boolean> productExists() {
