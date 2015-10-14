@@ -1,8 +1,4 @@
 {
-  "productType": {
-    "typeId": "product-type",
-    "id": "PRODUCT-TYPE-ID"
-  },
   "name": {
     "en": "Classic box"
   },
@@ -252,10 +248,5 @@
       }
     }
   ],
-  "searchKeywords": {},
-  "hasStagedChanges": false,
-  "taxCategory": {
-    "typeId": "tax-category",
-    "id": "3b2fbecb-c702-48ba-a755-5d2fa3e3fa6e"
-  }
+  "searchKeywords": {}
 }

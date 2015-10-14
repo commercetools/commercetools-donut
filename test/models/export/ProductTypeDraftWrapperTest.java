@@ -18,8 +18,8 @@ public class ProductTypeDraftWrapperTest {
 
         final ProductTypeDraft productTypeDraft = productTypeDraftWrapper.createProductTypeDraft();
         assertThat(productTypeDraft).isNotNull();
-        assertThat(productTypeDraft.getName()).isEqualTo(productTypeDraftWrapper.getName());
-        assertThat(productTypeDraft.getDescription()).isEqualTo(productTypeDraftWrapper.getDescription());
-        assertThat(productTypeDraft.getAttributes().size()).isEqualTo(productTypeDraftWrapper.getAttributes().size());
+        assertThat(productTypeDraft.getName()).isEqualTo("Donuts box");
+        assertThat(productTypeDraft.getDescription()).isEqualTo("A box with delicious donuts");
+        assertThat(productTypeDraft.getAttributes().size()).isEqualTo(5);
     }
 }

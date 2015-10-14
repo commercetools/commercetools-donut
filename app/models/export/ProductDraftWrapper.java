@@ -17,27 +17,23 @@ import static java.util.Objects.requireNonNull;
 
 public class ProductDraftWrapper extends Base {
 
-    private ProductTypeWrapper productType;
     private final LocalizedString name;
     private final LocalizedString description;
     private final LocalizedString slug;
     private final ProductVariantDraftWrapper masterVariant;
     private final List<ProductVariantDraftWrapper> variants;
-    private final TaxCategoryWrapper taxCategory;
 
     public ProductDraftWrapper(@JsonProperty("name") final LocalizedString name,
                                @JsonProperty("description") final LocalizedString description,
                                @JsonProperty("slug") final LocalizedString slug,
                                @JsonProperty("masterVariant") final ProductVariantDraftWrapper masterVariant,
-                               @JsonProperty("variants") final List<ProductVariantDraftWrapper> variants,
-                               @JsonProperty("taxCategory") final TaxCategoryWrapper taxCategory) {
+                               @JsonProperty("variants") final List<ProductVariantDraftWrapper> variants) {
 
         this.name = requireNonNull(name);
         this.description = requireNonNull(description);
         this.slug = requireNonNull(slug);
         this.masterVariant = requireNonNull(masterVariant);
         this.variants = requireNonNull(variants);
-        this.taxCategory = requireNonNull(taxCategory);
 
     }
 
@@ -68,10 +64,6 @@ public class ProductDraftWrapper extends Base {
                 .collect(Collectors.toList());
 
         return ProductVariantDraftBuilder.of().prices(prices).images(images).sku(masterVariant.sku).attributes(attributes).build();
-    }
-
-    public ProductTypeWrapper getProductType() {
-        return productType;
     }
 
     public LocalizedString getName() {

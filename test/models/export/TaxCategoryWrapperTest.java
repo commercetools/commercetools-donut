@@ -25,6 +25,5 @@ public class TaxCategoryWrapperTest {
         assertThat(taxRate.getAmount()).isEqualTo(0.19);
         assertThat(taxRate.getName()).isEqualTo("19% MwSt");
         assertThat(taxRate.getCountry()).isEqualTo(CountryCode.DE);
-        System.err.println(taxCategoryDraft);
     }
 }
