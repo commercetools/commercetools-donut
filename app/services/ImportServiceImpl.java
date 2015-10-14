@@ -6,20 +6,23 @@ import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.Product;
+import io.sphere.sdk.products.ProductDraft;
+import io.sphere.sdk.products.commands.ProductCreateCommand;
 import io.sphere.sdk.producttypes.ProductType;
 import io.sphere.sdk.producttypes.commands.ProductTypeCreateCommand;
+import io.sphere.sdk.taxcategories.TaxCategory;
+import io.sphere.sdk.taxcategories.commands.TaxCategoryCreateCommand;
 import io.sphere.sdk.types.*;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
 import models.export.ProductDraftWrapper;
 import models.export.ProductTypeDraftWrapper;
+import models.export.TaxCategoryWrapper;
 import play.Logger;
 import play.libs.F;
 import utils.JsonUtils;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -29,8 +32,13 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final Logger.ALogger LOG = Logger.of(ImportServiceImpl.class);
 
     private static final String PRODUCT_TYPE_JSON_RESOURCE = "data/product-type-draft.json";
+    private static final String TAX_CATEGORY_JSON_RESOURCE = "data/tax-category-draft.json";
     private static final String PRODUCT_JSON_RESOURCE = "data/product-draft.json";
-    private static final Path PATH = FileSystems.getDefault().getPath("conf/data", "product-draft.json");
+
+
+    private static final Path PRODUCT_PATH = FileSystems.getDefault().getPath("conf/data", "product-draft.json");
+    private static final Path TAX_CATEGORY_PATH = FileSystems.getDefault().getPath("conf/data", "tax-category-draft.json");
+
 
     private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
     private static final String CUSTOM_TYPE_LABEL = "custom type for delivery frequency";
@@ -38,6 +46,7 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
 
     private static final String PRODUCT_TYPE_ID_KEY = "PRODUCT-TYPE-ID";
+    private static final String TAX_CATEGORY_ID_KEY = "TAX_CATEGORY-ID";
 
     @Inject
     public ImportServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
@@ -68,30 +77,26 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
 
     @Override
     public F.Promise<Product> exportProductModel() {
+        final F.Promise<TaxCategory> taxCategoryPromise = createTaxCategoryModel();
         final F.Promise<ProductType> productTypePromise = createProductTypeModel();
-        return productTypePromise.flatMap(productType -> {
-            writeProductTypeId(productType.getId());
+
+        return taxCategoryPromise.flatMap(taxCategory -> productTypePromise.flatMap(productType -> {
             final ProductDraftWrapper productDraftWrapper = JsonUtils.readObjectFromResource(PRODUCT_JSON_RESOURCE,
                     ProductDraftWrapper.class);
-            return null;//playJavaSphereClient().execute(ProductCreateCommand.of(productDraftWrapper.createProductDraft(productType)));
-        });
-    }
-
-
-
-    private void writeProductTypeId(final String id) {
-        final String data;
-        try {
-            data = new String(Files.readAllBytes(PATH)).replace(PRODUCT_TYPE_ID_KEY, id);
-            Files.write(PATH, data.getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to write resource file");
-        }
+            final ProductDraft productDraft = productDraftWrapper.createProductDraft(productType, taxCategory);
+            return playJavaSphereClient().execute(ProductCreateCommand.of(productDraft));
+        }));
     }
 
     private F.Promise<ProductType> createProductTypeModel() {
         final ProductTypeDraftWrapper productTypeDraftWrapper =
                 JsonUtils.readObjectFromResource(PRODUCT_TYPE_JSON_RESOURCE, ProductTypeDraftWrapper.class);
         return playJavaSphereClient().execute(ProductTypeCreateCommand.of(productTypeDraftWrapper.createProductTypeDraft()));
+    }
+
+    private F.Promise<TaxCategory> createTaxCategoryModel() {
+        final TaxCategoryWrapper taxCategoryWrapper = JsonUtils.readObjectFromResource(TAX_CATEGORY_JSON_RESOURCE,
+                TaxCategoryWrapper.class);
+        return playJavaSphereClient().execute(TaxCategoryCreateCommand.of(taxCategoryWrapper.createTaxCategoryDraft()));
     }
 }

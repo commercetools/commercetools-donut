@@ -1,10 +1,14 @@
 package services;
 
 
+import io.sphere.sdk.products.Product;
 import org.junit.Before;
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
+import play.libs.F;
+
+import static org.assertj.core.api.StrictAssertions.assertThat;
 
 public class ImportServiceIntegrationTest {
 
@@ -18,12 +22,14 @@ public class ImportServiceIntegrationTest {
     }
 
     @Test
-    public void testCreateProductModel() {
+    public void testExportCustomType() {
         //TODO
     }
 
     @Test
-    public void testCreateProductDraftModel() {
-        //TODO
+    public void testExportProductModel() {
+        final F.Promise<Product> productPromise = importService.exportProductModel();
+        final Product product = productPromise.get(5000);
+        assertThat(product).isNotNull();
     }
 }
