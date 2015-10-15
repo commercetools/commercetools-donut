@@ -1,7 +1,6 @@
 package models.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.sphere.sdk.models.Base;
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.types.*;
@@ -90,46 +89,5 @@ public class TypeDraftWrapper {
 
     public List<FieldDefinitionWrapper> getFieldDefinitions() {
         return fieldDefinitions;
-    }
-
-    public static class FieldDefinitionWrapper extends Base{
-
-        private final AttributeTypeWrapper type;
-        private final String name;
-        private final LocalizedString label;
-        private final TextInputHintWrapper inputHint;
-        private final Boolean isRequired;
-
-        public FieldDefinitionWrapper(@JsonProperty("type") final AttributeTypeWrapper type,
-                                      @JsonProperty("name") final String name,
-                                      @JsonProperty("label") final LocalizedString label,
-                                      @JsonProperty("inputHint") final TextInputHintWrapper inputHint,
-                                      @JsonProperty("required") final Boolean isRequired) {
-            this.type = (type);
-            this.name = (name);
-            this.label = (label);
-            this.inputHint = (inputHint);
-            this.isRequired = (isRequired);
-        }
-
-        public AttributeTypeWrapper getType() {
-            return type;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public LocalizedString getLabel() {
-            return label;
-        }
-
-        public TextInputHintWrapper getInputHint() {
-            return inputHint;
-        }
-
-        public Boolean getIsRequired() {
-            return isRequired;
-        }
     }
 }
