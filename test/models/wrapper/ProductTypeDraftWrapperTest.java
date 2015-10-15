@@ -2,10 +2,7 @@ package models.wrapper;
 
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
-import io.sphere.sdk.products.attributes.AttributeConstraint;
-import io.sphere.sdk.products.attributes.AttributeDefinition;
-import io.sphere.sdk.products.attributes.NumberType;
-import io.sphere.sdk.products.attributes.StringType;
+import io.sphere.sdk.products.attributes.*;
 import io.sphere.sdk.producttypes.ProductTypeDraft;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,76 +37,49 @@ public class ProductTypeDraftWrapperTest {
 
     @Test
     public void testQuantityAttributeDefinitions() {
-        final Optional<AttributeDefinition> optionalAttributeDefinition = productTypeDraft.getAttributes().stream()
-                .filter(attributeDefinition -> "quantity".equals(attributeDefinition.getName()))
-                .findFirst();
-        assertThat(optionalAttributeDefinition.isPresent());
-        final AttributeDefinition attributeDefinition = optionalAttributeDefinition.get();
-        assertThat(attributeDefinition.getLabel()).isEqualTo(LocalizedString.of(Locale.ENGLISH, "Quantity"));
-        assertThat(attributeDefinition.getAttributeType()).isEqualTo(NumberType.of());
-        assertThat(attributeDefinition.getAttributeConstraint()).isEqualTo(AttributeConstraint.COMBINATION_UNIQUE);
-        assertThat(attributeDefinition.getInputHint()).isEqualTo(TextInputHint.SINGLE_LINE);
-        assertThat(attributeDefinition.getIsRequired()).isEqualTo(Boolean.TRUE);
-        assertThat(attributeDefinition.getIsSearchable()).isEqualTo(Boolean.TRUE);
+        checkAttributeAssertions("quantity", "Quantity", NumberType.of(), AttributeConstraint.COMBINATION_UNIQUE,
+                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
     }
 
     @Test
     public void testBoxAttributeDefinitions() {
-        final Optional<AttributeDefinition> optionalAttributeDefinition = productTypeDraft.getAttributes().stream()
-                .filter(attributeDefinition -> "box".equals(attributeDefinition.getName()))
-                .findFirst();
-        assertThat(optionalAttributeDefinition.isPresent());
-        final AttributeDefinition attributeDefinition = optionalAttributeDefinition.get();
-        assertThat(attributeDefinition.getLabel()).isEqualTo(LocalizedString.of(Locale.ENGLISH, "Box name"));
-        assertThat(attributeDefinition.getAttributeType()).isEqualTo(StringType.of());
-        assertThat(attributeDefinition.getAttributeConstraint()).isEqualTo(AttributeConstraint.COMBINATION_UNIQUE);
-        assertThat(attributeDefinition.getInputHint()).isEqualTo(TextInputHint.SINGLE_LINE);
-        assertThat(attributeDefinition.getIsRequired()).isEqualTo(Boolean.TRUE);
-        assertThat(attributeDefinition.getIsSearchable()).isEqualTo(Boolean.TRUE);
+        checkAttributeAssertions("box", "Box name", StringType.of(), AttributeConstraint.COMBINATION_UNIQUE,
+                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
     }
 
     @Test
     public void testPactasWeeklyAttributeDefinitions() {
-        final Optional<AttributeDefinition> optionalAttributeDefinition = productTypeDraft.getAttributes().stream()
-                .filter(attributeDefinition -> "pactas1".equals(attributeDefinition.getName()))
-                .findFirst();
-        assertThat(optionalAttributeDefinition.isPresent());
-        final AttributeDefinition attributeDefinition = optionalAttributeDefinition.get();
-        assertThat(attributeDefinition.getLabel()).isEqualTo(LocalizedString.of(Locale.ENGLISH, "Pactas ID weekly"));
-        assertThat(attributeDefinition.getAttributeType()).isEqualTo(StringType.of());
-        assertThat(attributeDefinition.getAttributeConstraint()).isEqualTo(AttributeConstraint.UNIQUE);
-        assertThat(attributeDefinition.getInputHint()).isEqualTo(TextInputHint.SINGLE_LINE);
-        assertThat(attributeDefinition.getIsRequired()).isEqualTo(Boolean.TRUE);
-        assertThat(attributeDefinition.getIsSearchable()).isEqualTo(Boolean.TRUE);
+        checkAttributeAssertions("pactas1", "Pactas ID weekly", StringType.of(), AttributeConstraint.UNIQUE,
+                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
     }
 
     @Test
     public void testPactasTwoWeeklyAttributeDefinitions() {
-        final Optional<AttributeDefinition> optionalAttributeDefinition = productTypeDraft.getAttributes().stream()
-                .filter(attributeDefinition -> "pactas2".equals(attributeDefinition.getName()))
-                .findFirst();
-        assertThat(optionalAttributeDefinition.isPresent());
-        final AttributeDefinition attributeDefinition = optionalAttributeDefinition.get();
-        assertThat(attributeDefinition.getLabel()).isEqualTo(LocalizedString.of(Locale.ENGLISH, "Pactas ID two weeks"));
-        assertThat(attributeDefinition.getAttributeType()).isEqualTo(StringType.of());
-        assertThat(attributeDefinition.getAttributeConstraint()).isEqualTo(AttributeConstraint.UNIQUE);
-        assertThat(attributeDefinition.getInputHint()).isEqualTo(TextInputHint.SINGLE_LINE);
-        assertThat(attributeDefinition.getIsRequired()).isEqualTo(Boolean.TRUE);
-        assertThat(attributeDefinition.getIsSearchable()).isEqualTo(Boolean.TRUE);
+        checkAttributeAssertions("pactas2", "Pactas ID two weeks", StringType.of(), AttributeConstraint.UNIQUE,
+                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
     }
 
     @Test
     public void testPactasMonthlyAttributeDefinitions() {
+        checkAttributeAssertions("pactas4", "Pactas ID monthly", StringType.of(), AttributeConstraint.UNIQUE,
+                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
+    }
+
+
+    private void checkAttributeAssertions(final String assertName, final String assertLabel,
+                                          final AttributeType assertType, final AttributeConstraint assertConstraint,
+                                          final TextInputHint assertTextInputHint, final Boolean assertIsRequired,
+                                          final Boolean assertIsSearchable) {
         final Optional<AttributeDefinition> optionalAttributeDefinition = productTypeDraft.getAttributes().stream()
-                .filter(attributeDefinition -> "pactas4".equals(attributeDefinition.getName()))
+                .filter(attributeDefinition -> assertName.equals(attributeDefinition.getName()))
                 .findFirst();
         assertThat(optionalAttributeDefinition.isPresent());
         final AttributeDefinition attributeDefinition = optionalAttributeDefinition.get();
-        assertThat(attributeDefinition.getLabel()).isEqualTo(LocalizedString.of(Locale.ENGLISH, "Pactas ID monthly"));
-        assertThat(attributeDefinition.getAttributeType()).isEqualTo(StringType.of());
-        assertThat(attributeDefinition.getAttributeConstraint()).isEqualTo(AttributeConstraint.UNIQUE);
-        assertThat(attributeDefinition.getInputHint()).isEqualTo(TextInputHint.SINGLE_LINE);
-        assertThat(attributeDefinition.getIsRequired()).isEqualTo(Boolean.TRUE);
-        assertThat(attributeDefinition.getIsSearchable()).isEqualTo(Boolean.TRUE);
+        assertThat(attributeDefinition.getLabel()).isEqualTo(LocalizedString.of(Locale.ENGLISH, assertLabel));
+        assertThat(attributeDefinition.getAttributeType()).isEqualTo(assertType);
+        assertThat(attributeDefinition.getAttributeConstraint()).isEqualTo(assertConstraint);
+        assertThat(attributeDefinition.getInputHint()).isEqualTo(assertTextInputHint);
+        assertThat(attributeDefinition.getIsRequired()).isEqualTo(assertIsRequired);
+        assertThat(attributeDefinition.getIsSearchable()).isEqualTo(assertIsSearchable);
     }
 }
