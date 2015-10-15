@@ -28,7 +28,7 @@ public class ProductTypeDraftWrapperTest {
     }
 
     @Test
-    public void testCreateProductTypeDraft() throws Exception {
+    public void testCreateProductTypeDraft() {
         assertThat(productTypeDraft).isNotNull();
         assertThat(productTypeDraft.getName()).isEqualTo("Donuts box");
         assertThat(productTypeDraft.getDescription()).isEqualTo("A box with delicious donuts");

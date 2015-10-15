@@ -1,10 +1,7 @@
 package services;
 
 import com.google.inject.Singleton;
-import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.client.PlayJavaSphereClient;
-import io.sphere.sdk.models.LocalizedString;
-import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductDraft;
 import io.sphere.sdk.products.ProductProjection;
@@ -18,19 +15,21 @@ import io.sphere.sdk.producttypes.commands.ProductTypeCreateCommand;
 import io.sphere.sdk.queries.PagedQueryResult;
 import io.sphere.sdk.taxcategories.TaxCategory;
 import io.sphere.sdk.taxcategories.commands.TaxCategoryCreateCommand;
-import io.sphere.sdk.types.*;
+import io.sphere.sdk.types.Type;
+import io.sphere.sdk.types.TypeDraft;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
 import io.sphere.sdk.types.queries.TypeQuery;
 import models.wrapper.ProductDraftWrapper;
 import models.wrapper.ProductTypeDraftWrapper;
 import models.wrapper.TaxCategoryWrapper;
+import models.wrapper.TypeDraftWrapper;
 import play.Configuration;
 import play.Logger;
 import play.libs.F;
 import utils.JsonUtils;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -42,11 +41,9 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final String PRODUCT_TYPE_JSON_RESOURCE = "data/product-type-draft.json";
     private static final String TAX_CATEGORY_JSON_RESOURCE = "data/tax-category-draft.json";
     private static final String PRODUCT_JSON_RESOURCE = "data/product-draft.json";
+    private static final String TYPE_DRAFT_JSON_RESOURCE = "data/type-draft.json";
 
     private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
-    private static final String CUSTOM_TYPE_NAME = "custom type for delivery frequency";
-    private static final String FREQUENCY_FIELD_NAME = "frequency";
-    private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
     private static final long ALLOWED_TIMEOUT = 5000;
 
     @Inject
@@ -108,23 +105,11 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
 
     @Override
     public F.Promise<Type> exportCustomType() {
-        final TypeDraft customTypeDraft = frequencyTypeDefinition();
-        final F.Promise<Type> customTypePromise = playJavaSphereClient().execute(TypeCreateCommand.of(customTypeDraft));
+        final TypeDraftWrapper typeDraftWrapper = JsonUtils.readObjectFromResource(TYPE_DRAFT_JSON_RESOURCE,
+                TypeDraftWrapper.class);
+        final TypeDraft typeDraft = typeDraftWrapper.createTypeDraft();
+        final F.Promise<Type> customTypePromise = playJavaSphereClient().execute(TypeCreateCommand.of(typeDraft));
         return customTypePromise;
-    }
-
-    private static TypeDraft frequencyTypeDefinition() {
-        final LocalizedString typeName = LocalizedString.of(Locale.ENGLISH, CUSTOM_TYPE_NAME);
-        final String cartResourceTypeId = Cart.resourceTypeId();
-        final Set<String> resourceTypeIds = Collections.singleton(cartResourceTypeId);
-        final List<FieldDefinition> fieldDefinitions = Collections.singletonList(frequencyFieldDefinition());
-
-        return TypeDraftBuilder.of(CUSTOM_TYPE_KEY, typeName, resourceTypeIds).fieldDefinitions(fieldDefinitions).build();
-    }
-
-    private static FieldDefinition frequencyFieldDefinition() {
-        final LocalizedString frequencyFieldLabel = LocalizedString.of(Locale.ENGLISH, FREQUENCY_FIELD_LABEL);
-        return FieldDefinition.of(StringType.of(), FREQUENCY_FIELD_NAME, frequencyFieldLabel, false, TextInputHint.SINGLE_LINE);
     }
 
     @Override
