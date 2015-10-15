@@ -14,6 +14,7 @@ import play.inject.guice.GuiceApplicationBuilder;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.StrictAssertions.assertThat;
 import static play.test.Helpers.running;
@@ -37,7 +38,6 @@ public class ImportServiceIntegrationTest {
         //TODO
     }
 
-
     //@Test
     public void testExportCustomType() {
         running(application, () -> {
@@ -52,6 +52,15 @@ public class ImportServiceIntegrationTest {
         });
     }
 
+    //@Test
+    public void getCustomTypes() {
+        running(application, () -> {
+            final TypeQuery query = TypeQuery.of();
+            final List<Type> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
+            final Optional<Type> optionalType = results.stream().filter(type -> "cart-frequency-key".equals(type.getKey())).findFirst();
+            assertThat(optionalType.isPresent()).isTrue();
+        });
+    }
 
     //@Test
     public void deleteCustomType() {
