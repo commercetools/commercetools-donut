@@ -45,7 +45,7 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final String PRODUCT_JSON_RESOURCE = "data/product-draft.json";
 
     private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
-    private static final String CUSTOM_TYPE_LABEL = "custom type for delivery frequency";
+    private static final String CUSTOM_TYPE_NAME = "custom type for delivery frequency";
     private static final String FREQUENCY_FIELD_NAME = "frequency";
     private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
 
@@ -89,7 +89,7 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     }
 
     private static TypeDraft frequencyTypeDefinition() {
-        final LocalizedString typeName = LocalizedString.of(Locale.ENGLISH, CUSTOM_TYPE_LABEL);
+        final LocalizedString typeName = LocalizedString.of(Locale.ENGLISH, CUSTOM_TYPE_NAME);
         final String cartResourceTypeId = Cart.resourceTypeId();
         final Set<String> resourceTypeIds = Collections.singleton(cartResourceTypeId);
         final List<FieldDefinition> fieldDefinitions = Collections.singletonList(frequencyFieldDefinition());
