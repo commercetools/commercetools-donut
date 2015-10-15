@@ -22,7 +22,7 @@ Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdon
 There is a flag named `fixtures.import.enabled` in the configuration file `conf/application.conf`, which allows an initial import of the of the required, JSON-based product model
 into the commercetools-platform. After the initial import succeeded, this flag can be set to `false` to improve the startup time of the application.
 
-If you don't perform an initial import, you have to provide the product model (see `conf/data`) in your platform project, or the application will raise a ProductNotFoundException on application startup.
+If you don't perform an initial import, you have to provide the product model (see `conf/data`) in your platform project, or the application will raise a `ProductNotFoundException` on application startup.
 
 ### Configure it
 

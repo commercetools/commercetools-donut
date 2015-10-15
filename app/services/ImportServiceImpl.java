@@ -8,6 +8,7 @@ import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductDraft;
 import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.ProductProjectionType;
 import io.sphere.sdk.products.commands.ProductCreateCommand;
 import io.sphere.sdk.products.commands.ProductUpdateCommand;
 import io.sphere.sdk.products.commands.updateactions.Publish;
@@ -19,6 +20,7 @@ import io.sphere.sdk.taxcategories.TaxCategory;
 import io.sphere.sdk.taxcategories.commands.TaxCategoryCreateCommand;
 import io.sphere.sdk.types.*;
 import io.sphere.sdk.types.commands.TypeCreateCommand;
+import io.sphere.sdk.types.queries.TypeQuery;
 import models.wrapper.ProductDraftWrapper;
 import models.wrapper.ProductTypeDraftWrapper;
 import models.wrapper.TaxCategoryWrapper;
@@ -28,10 +30,7 @@ import play.libs.F;
 import utils.JsonUtils;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -48,6 +47,7 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final String CUSTOM_TYPE_NAME = "custom type for delivery frequency";
     private static final String FREQUENCY_FIELD_NAME = "frequency";
     private static final String FREQUENCY_FIELD_LABEL = "selected frequency";
+    private static final long ALLOWED_TIMEOUT = 5000;
 
     @Inject
     public ImportServiceImpl(final PlayJavaSphereClient playJavaSphereClient, final Configuration configuration) {
@@ -57,19 +57,45 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
         LOG.debug("Import enabled: {}", importEnabled);
         if(importEnabled) {
             importData();
+            importCustomType();
         }
     }
 
     private void importData() {
+        LOG.debug("Starting Product import");
         productExists().flatMap(productExits -> {
             LOG.debug("Existing Product found: {}", productExits);
             return (productExits) ?
                     F.Promise.pure(null) :
                     exportProductModel().map(product -> {
-                        LOG.debug("Finished Product import");
+                        LOG.debug("Finished Product import, created '{}'",
+                                product.toProjection(ProductProjectionType.CURRENT).getName());
                         return null;
                     });
-        }).get(5000);
+        }).get(ALLOWED_TIMEOUT);
+    }
+
+    private void importCustomType() {
+        LOG.debug("Starting custom Type import");
+        customTypeExists().flatMap(customTypeExists -> {
+            LOG.debug("Existing custom Type found: {}", customTypeExists);
+            return (customTypeExists) ?
+                    F.Promise.pure(null) :
+                    exportCustomType().map(type -> {
+                        LOG.debug("Finished custom Type import, created '{}'", type.getKey());
+                        return null;
+                    });
+        }).get(ALLOWED_TIMEOUT);
+    }
+
+    private F.Promise<Boolean> customTypeExists() {
+        final TypeQuery query = TypeQuery.of();
+        final F.Promise<PagedQueryResult<Type>> execute = playJavaSphereClient().execute(query);
+        return execute.map(typePagedQueryResult -> {
+            final Optional<Type> optionalType = typePagedQueryResult.getResults().stream()
+                    .filter(type -> CUSTOM_TYPE_KEY.equals(type.getKey())).findFirst();
+            return optionalType.isPresent();
+        });
     }
 
     private F.Promise<Boolean> productExists() {
@@ -84,7 +110,6 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     public F.Promise<Type> exportCustomType() {
         final TypeDraft customTypeDraft = frequencyTypeDefinition();
         final F.Promise<Type> customTypePromise = playJavaSphereClient().execute(TypeCreateCommand.of(customTypeDraft));
-        customTypePromise.onRedeem(type -> LOG.debug("Created custom Type: {}", type));
         return customTypePromise;
     }
 
