@@ -1,0 +1,88 @@
+{
+  "offset": 0,
+  "count": 1,
+  "total": 1,
+  "results": [
+    {
+      "id": "f7b7fb37-bc11-4ed5-bbe0-b3b70c7cb13b",
+      "version": 44,
+      "name": "Donuts box",
+      "description": "A box with delicious donuts",
+      "classifier": "Food",
+      "attributes": [
+        {
+          "name": "quantity",
+          "label": {
+            "en": "Quantity"
+          },
+          "isRequired": true,
+          "type": {
+            "name": "number"
+          },
+          "attributeConstraint": "CombinationUnique",
+          "isSearchable": true,
+          "inputHint": "SingleLine",
+          "displayGroup": "Other"
+        },
+        {
+          "name": "box",
+          "label": {
+            "en": "Box name"
+          },
+          "isRequired": true,
+          "type": {
+            "name": "text"
+          },
+          "attributeConstraint": "CombinationUnique",
+          "isSearchable": true,
+          "inputHint": "SingleLine",
+          "displayGroup": "Other"
+        },
+        {
+          "name": "pactas1",
+          "label": {
+            "en": "Pactas ID weekly"
+          },
+          "isRequired": true,
+          "type": {
+            "name": "text"
+          },
+          "attributeConstraint": "Unique",
+          "isSearchable": true,
+          "inputHint": "SingleLine",
+          "displayGroup": "Other"
+        },
+        {
+          "name": "pactas2",
+          "label": {
+            "en": "Pactas ID two weeks"
+          },
+          "isRequired": true,
+          "type": {
+            "name": "text"
+          },
+          "attributeConstraint": "Unique",
+          "isSearchable": true,
+          "inputHint": "SingleLine",
+          "displayGroup": "Other"
+        },
+        {
+          "name": "pactas4",
+          "label": {
+            "en": "Pactas ID monthly"
+          },
+          "isRequired": true,
+          "type": {
+            "name": "text"
+          },
+          "attributeConstraint": "Unique",
+          "isSearchable": true,
+          "inputHint": "SingleLine",
+          "displayGroup": "Other"
+        }
+      ],
+      "createdAt": "1970-01-01T00:00:00.001Z",
+      "lastModifiedAt": "2014-03-20T10:33:10.749Z"
+    }
+  ]
+}

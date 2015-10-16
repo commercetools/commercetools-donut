@@ -7,6 +7,7 @@ import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.queries.ProductProjectionQuery;
 import io.sphere.sdk.queries.PagedQueryResult;
 import play.libs.F;
+import services.ImportService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,12 +22,17 @@ public class ProductProvider implements Provider<ProductProjection> {
     private static final long ALLOWED_TIMEOUT = 3000;
 
     @Inject
-    public ProductProvider(final PlayJavaSphereClient playJavaSphereClient) {
+    public ProductProvider(final PlayJavaSphereClient playJavaSphereClient, final ImportService importService) {
+        /*
+        ImportService is necessary here because it needs to be initialized
+        before the Product can be provided via dependency injection to the controllers
+        */
+        requireNonNull(importService);
         this.playJavaSphereClient = requireNonNull(playJavaSphereClient);
     }
 
     @Override
-    public  ProductProjection get() {
+    public ProductProjection get() {
         final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
         final F.Promise<PagedQueryResult<ProductProjection>> productProjectionPagedQueryResultPromise =
                 playJavaSphereClient.execute(request);

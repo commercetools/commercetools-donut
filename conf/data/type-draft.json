@@ -1,0 +1,25 @@
+{
+  "key": "cart-frequency-key",
+  "name": {
+    "en": "cart-frequency"
+  },
+  "description": {
+    "en": "cart-frequency description"
+  },
+  "resourceTypeIds": [
+    "order"
+  ],
+  "fieldDefinitions": [
+    {
+      "type": {
+        "name": "String"
+      },
+      "name": "frequency",
+      "label": {
+        "en": "selected frequency"
+      },
+      "inputHint": "SINGLE_LINE",
+      "required": true
+    }
+  ]
+}
