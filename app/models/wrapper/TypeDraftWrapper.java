@@ -62,8 +62,8 @@ public class TypeDraftWrapper {
     private FieldType mapFieldType(final AttributeTypeWrapper attributeTypeWrapper) {
         final FieldType result;
         switch (attributeTypeWrapper.name()) {
-            case "String":
-                result = StringType.of();
+            case "Number":
+                result = NumberType.of();
                 break;
             default:
                 throw new RuntimeException("Unknown FieldType: " + attributeTypeWrapper.name());
