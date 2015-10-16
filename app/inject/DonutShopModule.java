@@ -5,7 +5,10 @@ import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import pactas.Pactas;
 import pactas.PactasImpl;
-import services.*;
+import services.CartService;
+import services.CartServiceImpl;
+import services.OrderService;
+import services.OrderServiceImpl;
 
 import javax.inject.Singleton;
 
@@ -18,6 +21,5 @@ public class DonutShopModule extends AbstractModule {
         bind(CartService.class).to(CartServiceImpl.class).in(Singleton.class);
         bind(OrderService.class).to(OrderServiceImpl.class).in(Singleton.class);
         bind(Pactas.class).to(PactasImpl.class).in(Singleton.class);
-        bind(ExportService.class).to(ExportServiceImpl.class).in(Singleton.class);
     }
 }
