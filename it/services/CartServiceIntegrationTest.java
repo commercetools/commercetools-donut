@@ -4,6 +4,7 @@ package services;
 import controllers.ProductController;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.VariantIdentifier;
 import io.sphere.sdk.types.CustomFields;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,6 +56,10 @@ public class CartServiceIntegrationTest {
         productProjection = fakeApplication.injector().instanceOf(ProductProjection.class);
     }
 
+    private static VariantIdentifier variantIdentifier(final String productId, final Integer variantId) {
+        return VariantIdentifier.of(productId, variantId);
+    }
+
     @Ignore
     @Test
     public void testGetOrCreateCart() {
@@ -71,8 +76,8 @@ public class CartServiceIntegrationTest {
     @Test
     public void testSetProductToCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection,
-                productProjection.getMasterVariant(), FREQUENCY).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
+                productProjection.getMasterVariant().getId()), FREQUENCY).get(ALLOWED_TIMEOUT);
         assertThat(cartWithProduct.getLineItems().size()).isEqualTo(1);
     }
 
@@ -80,8 +85,8 @@ public class CartServiceIntegrationTest {
     @Test
     public void testClearCart() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection,
-                productProjection.getMasterVariant(), FREQUENCY).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
+                productProjection.getMasterVariant().getId()), FREQUENCY).get(ALLOWED_TIMEOUT);
         final Cart clearedCart = cartService.clearCart(cartWithProduct).get(ALLOWED_TIMEOUT);
         assertThat(clearedCart.getLineItems()).isEmpty();
     }
@@ -90,8 +95,8 @@ public class CartServiceIntegrationTest {
     @Test
     public void testGetFrequency() {
         final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, productProjection,
-                productProjection.getMasterVariant(), FREQUENCY).get(ALLOWED_TIMEOUT);
+        final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
+                productProjection.getMasterVariant().getId()), FREQUENCY).get(ALLOWED_TIMEOUT);
         final F.Promise<Integer> result = cartService.getFrequency(cartWithProduct.getId());
         assertThat(result.get(ALLOWED_TIMEOUT)).isNotNull();
         assertThat(result.get(ALLOWED_TIMEOUT)).isEqualTo(FREQUENCY);

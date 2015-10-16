@@ -22,6 +22,7 @@ import io.sphere.sdk.models.AddressBuilder;
 import io.sphere.sdk.models.DefaultCurrencyUnits;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.VariantIdentifier;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 import io.sphere.sdk.types.CustomFieldsDraft;
 import pactas.models.PactasContract;
@@ -101,16 +102,14 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override //TODO variant identifier, Integer
-    public F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product,
-                                            final ProductVariant variant, final Integer frequency) {
+    public F.Promise<Cart> setProductToCart(final Cart cart, final VariantIdentifier variantIdentifier, Integer frequency) {
         requireNonNull(cart);
-        requireNonNull(product);
-        requireNonNull(variant);
+        requireNonNull(variantIdentifier);
         requireNonNull(frequency);
 
         final List<? extends UpdateAction<Cart>> cartUpdateActions = Arrays.asList(
                 SetCustomField.ofObject(FIELD_KEY, frequency),
-                AddLineItem.of(product.getId(), variant.getId(), frequency)
+                AddLineItem.of(variantIdentifier.getProductId(), variantIdentifier.getVariantId(), frequency)
         );
 
         return playJavaSphereClient().execute(CartUpdateCommand.of(cart, cartUpdateActions)).map(updatedCart -> {
