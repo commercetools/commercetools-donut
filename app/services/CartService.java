@@ -44,7 +44,8 @@ public interface CartService {
      * @param variant the selected {@code ProductVariant}, must not be null
      * @param frequency the selected delivery frequency
      */
-    F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency);
+    F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant,
+                                     final Integer frequency);
 
     /**
      * Returns the value of the {@code CustomObject} named PactasKeys.FREQUENCY, that is bound to the {@code Cart}

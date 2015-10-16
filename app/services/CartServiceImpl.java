@@ -1,6 +1,5 @@
 package services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Singleton;
 import exceptions.PlanVariantNotFoundException;
@@ -11,13 +10,12 @@ import io.sphere.sdk.carts.commands.CartDeleteCommand;
 import io.sphere.sdk.carts.commands.CartUpdateCommand;
 import io.sphere.sdk.carts.commands.updateactions.AddLineItem;
 import io.sphere.sdk.carts.commands.updateactions.RemoveLineItem;
+import io.sphere.sdk.carts.commands.updateactions.SetCustomField;
 import io.sphere.sdk.carts.commands.updateactions.SetShippingAddress;
 import io.sphere.sdk.carts.queries.CartByIdGet;
 import io.sphere.sdk.client.PlayJavaSphereClient;
+import io.sphere.sdk.commands.UpdateAction;
 import io.sphere.sdk.customobjects.CustomObject;
-import io.sphere.sdk.customobjects.CustomObjectDraft;
-import io.sphere.sdk.customobjects.commands.CustomObjectDeleteCommand;
-import io.sphere.sdk.customobjects.commands.CustomObjectUpsertCommand;
 import io.sphere.sdk.customobjects.queries.CustomObjectByKeyGet;
 import io.sphere.sdk.models.Address;
 import io.sphere.sdk.models.AddressBuilder;
@@ -43,6 +41,8 @@ import static java.util.Objects.requireNonNull;
 public class CartServiceImpl extends AbstractShopService implements CartService {
 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
+    private static final String TYPE_KEY = "cart-frequency-key";
+    private static final String FIELD_KEY = "frequency";
 
     @Inject
     public CartServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
@@ -54,68 +54,69 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(session);
         return Optional.ofNullable(session.get(SessionKeys.CART_ID))
                 .map(cardId -> {
-                    LOG.debug("Fetching existing Cart[cartId={}]", cardId);
-                    return playJavaSphereClient().execute(CartByIdGet.of(cardId));
+                    return playJavaSphereClient().execute(CartByIdGet.of(cardId)).map(cart -> {
+                        LOG.debug("Fetched existing Cart[cartId={}, items={}, custom frequency={}]", cart.getId(),
+                                cart.getLineItems().size(), cart.getCustom().getFieldAsString("frequency"));
+                        return cart;
+                    });
                 })
                 .orElseGet(() -> {
                     final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR)
-                            .witCustom(CustomFieldsDraft.ofTypeKeyAndObjects("cart-frequency-key", INITIAL_FREQUENCY));
-                    LOG.debug("Creating new Cart from draft");
-                    return playJavaSphereClient().execute(CartCreateCommand.of(cartDraft));
+                            .witCustom(CustomFieldsDraft.ofTypeKeyAndObjects(TYPE_KEY, frequencyType(0)));
+                    return playJavaSphereClient().execute(CartCreateCommand.of(cartDraft))
+                            .map(cart -> {
+                                LOG.debug("Created new Cart[cartId={}, items={}, custom frequency={}]", cart.getId(),
+                                        cart.getLineItems().size(), cart.getCustom().getFieldAsString("frequency"));
+                                return cart;
+                            });
                 });
     }
 
-    private final static Map<String, Object> INITIAL_FREQUENCY =
-            Collections.unmodifiableMap(new HashMap<String, Object>() {
-                {
-                    put("frequency", "0"); //TODO number type
-                }
-            });
-
+    private final static Map<String, Object> frequencyType(final int frequency) {
+        return Collections.unmodifiableMap(new HashMap<String, Object>() {
+            {
+                put(FIELD_KEY, String.valueOf(frequency)); //TODO number type
+            }
+        });
+    }
 
     @Override
     public F.Promise<Cart> clearCart(final Cart cart) {
         requireNonNull(cart);
-        clearFrequency(cart.getId());
-        final List<RemoveLineItem> items = cart.getLineItems().stream().map((item) -> {
-            final RemoveLineItem removeLineItem = RemoveLineItem.of(item, 1);
+
+        final List<? extends UpdateAction<Cart>> items = cart.getLineItems().stream().map((item) -> {
+            final RemoveLineItem removeLineItem = RemoveLineItem.of(item);
             return removeLineItem;
         }).collect(Collectors.toList());
-        final F.Promise<Cart> clearedCartPromise = playJavaSphereClient().execute(CartUpdateCommand.of(cart, items));
-        return clearedCartPromise.map(clearedCart -> {
-            LOG.debug("Cleared Cart[cartId={}]", clearedCart.getId());
-            return clearedCart;
-        });
+
+        final F.Promise<Cart> clearedItemsPromise = playJavaSphereClient().execute(CartUpdateCommand.of(cart, items));
+        return clearedItemsPromise.flatMap(clearedItemsCart ->
+                playJavaSphereClient().execute(CartUpdateCommand.of(clearedItemsCart,
+                        SetCustomField.ofObject(FIELD_KEY, String.valueOf(0))))
+                        .map(clearedTypeCart -> {
+                            LOG.debug("Cleared Cart: items={}, custom frequency={}", clearedTypeCart.getLineItems().size(),
+                                    clearedTypeCart.getCustom().getFieldAsString("frequency"));
+                            return clearedTypeCart;
+                        }));
     }
 
-
-    private void clearFrequency(final String cartId) {
-        requireNonNull(cartId);
-        final Optional<F.Promise<CustomObject<JsonNode>>> result = Optional.ofNullable(
-                playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId)));
-        if (result.isPresent()) {
-            playJavaSphereClient().execute(CustomObjectDeleteCommand.of(PactasKeys.FREQUENCY, cartId));
-            LOG.debug("Cleared CustomObject");
-        }
-    }
-
-
-    @Override
-    public F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant,
-                                            final int frequency) {
+    @Override //TODO variant identifier, Integer
+    public F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product,
+                                            final ProductVariant variant, final Integer frequency) {
         requireNonNull(cart);
         requireNonNull(product);
         requireNonNull(variant);
-        final CustomObjectDraft<Integer> draft = CustomObjectDraft.ofUnversionedUpsert(SessionKeys.FREQUENCY, cart.getId(),
-                frequency, new TypeReference<CustomObject<Integer>>() {
-                });
-        final F.Promise<CustomObject<Integer>> customObjectPromise =
-                playJavaSphereClient().execute(CustomObjectUpsertCommand.of(draft));
+        requireNonNull(frequency);
 
-        return customObjectPromise.flatMap(customObject -> {
-            LOG.debug("Set CustomObject[container={}, key={}, value={}]", customObject.getContainer(), customObject.getKey(), customObject.getValue());
-            return playJavaSphereClient().execute(CartUpdateCommand.of(cart, AddLineItem.of(product.getId(),
-                    variant.getId(), frequency)));
+        final List<? extends UpdateAction<Cart>> cartUpdateActions = Arrays.asList(
+                SetCustomField.ofObject(FIELD_KEY, String.valueOf(frequency)),
+                AddLineItem.of(product.getId(), variant.getId(), frequency)
+        );
+
+        return playJavaSphereClient().execute(CartUpdateCommand.of(cart, cartUpdateActions)).map(updatedCart -> {
+            LOG.debug("Updated Cart: items={}, custom frequency={}", updatedCart.getLineItems().size(),
+                    updatedCart.getCustom().getFieldAsString("frequency"));
+            return cart;
         });
     }
 
