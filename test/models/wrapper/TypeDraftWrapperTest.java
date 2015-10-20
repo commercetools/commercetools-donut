@@ -3,7 +3,7 @@ package models.wrapper;
 import io.sphere.sdk.models.LocalizedString;
 import io.sphere.sdk.models.TextInputHint;
 import io.sphere.sdk.types.FieldDefinition;
-import io.sphere.sdk.types.StringType;
+import io.sphere.sdk.types.NumberType;
 import io.sphere.sdk.types.TypeDraft;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,8 +44,8 @@ public class TypeDraftWrapperTest {
         final FieldDefinition fieldDefinition = typeDraft.getFieldDefinitions().get(0);
         assertThat(fieldDefinition.getName()).isEqualTo("frequency");
         assertThat(fieldDefinition.getLabel()).isEqualTo(LocalizedString.of(Locale.ENGLISH, "selected frequency"));
-        assertThat(fieldDefinition.getType()).isEqualTo(StringType.of());
+        assertThat(fieldDefinition.getType()).isEqualTo(NumberType.of());
         assertThat(fieldDefinition.getInputHint()).isEqualTo(TextInputHint.SINGLE_LINE);
-        assertThat(fieldDefinition.isRequired()).isEqualTo(Boolean.TRUE);
+        assertThat(fieldDefinition.isRequired()).isEqualTo(true);
     }
 }
