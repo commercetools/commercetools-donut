@@ -101,7 +101,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                         }));
     }
 
-    @Override //TODO variant identifier, Integer
+    @Override
     public F.Promise<Cart> setProductToCart(final Cart cart, final VariantIdentifier variantIdentifier, Integer frequency) {
         requireNonNull(cart);
         requireNonNull(variantIdentifier);
