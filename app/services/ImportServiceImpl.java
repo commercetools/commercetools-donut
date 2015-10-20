@@ -5,7 +5,6 @@ import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.products.Product;
 import io.sphere.sdk.products.ProductDraft;
 import io.sphere.sdk.products.ProductProjection;
-import io.sphere.sdk.products.ProductProjectionType;
 import io.sphere.sdk.products.commands.ProductCreateCommand;
 import io.sphere.sdk.products.commands.ProductUpdateCommand;
 import io.sphere.sdk.products.commands.updateactions.Publish;
@@ -53,54 +52,48 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
         final Boolean importEnabled = configuration.getBoolean("fixtures.import.enabled", false);
         LOG.debug("Import enabled: {}", importEnabled);
         if(importEnabled) {
-            importData();
+            importProductData();
             importCustomType();
         }
     }
 
-    private void importData() {
+    private void importProductData() {
         LOG.debug("Starting Product import");
-        productExists().flatMap(productExits -> {
-            LOG.debug("Existing Product found: {}", productExits);
-            return (productExits) ?
-                    F.Promise.pure(null) :
-                    exportProductModel().map(product -> {
-                        LOG.debug("Finished Product import, created '{}'",
-                                product.toProjection(ProductProjectionType.CURRENT).getName());
-                        return null;
-                    });
-        }).get(ALLOWED_TIMEOUT);
-    }
-
-    private void importCustomType() {
-        LOG.debug("Starting custom Type import");
-        customTypeExists().flatMap(customTypeExists -> {
-            LOG.debug("Existing custom Type found: {}", customTypeExists);
-            return (customTypeExists) ?
-                    F.Promise.pure(null) :
-                    exportCustomType().map(type -> {
-                        LOG.debug("Finished custom Type import, created '{}'", type.getKey());
-                        return null;
-                    });
-        }).get(ALLOWED_TIMEOUT);
-    }
-
-    private F.Promise<Boolean> customTypeExists() {
-        final TypeQuery query = TypeQuery.of();
-        final F.Promise<PagedQueryResult<Type>> execute = playJavaSphereClient().execute(query);
-        return execute.map(typePagedQueryResult -> {
-            final Optional<Type> optionalType = typePagedQueryResult.getResults().stream()
-                    .filter(type -> CUSTOM_TYPE_KEY.equals(type.getKey())).findFirst();
-            return optionalType.isPresent();
+        currentProductData().onRedeem(existingProduct -> {
+            LOG.debug("Existing Product found: {}", existingProduct.isPresent());
+            if(!existingProduct.isPresent()) {
+                exportProductModel().onRedeem(product -> LOG.debug("Finished Product import, created '{}'", product));
+            }
         });
     }
 
-    private F.Promise<Boolean> productExists() {
-        final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
+    private F.Promise<Optional<ProductProjection>> currentProductData() {
+        final ProductProjectionQuery query = ProductProjectionQuery.ofCurrent();
         final F.Promise<PagedQueryResult<ProductProjection>> productProjectionResultPromise =
-                playJavaSphereClient().execute(request);
-        return productProjectionResultPromise.map(productProjectionPagedQueryResult ->
-                !productProjectionPagedQueryResult.getResults().isEmpty());
+                playJavaSphereClient().execute(query);
+
+        return productProjectionResultPromise.map(PagedQueryResult::head);
+    }
+
+
+    private void importCustomType() {
+        LOG.debug("Starting custom Type import");
+        currentCustomType().onRedeem(currentCustomType -> {
+            LOG.debug("Existing custom Type found: {}", currentCustomType.isPresent());
+            if (!currentCustomType.isPresent()) {
+                exportCustomType().onRedeem(type -> LOG.debug("Finished custom Type import, created '{}'", type.getKey()));
+            }
+        });
+    }
+
+    private F.Promise<Optional<Type>> currentCustomType() {
+        final TypeQuery query = TypeQuery.of();
+        final F.Promise<PagedQueryResult<Type>> execute = playJavaSphereClient().execute(query);
+        return execute.map(typePagedQueryResult ->
+                        typePagedQueryResult.getResults().stream()
+                                .filter(type -> CUSTOM_TYPE_KEY.equals(type.getKey()))
+                                .findFirst()
+        );
     }
 
     @Override
