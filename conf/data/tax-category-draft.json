@@ -1,0 +1,11 @@
+{
+  "name": "Standard tax category",
+  "rates": [
+    {
+      "name": "19% MwSt",
+      "amount": 0.19,
+      "includedInPrice": true,
+      "country": "DE"
+    }
+  ]
+}
