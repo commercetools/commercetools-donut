@@ -102,7 +102,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override
-    public F.Promise<Cart> setProductToCart(final Cart cart, final VariantIdentifier variantIdentifier, Integer frequency) {
+    public F.Promise<Cart> setProductToCart(final Cart cart, final VariantIdentifier variantIdentifier, int frequency) {
         requireNonNull(cart);
         requireNonNull(variantIdentifier);
         requireNonNull(frequency);
