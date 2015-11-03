@@ -3,7 +3,6 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import pactas.PactasException;
 import pactas.models.PactasContract;
@@ -55,8 +54,6 @@ public class PactasWebhookControllerIntegrationTest {
         Http.Context.current.set(emptyContext);
     }
 
-    @Ignore
-    //FIX ME {"error":"invalid_client","error_description":"unknown client"}
     @Test(expected = PactasException.class)
     public void testCreateOrderFromSubscription() throws Exception {
         final PactasWebhookController controller =  fakeApplication.injector().instanceOf(PactasWebhookController.class);
