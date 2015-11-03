@@ -20,7 +20,7 @@ deploy:
   provider: heroku
   app: sphere-donut-new
   api_key:
-    secure: IAoqyY58wF9XVw6Hk/Kuq0I/zeUeF3mAM+bHPA+8T4btoCFayvDAjYKF1FvuZgDJesnnFJRFLfCaTprHTxrZ1Ki35Ow9b8xtKolLHAVQuMA2QRYuAsIjvyQ8meEfGWEI2Z8CVJiu8mVfIZqcIduq1p9YukDzxZ4wVunr+wjJFM0=
+    secure: iH6hSoXTRwD2L/2+b892umlnaybyGM00FKJDKtC1jSOQrNcPHqWTGin/NMDtM3CTLQAUw3RvYAxpnoT6hMLfBPd67vxg6GbpJsAFsgGXG8j+J2l9sJOL8x+VPJFG8xMPrXKnGs8FF0/xVVA05hFLAtZFVY5AyJnj1GS30DYFAp0=
 env:
   global:
   - secure: ZtjWzbst9A5bYwFdPkTIr/5GN1OP7uFNoIAOhkQBGf3z6M6SPewIkCdFZM/5Qyyk/xQLf3eHJN7RfB+YbuNQbn5cyzN6xh5mPezBQ8+LGYDOH5A2C9zUrk/PvS03YtuS0sMD/mCeiTorjCyK9yX5gTJBq5yzloRageS/Tepqs/Y=
