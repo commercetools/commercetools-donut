@@ -43,7 +43,6 @@ public class ImportServiceImpl extends AbstractShopService implements ImportServ
     private static final String TYPE_DRAFT_JSON_RESOURCE = "data/type-draft.json";
 
     private static final String CUSTOM_TYPE_KEY = "cart-frequency-key";
-    private static final long ALLOWED_TIMEOUT = 5000;
 
     @Inject
     public ImportServiceImpl(final PlayJavaSphereClient playJavaSphereClient, final Configuration configuration) {
