@@ -38,38 +38,38 @@ public class ProductTypeDraftWrapperTest {
     @Test
     public void testQuantityAttributeDefinitions() {
         checkAttributeAssertions("quantity", "Quantity", NumberType.of(), AttributeConstraint.COMBINATION_UNIQUE,
-                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
+                TextInputHint.SINGLE_LINE, true, true);
     }
 
     @Test
     public void testBoxAttributeDefinitions() {
         checkAttributeAssertions("box", "Box name", StringType.of(), AttributeConstraint.COMBINATION_UNIQUE,
-                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
+                TextInputHint.SINGLE_LINE, true, true);
     }
 
     @Test
     public void testPactasWeeklyAttributeDefinitions() {
         checkAttributeAssertions("pactas1", "Pactas ID weekly", StringType.of(), AttributeConstraint.UNIQUE,
-                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
+                TextInputHint.SINGLE_LINE, true, true);
     }
 
     @Test
     public void testPactasTwoWeeklyAttributeDefinitions() {
         checkAttributeAssertions("pactas2", "Pactas ID two weeks", StringType.of(), AttributeConstraint.UNIQUE,
-                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
+                TextInputHint.SINGLE_LINE, true, true);
     }
 
     @Test
     public void testPactasMonthlyAttributeDefinitions() {
         checkAttributeAssertions("pactas4", "Pactas ID monthly", StringType.of(), AttributeConstraint.UNIQUE,
-                TextInputHint.SINGLE_LINE, Boolean.TRUE, Boolean.TRUE);
+                TextInputHint.SINGLE_LINE, true, true);
     }
 
 
     private void checkAttributeAssertions(final String assertName, final String assertLabel,
                                           final AttributeType assertType, final AttributeConstraint assertConstraint,
-                                          final TextInputHint assertTextInputHint, final Boolean assertIsRequired,
-                                          final Boolean assertIsSearchable) {
+                                          final TextInputHint assertTextInputHint, final boolean assertIsRequired,
+                                          final boolean assertIsSearchable) {
         final Optional<AttributeDefinition> optionalAttributeDefinition = productTypeDraft.getAttributes().stream()
                 .filter(attributeDefinition -> assertName.equals(attributeDefinition.getName()))
                 .findFirst();

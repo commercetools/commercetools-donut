@@ -25,7 +25,6 @@ public class OrderController extends BaseController {
     private final CartService cartService;
     private final String pactasPublicKey;
 
-
     @Inject
     public OrderController(final Application application, final CartService cartService,
                            final ProductProjection productProjection) {

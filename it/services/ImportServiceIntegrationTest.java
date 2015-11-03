@@ -1,8 +1,20 @@
 package services;
 
 
+import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.carts.commands.CartDeleteCommand;
+import io.sphere.sdk.carts.queries.CartQuery;
 import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.models.LocalizedString;
+import io.sphere.sdk.products.Product;
+import io.sphere.sdk.products.commands.ProductDeleteCommand;
+import io.sphere.sdk.products.queries.ProductQuery;
+import io.sphere.sdk.producttypes.ProductType;
+import io.sphere.sdk.producttypes.commands.ProductTypeDeleteCommand;
+import io.sphere.sdk.producttypes.queries.ProductTypeQuery;
+import io.sphere.sdk.taxcategories.TaxCategory;
+import io.sphere.sdk.taxcategories.commands.TaxCategoryDeleteCommand;
+import io.sphere.sdk.taxcategories.queries.TaxCategoryQuery;
 import io.sphere.sdk.types.FieldDefinition;
 import io.sphere.sdk.types.Type;
 import io.sphere.sdk.types.commands.TypeDeleteCommand;
@@ -70,6 +82,55 @@ public class ImportServiceIntegrationTest {
             results.forEach(type -> {
                 final Type execute = sphereClient.execute(TypeDeleteCommand.of(type)).get(ALLOWED_TIMEOUT);
                 System.err.println("####" + type.getKey());
+            });
+        });
+    }
+
+    //@Test
+    public void deleteCarts() {
+        running(application, () -> {
+            final CartQuery query = CartQuery.of();
+            final List<Cart> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
+            results.forEach(cart -> {
+                final Cart execute = sphereClient.execute(CartDeleteCommand.of(cart)).get(ALLOWED_TIMEOUT);
+                System.err.println("####" + execute);
+            });
+        });
+    }
+
+    //@Test
+    public void deleteProducts() {
+        running(application, () -> {
+            final ProductQuery query = ProductQuery.of();
+            final List<Product> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
+            results.forEach(product -> {
+                final Product execute = sphereClient.execute(ProductDeleteCommand.of(product)).get(ALLOWED_TIMEOUT);
+                System.err.println("####" + execute.getId());
+            });
+        });
+    }
+
+    //@Test
+    private void deleteProductTypes() {
+        running(application, () -> {
+            final ProductTypeQuery query = ProductTypeQuery.of();
+            final List<ProductType> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
+            results.forEach(productType -> {
+                final ProductType execute = sphereClient.execute(ProductTypeDeleteCommand.of(productType)).get(ALLOWED_TIMEOUT);
+                System.err.println("####" + execute.getId());
+            });
+        });
+    }
+
+
+    //@Test
+    public void deleteTaxCategory() {
+        running(application, () -> {
+            final TaxCategoryQuery query = TaxCategoryQuery.of();
+            final List<TaxCategory> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
+            results.forEach(taxCategory -> {
+                final TaxCategory execute = sphereClient.execute(TaxCategoryDeleteCommand.of(taxCategory)).get(ALLOWED_TIMEOUT);
+                System.err.println("####" + execute.getId());
             });
         });
     }

@@ -3,6 +3,7 @@ package services;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
+import io.sphere.sdk.products.VariantIdentifier;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.libs.F;
@@ -40,11 +41,11 @@ public interface CartService {
      * users {@code Cart}.
      *
      * @param cart the user's current {@code Cart} object, must not be null
-     * @param product the {@code ProductProjection} to add, must not be null
-     * @param variant the selected {@code ProductVariant}, must not be null
+     * @param variantIdentifier the {@code VariantIdentifier} to add, must not be null
      * @param frequency the selected delivery frequency
      */
-    F.Promise<Cart> setProductToCart(final Cart cart, final ProductProjection product, final ProductVariant variant, final int frequency);
+    F.Promise<Cart> setProductToCart(final Cart cart, final VariantIdentifier variantIdentifier,
+                                     final int frequency);
 
     /**
      * Returns the value of the {@code CustomObject} named PactasKeys.FREQUENCY, that is bound to the {@code Cart}
