@@ -42,8 +42,8 @@ import static java.util.Objects.requireNonNull;
 public class CartServiceImpl extends AbstractShopService implements CartService {
 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
-    private static final String TYPE_KEY = "cart-frequency-key";
-    private static final String FIELD_KEY = "frequency";
+    private static final String FREQUENCY_TYPE_KEY = "cart-frequency-key";
+    private static final String FREQUENCY_FIELD_KEY = "frequency";
 
     @Inject
     public CartServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
@@ -57,17 +57,17 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 .map(cardId -> {
                     return playJavaSphereClient().execute(CartByIdGet.of(cardId)).map(cart -> {
                         LOG.debug("Fetched existing Cart[cartId={}, items={}, custom frequency={}]", cart.getId(),
-                                cart.getLineItems().size(), cart.getCustom().getFieldAsString("frequency"));
+                                cart.getLineItems().size(), cart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
                         return cart;
                     });
                 })
                 .orElseGet(() -> {
                     final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR)
-                            .witCustom(CustomFieldsDraft.ofTypeKeyAndObjects(TYPE_KEY, frequencyType(0)));
+                            .witCustom(CustomFieldsDraft.ofTypeKeyAndObjects(FREQUENCY_TYPE_KEY, frequencyType(0)));
                     return playJavaSphereClient().execute(CartCreateCommand.of(cartDraft))
                             .map(cart -> {
                                 LOG.debug("Created new Cart[cartId={}, items={}, custom frequency={}]", cart.getId(),
-                                        cart.getLineItems().size(), cart.getCustom().getFieldAsString("frequency"));
+                                        cart.getLineItems().size(), cart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
                                 return cart;
                             });
                 });
@@ -76,7 +76,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     private final static Map<String, Object> frequencyType(final int frequency) {
         return Collections.unmodifiableMap(new HashMap<String, Integer>() {
             {
-                put(FIELD_KEY, frequency);
+                put(FREQUENCY_FIELD_KEY, frequency);
             }
         });
     }
@@ -93,10 +93,10 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         final F.Promise<Cart> clearedItemsPromise = playJavaSphereClient().execute(CartUpdateCommand.of(cart, items));
         return clearedItemsPromise.flatMap(clearedItemsCart ->
                 playJavaSphereClient().execute(CartUpdateCommand.of(clearedItemsCart,
-                        SetCustomField.ofObject(FIELD_KEY, 0)))
+                        SetCustomField.ofObject(FREQUENCY_FIELD_KEY, 0)))
                         .map(clearedTypeCart -> {
                             LOG.debug("Cleared Cart: items={}, custom frequency={}", clearedTypeCart.getLineItems().size(),
-                                    clearedTypeCart.getCustom().getFieldAsString("frequency"));
+                                    clearedTypeCart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
                             return clearedTypeCart;
                         }));
     }
@@ -108,13 +108,13 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(frequency);
 
         final List<? extends UpdateAction<Cart>> cartUpdateActions = Arrays.asList(
-                SetCustomField.ofObject(FIELD_KEY, frequency),
+                SetCustomField.ofObject(FREQUENCY_FIELD_KEY, frequency),
                 AddLineItem.of(variantIdentifier.getProductId(), variantIdentifier.getVariantId(), frequency)
         );
 
         return playJavaSphereClient().execute(CartUpdateCommand.of(cart, cartUpdateActions)).map(updatedCart -> {
             LOG.debug("Updated Cart: items={}, custom frequency={}", updatedCart.getLineItems().size(),
-                    updatedCart.getCustom().getFieldAsString("frequency"));
+                    updatedCart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
             return cart;
         });
     }
