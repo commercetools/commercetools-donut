@@ -23,6 +23,7 @@ import io.sphere.sdk.models.DefaultCurrencyUnits;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.VariantIdentifier;
+import io.sphere.sdk.products.attributes.Attribute;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 import io.sphere.sdk.types.CustomFieldsDraft;
 import pactas.models.PactasContract;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 @Singleton
@@ -177,9 +179,22 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
         requireNonNull(pactasId);
         return product.getAllVariants().stream().map(variant -> {
-                    final String monthly = variant.getAttribute(PactasKeys.ID_MONTHLY).getValue(AttributeAccess.ofString());
-                    final String twoWeeks = variant.getAttribute(PactasKeys.ID_TWO_WEEKS).getValue(AttributeAccess.ofString());
-                    final String weekly = variant.getAttribute(PactasKeys.ID_WEEKLY).getValue(AttributeAccess.ofString());
+
+                    final String monthly = Optional.<Attribute>ofNullable(variant.getAttribute(PactasKeys.ID_MONTHLY))
+                            .map(attribute -> attribute.getValue(AttributeAccess.ofString()))
+                            .orElseThrow(() -> new RuntimeException(format("Unable to get Attribute '%s'",
+                                    PactasKeys.ID_MONTHLY)));
+
+                    final String twoWeeks = Optional.<Attribute>ofNullable(variant.getAttribute(PactasKeys.ID_TWO_WEEKS))
+                            .map(attribute -> attribute.getValue(AttributeAccess.ofString()))
+                            .orElseThrow(() -> new RuntimeException(format("Unable to get Attribute '%s'",
+                                    PactasKeys.ID_TWO_WEEKS)));
+
+                    final String weekly = Optional.<Attribute>ofNullable(variant.getAttribute(PactasKeys.ID_WEEKLY))
+                            .map(attribute -> attribute.getValue(AttributeAccess.ofString()))
+                            .orElseThrow(() -> new RuntimeException(format("Unable to get Attribute '%s'",
+                                    PactasKeys.ID_WEEKLY)));
+
                     return (pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) ? variant : null;
                 }
         ).findFirst();
