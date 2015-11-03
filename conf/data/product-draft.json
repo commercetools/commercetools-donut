@@ -22,21 +22,21 @@
     ],
     "images": [
       {
-        "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-WuuDavUS.png",
+        "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
         "dimensions": {
           "w": 264,
           "h": 190
         }
       },
       {
-        "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-green-C3OqK9-I.png",
+        "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-green.png",
         "dimensions": {
           "w": 404,
           "h": 800
         }
       },
       {
-        "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-green-AfNyfCRG.png",
+        "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-green.png",
         "dimensions": {
           "w": 213,
           "h": 100
@@ -79,21 +79,21 @@
       ],
       "images": [
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-PS4UxrYk.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
           "dimensions": {
             "w": 264,
             "h": 190
           }
         },
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-brown-7SthyUtd.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-brown.png",
           "dimensions": {
             "w": 404,
             "h": 800
           }
         },
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-brown-vUVfO0A3.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-brown.png",
           "dimensions": {
             "w": 213,
             "h": 100
@@ -135,21 +135,21 @@
       ],
       "images": [
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-GpC-P4Ta.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
           "dimensions": {
             "w": 264,
             "h": 190
           }
         },
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-pink-VrwHTJ4u.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-pink.png",
           "dimensions": {
             "w": 404,
             "h": 800
           }
         },
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-pink-LiQCHu5K.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-pink.png",
           "dimensions": {
             "w": 213,
             "h": 100
@@ -191,21 +191,21 @@
       ],
       "images": [
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/donuts-C1jwvNhm.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
           "dimensions": {
             "w": 264,
             "h": 190
           }
         },
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/stamp-gold-XPyAYcrR.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-gold.png",
           "dimensions": {
             "w": 404,
             "h": 800
           }
         },
         {
-          "url": "https://d7425bc8dad60afc1fb6-19c25edf7c08d49ff8f45ca05592de1c.ssl.cf3.rackcdn.com/save-gold-hT_VyC_A.png",
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-gold.png",
           "dimensions": {
             "w": 213,
             "h": 100
