@@ -54,26 +54,30 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     public F.Promise<Cart> getOrCreateCart(final Http.Session session) {
         requireNonNull(session);
         return Optional.ofNullable(session.get(SessionKeys.CART_ID))
-                .map(cardId -> {
-                    return playJavaSphereClient().execute(CartByIdGet.of(cardId)).map(cart -> {
-                        LOG.debug("Fetched existing Cart[cartId={}, items={}, custom frequency={}]", cart.getId(),
-                                cart.getLineItems().size(), cart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
-                        return cart;
-                    });
-                })
+                .map(cardId -> playJavaSphereClient().execute(CartByIdGet.of(cardId)).map(cart -> {
+                    LOG.debug("Fetched existing Cart[cartId={}, items={}, custom frequency={}]",
+                            cart.getId(), cart.getLineItems().size(), getFrequencyString(cart));
+                    return cart;
+                }))
                 .orElseGet(() -> {
                     final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR)
                             .witCustom(CustomFieldsDraft.ofTypeKeyAndObjects(FREQUENCY_TYPE_KEY, frequencyType(0)));
                     return playJavaSphereClient().execute(CartCreateCommand.of(cartDraft))
                             .map(cart -> {
-                                LOG.debug("Created new Cart[cartId={}, items={}, custom frequency={}]", cart.getId(),
-                                        cart.getLineItems().size(), cart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
+                                LOG.debug("Created new Cart[cartId={}, items={}, custom frequency={}]",
+                                        cart.getId(), cart.getLineItems().size(), getFrequencyString(cart));
                                 return cart;
                             });
                 });
     }
 
-    private final static Map<String, Object> frequencyType(final int frequency) {
+    private String getFrequencyString(final Cart cart) {
+        return Optional.ofNullable(cart.getCustom())
+                .map(customFields -> customFields.getFieldAsString(FREQUENCY_FIELD_KEY))
+                .orElse("null");
+    }
+
+    private static Map<String, Object> frequencyType(final int frequency) {
         return Collections.unmodifiableMap(new HashMap<String, Integer>() {
             {
                 put(FREQUENCY_FIELD_KEY, frequency);
@@ -95,8 +99,8 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 playJavaSphereClient().execute(CartUpdateCommand.of(clearedItemsCart,
                         SetCustomField.ofObject(FREQUENCY_FIELD_KEY, 0)))
                         .map(clearedTypeCart -> {
-                            LOG.debug("Cleared Cart: items={}, custom frequency={}", clearedTypeCart.getLineItems().size(),
-                                    clearedTypeCart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
+                            LOG.debug("Cleared Cart: items={}, custom frequency={}",
+                                    clearedTypeCart.getLineItems().size(), getFrequencyString(clearedTypeCart));
                             return clearedTypeCart;
                         }));
     }
@@ -114,7 +118,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
         return playJavaSphereClient().execute(CartUpdateCommand.of(cart, cartUpdateActions)).map(updatedCart -> {
             LOG.debug("Updated Cart: items={}, custom frequency={}", updatedCart.getLineItems().size(),
-                    updatedCart.getCustom().getFieldAsString(FREQUENCY_FIELD_KEY));
+                    getFrequencyString(updatedCart));
             return cart;
         });
     }
@@ -130,13 +134,12 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(cartId);
         final F.Promise<CustomObject<JsonNode>> customObjectPromise =
                 playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
-        return customObjectPromise.map(nullableCustomObject -> extractFrequency(nullableCustomObject));
+        return customObjectPromise.map(this::extractFrequency);
     }
 
     private Integer extractFrequency(@Nullable final CustomObject<JsonNode> nullableCustomObject) {
         final int result = Optional.ofNullable(nullableCustomObject)
-                .map(customObject -> customObject.getValue().asInt())
-                .orElse(0);
+                .map(customObject -> customObject.getValue().asInt()).orElse(0);
         LOG.debug("Extracted frequency: {}", result);
         return result;
     }
@@ -144,7 +147,9 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     @Override
     public Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart) {
         requireNonNull(cart);
-        return (!cart.getLineItems().isEmpty()) ? Optional.ofNullable(cart.getLineItems().get(0).getVariant()) : Optional.empty();
+        return (!cart.getLineItems().isEmpty()) ?
+                Optional.ofNullable(cart.getLineItems().get(0).getVariant()) :
+                Optional.empty();
     }
 
     @Override
