@@ -18,7 +18,7 @@ notifications:
     on_failure: change
 deploy:
   provider: heroku
-  app: sphere-donut-new
+  app: sphere-donut-staging
   api_key:
     secure: iH6hSoXTRwD2L/2+b892umlnaybyGM00FKJDKtC1jSOQrNcPHqWTGin/NMDtM3CTLQAUw3RvYAxpnoT6hMLfBPd67vxg6GbpJsAFsgGXG8j+J2l9sJOL8x+VPJFG8xMPrXKnGs8FF0/xVVA05hFLAtZFVY5AyJnj1GS30DYFAp0=
 env:
