@@ -71,29 +71,30 @@ public class ImportServiceIntegrationTest {
             final List<Type> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
             final Optional<Type> optionalType = results.stream().filter(type -> "cart-frequency-key".equals(type.getKey())).findFirst();
             assertThat(optionalType.isPresent()).isTrue();
+            System.err.println("### " + optionalType.get());
         });
     }
 
-    //@Test
+    @Test
     public void deleteCustomType() {
         running(application, () -> {
             final TypeQuery query = TypeQuery.of();
             final List<Type> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
             results.forEach(type -> {
                 final Type execute = sphereClient.execute(TypeDeleteCommand.of(type)).get(ALLOWED_TIMEOUT);
-                System.err.println("####" + type.getKey());
+                System.err.println("#### types:" + results.size());
             });
         });
     }
 
-    //@Test
+    @Test
     public void deleteCarts() {
         running(application, () -> {
             final CartQuery query = CartQuery.of();
             final List<Cart> results = sphereClient.execute(query).get(ALLOWED_TIMEOUT).getResults();
             results.forEach(cart -> {
                 final Cart execute = sphereClient.execute(CartDeleteCommand.of(cart)).get(ALLOWED_TIMEOUT);
-                System.err.println("####" + execute);
+                System.err.println("#### carts:" + results.size());
             });
         });
     }

@@ -1,6 +1,5 @@
 package services;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Singleton;
 import exceptions.PlanVariantNotFoundException;
 import io.sphere.sdk.carts.Cart;
@@ -15,8 +14,6 @@ import io.sphere.sdk.carts.commands.updateactions.SetShippingAddress;
 import io.sphere.sdk.carts.queries.CartByIdGet;
 import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.commands.UpdateAction;
-import io.sphere.sdk.customobjects.CustomObject;
-import io.sphere.sdk.customobjects.queries.CustomObjectByKeyGet;
 import io.sphere.sdk.models.Address;
 import io.sphere.sdk.models.AddressBuilder;
 import io.sphere.sdk.models.DefaultCurrencyUnits;
@@ -32,7 +29,6 @@ import play.Logger;
 import play.libs.F;
 import play.mvc.Http;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -121,7 +117,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         return playJavaSphereClient().execute(CartUpdateCommand.of(cart, cartUpdateActions)).map(updatedCart -> {
             LOG.debug("Updated Cart: items={}, custom frequency={}", updatedCart.getLineItems().size(),
                     getFrequencyString(updatedCart));
-            return cart;
+            return updatedCart;
         });
     }
 
@@ -129,29 +125,6 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     public F.Promise<Cart> deleteCart(final Cart cart) {
         requireNonNull(cart);
         return playJavaSphereClient().execute(CartDeleteCommand.of(cart));
-    }
-
-    @Override
-    public F.Promise<Integer> getFrequency(final String cartId) {
-        requireNonNull(cartId);
-        final F.Promise<CustomObject<JsonNode>> customObjectPromise =
-                playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
-        return customObjectPromise.map(this::extractFrequency);
-    }
-
-    private Integer extractFrequency(@Nullable final CustomObject<JsonNode> nullableCustomObject) {
-        final int result = Optional.ofNullable(nullableCustomObject)
-                .map(customObject -> customObject.getValue().asInt()).orElse(0);
-        LOG.debug("Extracted frequency: {}", result);
-        return result;
-    }
-
-    @Override
-    public Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart) {
-        requireNonNull(cart);
-        return (!cart.getLineItems().isEmpty()) ?
-                Optional.ofNullable(cart.getLineItems().get(0).getVariant()) :
-                Optional.empty();
     }
 
     @Override

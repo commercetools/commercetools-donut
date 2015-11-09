@@ -1,116 +1,119 @@
 package services;
 
-
-import controllers.ProductController;
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.VariantIdentifier;
 import io.sphere.sdk.types.CustomFields;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import play.api.mvc.RequestHeader;
-import play.libs.F;
+import pactas.models.PactasContract;
+import pactas.models.PactasCustomer;
+import play.Application;
+import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
-import play.mvc.Http.Request;
-import play.test.FakeApplication;
+import play.test.WithApplication;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.start;
+import static org.assertj.core.api.StrictAssertions.assertThat;
+import static services.CartFixtures.*;
+import static utils.JsonUtils.readObjectFromResource;
 
-public class CartServiceIntegrationTest {
-
-    private static FakeApplication fakeApplication;
-    private final static Request request = mock(Request.class);
-
-    private ProductController productController;
-    private CartService cartService;
-    private ProductProjection productProjection;
+public class CartServiceIntegrationTest extends WithApplication {
 
     private static final long ALLOWED_TIMEOUT = 5000;
-    private static final int FREQUENCY = 1;
 
-    @BeforeClass
-    public static void startFakeApplication() {
-        fakeApplication = fakeApplication();
-        start(fakeApplication);
+    private Application application;
+    private CartService cartService;
+    private ProductProjection productProjection;
+    private PlayJavaSphereClient playJavaSphereClient;
+
+    private static final String FREQUENCY_FIELD_KEY = "frequency";
+
+    public static final PactasContract CONTRACT = readObjectFromResource("pactas-contract.json", PactasContract.class);
+    public static final PactasCustomer CUSTOMER = readObjectFromResource("pactas-customer.json", PactasCustomer.class);
+
+    @Override
+    protected Application provideApplication() {
+        application = new GuiceApplicationBuilder().build();
+        return application;
     }
 
     @Before
-    /** Set up the context necessary for a contoller to run **/
-    public void setUpContext() {
-        final Map<String, String> flashData = Collections.emptyMap();
-        final Map<String, Object> argData = Collections.emptyMap();
-        final RequestHeader header = mock(RequestHeader.class);
-        final Http.Context context = new Http.Context(1L, header, request, flashData, flashData, argData);
-        Http.Context.current.set(context);
+    public void setUp() {
+        cartService = application.injector().instanceOf(CartService.class);
+        productProjection = application.injector().instanceOf(ProductProjection.class);
+        playJavaSphereClient = application.injector().instanceOf(PlayJavaSphereClient.class);
+    }
 
-        productController = fakeApplication.injector().instanceOf(ProductController.class);
-        cartService = fakeApplication.injector().instanceOf(CartService.class);
-        productProjection = fakeApplication.injector().instanceOf(ProductProjection.class);
+    @Test
+    public void testGetOrCreateCartWithEmptySession() {
+        final Cart cart = cartService.getOrCreateCart(emptySession()).get(ALLOWED_TIMEOUT);
+        assertThat(cart).isNotNull();
+        assertThat(cart.getLineItems().isEmpty());
+        final CustomFields customFields = cart.getCustom();
+        assertThat(customFields).isNotNull();
+        final Integer frequency = customFields.getFieldAsInteger(FREQUENCY_FIELD_KEY);
+        assertThat(frequency).isEqualTo(0);
+    }
+
+    @Test
+    public void testGetOrCreateCartWithExistingCart() {
+        withCustomType(playJavaSphereClient, type -> {
+            withCart(playJavaSphereClient, cart -> {
+                final Cart existing = cartService.getOrCreateCart(sessionWithCartId(cart.getId())).get(5000);
+                assertThat(existing).isNotNull();
+                return existing;
+            });
+            return type;
+        });
+    }
+
+    @Test
+    public void testSetProductToCart() {
+        withCustomType(playJavaSphereClient, type -> {
+            withCart(playJavaSphereClient, cart -> {
+                final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
+                        productProjection.getMasterVariant().getId()), 1).get(ALLOWED_TIMEOUT);
+                assertThat(cartWithProduct.getLineItems().size()).isEqualTo(1);
+                return cartWithProduct;
+            });
+            return type;
+        });
+    }
+
+
+    @Test
+    public void testClearCart() {
+        withCustomType(playJavaSphereClient, type -> {
+            final VariantIdentifier variantIdentifier = VariantIdentifier.of(productProjection.getId(), 1);
+            withCartAndBox(playJavaSphereClient, variantIdentifier, cart -> {
+                final Cart clearedCart = cartService.clearCart(cart).get(5000);
+                assertThat(clearedCart.getLineItems().isEmpty()).isTrue();
+                return clearedCart;
+            });
+            return type;
+        });
+    }
+
+    @Test
+    public void testCreateCartWithPactasInfo() {
+        //TODO
+    }
+
+    private Http.Session emptySession() {
+        return new Http.Session(new HashMap<>());
+    }
+
+    private Http.Session sessionWithCartId(final String cartId) {
+        final Map<String, String> sessionMap = new HashMap<>();
+        sessionMap.put(SessionKeys.CART_ID, cartId);
+        return new Http.Session(sessionMap);
     }
 
     private static VariantIdentifier variantIdentifier(final String productId, final Integer variantId) {
         return VariantIdentifier.of(productId, variantId);
-    }
-
-    @Ignore
-    @Test
-    public void testGetOrCreateCart() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        assertThat(cart).isNotNull();
-        final CustomFields customFields = cart.getCustom();
-        assertThat(customFields).isNotNull();
-        final Integer frequency = customFields.getFieldAsInteger("frequency");
-        assertThat(frequency).isNotNull();
-        assertThat(frequency).isEqualTo(0);
-    }
-
-    @Ignore
-    @Test
-    public void testSetProductToCart() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
-                productProjection.getMasterVariant().getId()), FREQUENCY).get(ALLOWED_TIMEOUT);
-        assertThat(cartWithProduct.getLineItems().size()).isEqualTo(1);
-    }
-
-    @Ignore
-    @Test
-    public void testClearCart() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
-                productProjection.getMasterVariant().getId()), FREQUENCY).get(ALLOWED_TIMEOUT);
-        final Cart clearedCart = cartService.clearCart(cartWithProduct).get(ALLOWED_TIMEOUT);
-        assertThat(clearedCart.getLineItems()).isEmpty();
-    }
-
-    @Ignore
-    @Test
-    public void testGetFrequency() {
-        final Cart cart = cartService.getOrCreateCart(productController.session()).get(ALLOWED_TIMEOUT);
-        final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
-                productProjection.getMasterVariant().getId()), FREQUENCY).get(ALLOWED_TIMEOUT);
-        final F.Promise<Integer> result = cartService.getFrequency(cartWithProduct.getId());
-        assertThat(result.get(ALLOWED_TIMEOUT)).isNotNull();
-        assertThat(result.get(ALLOWED_TIMEOUT)).isEqualTo(FREQUENCY);
-    }
-
-    @Ignore
-    @Test
-    public void testGetSelectedVariant() {
-        //TODO
-    }
-
-    @Ignore
-    @Test
-    public void testCreateCartWithPactasInfo() {
-        //TODO
     }
 }

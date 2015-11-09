@@ -2,14 +2,11 @@ package services;
 
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
-import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.VariantIdentifier;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.libs.F;
 import play.mvc.Http;
-
-import java.util.Optional;
 
 /**
  * Business service that provides access to the SPHERE.IO Cart API.
@@ -48,23 +45,6 @@ public interface CartService {
                                      final int frequency);
 
     /**
-     * Returns the value of the {@code CustomObject} named PactasKeys.FREQUENCY, that is bound to the {@code Cart}
-     * with the given cardId.
-     *
-     * @param cartId the identifier of the {@code Cart} object, the {@code CustomObject} is bound to
-     * @return the value of the {@code CustomObject}. If no {@code CustomObject} found, it returns 0
-     */
-    F.Promise<Integer> getFrequency(final String cartId);
-
-    /**
-     * Gets an optional, selected {@code ProductVariant} from the users {@code Cart}
-     *
-     * @param cart the {@code Cart} object to get the selected variant from, must not be null
-     * @return optional {@code ProductVariant}, maybe empty if there's no selection made
-     */
-    Optional<ProductVariant> getSelectedVariantFromCart(final Cart cart);
-
-    /**
      * Creates a {@code Cart} object with the required data from Pactas.
      *
      * @param product the selected  {@code ProductProjection}
@@ -74,5 +54,11 @@ public interface CartService {
      */
     F.Promise<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
 
+    /**
+     * Deletes an existing cart.
+     *
+     * @param cart the user's current {@code Cart} object, must not be null
+     * @return
+     */
     F.Promise<Cart> deleteCart(final Cart cart);
 }
