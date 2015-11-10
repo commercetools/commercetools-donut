@@ -1,6 +1,5 @@
 package pactas;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
@@ -24,8 +23,6 @@ public class PactasIntegrationTest extends WithApplication {
         return new GuiceApplicationBuilder().build();
     }
 
-    @Ignore
-    //FIX ME {"error":"invalid_client","error_description":"unknown client"}
     @Test(expected = PactasException.class)
     public void fetchesContract() throws Exception {
         final Pactas pactas = app.injector().instanceOf(Pactas.class);
@@ -33,8 +30,6 @@ public class PactasIntegrationTest extends WithApplication {
         assertThat(contract.getId()).isEqualTo(CONTRACT_ID);
     }
 
-    @Ignore
-    //FIX ME {"error":"invalid_client","error_description":"unknown client"}
     @Test(expected = PactasException.class)
     public void fetchesCustomer() throws Exception {
         final Pactas pactas = app.injector().instanceOf(Pactas.class);
