@@ -52,21 +52,17 @@ public class PactasWebhookController extends BaseController {
 
                 return customerPromise.flatMap(pactasCustomer -> {
                     LOG.debug("Fetched Pactas customer: {}", pactasCustomer);
-
-
                     final F.Promise<Cart> cartPromise = cartService.createCartWithPactasInfo(productProjection(), pactasContract,
                             pactasCustomer);
 
                     return cartPromise.flatMap(cart -> {
                         LOG.debug("Current Cart[cartId={}]", cart.getId());
-
                         final F.Promise<Order> orderPromise = orderService.createOrder(cart);
                         return orderPromise.map(order -> {
                             LOG.debug("Order created: {}", order);
                             return ok();
                         });
                     });
-
                 });
             });
         }
