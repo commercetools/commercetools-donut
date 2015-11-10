@@ -33,9 +33,10 @@ public class CartFixtures {
     private static final String TYPE_DRAFT_JSON_RESOURCE = "data/type-draft.json";
     private static final String FREQUENCY_TYPE_KEY = "cart-frequency-key";
     private static final String FREQUENCY_FIELD_KEY = "frequency";
+    private static final int ALLOWED_TIMEOUT = 5000;
 
     public static Cart createCart(final PlayJavaSphereClient client, final CartDraft cartDraft) {
-        return client.execute(CartCreateCommand.of(cartDraft)).get(5000);
+        return client.execute(CartCreateCommand.of(cartDraft)).get(ALLOWED_TIMEOUT);
     }
 
     public static Cart createCartFromDraft(final PlayJavaSphereClient client) {
@@ -57,7 +58,7 @@ public class CartFixtures {
                 SetCustomField.ofObject(FREQUENCY_FIELD_KEY, 1),
                 AddLineItem.of(variantIdentifier.getProductId(), variantIdentifier.getVariantId(), 1)
         );
-        final Cart cartWithProduct = client.execute(CartUpdateCommand.of(cart, cartUpdateActions)).get(5000);
+        final Cart cartWithProduct = client.execute(CartUpdateCommand.of(cart, cartUpdateActions)).get(ALLOWED_TIMEOUT);
         final Cart cartToDelete = operator.apply(cartWithProduct);
         client.execute(CartDeleteCommand.of(cartToDelete));
     }
@@ -66,13 +67,13 @@ public class CartFixtures {
         final TypeDraftWrapper typeDraftWrapper = JsonUtils.readObjectFromResource(TYPE_DRAFT_JSON_RESOURCE,
                 TypeDraftWrapper.class);
         final TypeDraft typeDraft = typeDraftWrapper.createTypeDraft();
-        return client.execute(TypeCreateCommand.of(typeDraft)).get(5000);
+        return client.execute(TypeCreateCommand.of(typeDraft)).get(ALLOWED_TIMEOUT);
     }
 
     public static void withCustomType(final PlayJavaSphereClient client, final UnaryOperator<Type> operator) {
         final Type customType = createCustomType(client);
         final Type customTypeToDelete = operator.apply(customType);
-        client.execute(TypeDeleteCommand.of(customTypeToDelete));
+        client.execute(TypeDeleteCommand.of(customTypeToDelete)).get(ALLOWED_TIMEOUT);
     }
 
     private static Map<String, Object> frequencyType(final int frequency) {
