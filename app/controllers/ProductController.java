@@ -57,7 +57,7 @@ public class ProductController extends BaseController {
             final SubscriptionFormData subscriptionFormData = boundForm.get();
             final int frequency = subscriptionFormData.getHowOften();
             final int variantId = subscriptionFormData.getVariantId();
-            LOG.debug("Received form data: frequency[{}], variantId[{}]", frequency, variantId);
+            LOG.debug("Received form data: frequency={}, variantId={}", frequency, variantId);
             final ProductVariant selectedVariant = productProjection().getVariant(variantId);
             final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
             final F.Promise<Cart> clearedCartPromise = currentCartPromise.flatMap(cartService::clearCart);
