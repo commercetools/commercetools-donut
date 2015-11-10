@@ -2,18 +2,17 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import pactas.PactasException;
-import pactas.models.PactasContract;
-import pactas.models.PactasCustomer;
+import play.Application;
 import play.api.http.MediaRange;
 import play.api.mvc.Request;
 import play.api.mvc.RequestHeader;
 import play.i18n.Lang;
+import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.test.FakeApplication;
+import play.test.WithApplication;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,27 +21,20 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.StrictAssertions.assertThat;
 import static play.mvc.Http.Status.OK;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.start;
 import static utils.JsonUtils.readJsonFromResource;
-import static utils.JsonUtils.readObjectFromResource;
 
-public class PactasWebhookControllerIntegrationTest {
+public class PactasWebhookControllerIntegrationTest extends WithApplication {
 
     public static final JsonNode WEBHOOK = readJsonFromResource("pactas-webhook-account.json");
 
     private static final long ALLOWED_TIMEOUT = 5000;
 
-    public static final PactasContract CONTRACT = readObjectFromResource("pactas-contract.json", PactasContract.class);
-    public static final PactasCustomer CUSTOMER = readObjectFromResource("pactas-customer.json", PactasCustomer.class);
+    private Application application;
 
-
-    private static FakeApplication fakeApplication;
-
-    @BeforeClass
-    public static void startFakeApplication() {
-        fakeApplication = fakeApplication();
-        start(fakeApplication);
+    @Override
+    protected Application provideApplication() {
+        application = new GuiceApplicationBuilder().build();
+        return application;
     }
 
     @Before
@@ -56,9 +48,10 @@ public class PactasWebhookControllerIntegrationTest {
 
     @Test(expected = PactasException.class)
     public void testCreateOrderFromSubscription() throws Exception {
-        final PactasWebhookController controller =  fakeApplication.injector().instanceOf(PactasWebhookController.class);
+        final PactasWebhookController controller =  application.injector().instanceOf(PactasWebhookController.class);
         final Result result = controller.createOrderFromSubscription().get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS);
         assertThat(result.status()).isEqualTo(OK);
+        assertThat(result).isEqualTo(OK);
     }
 
     private Http.Request fakeRequest() {
