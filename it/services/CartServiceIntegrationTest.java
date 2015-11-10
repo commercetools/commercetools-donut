@@ -4,7 +4,6 @@ import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.VariantIdentifier;
-import io.sphere.sdk.types.CustomFields;
 import org.junit.Before;
 import org.junit.Test;
 import pactas.models.PactasContract;
@@ -18,22 +17,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.StrictAssertions.assertThat;
-import static services.CartFixtures.*;
+import static services.CartFixtures.withCart;
+import static services.CartFixtures.withCartAndBox;
 import static utils.JsonUtils.readObjectFromResource;
 
 public class CartServiceIntegrationTest extends WithApplication {
 
     private static final long ALLOWED_TIMEOUT = 5000;
+    private static final int FREQUENCY = 1;
+    private static final PactasContract CONTRACT = readObjectFromResource("pactas-contract.json", PactasContract.class);
+    private static final PactasCustomer CUSTOMER = readObjectFromResource("pactas-customer.json", PactasCustomer.class);
 
     private Application application;
     private CartService cartService;
     private ProductProjection productProjection;
     private PlayJavaSphereClient playJavaSphereClient;
-
-    private static final String FREQUENCY_FIELD_KEY = "frequency";
-
-    public static final PactasContract CONTRACT = readObjectFromResource("pactas-contract.json", PactasContract.class);
-    public static final PactasCustomer CUSTOMER = readObjectFromResource("pactas-customer.json", PactasCustomer.class);
 
     @Override
     protected Application provideApplication() {
@@ -50,57 +48,53 @@ public class CartServiceIntegrationTest extends WithApplication {
 
     @Test
     public void testGetOrCreateCartWithEmptySession() {
-        final Cart cart = cartService.getOrCreateCart(emptySession()).get(ALLOWED_TIMEOUT);
-        assertThat(cart).isNotNull();
-        assertThat(cart.getLineItems().isEmpty());
-        final CustomFields customFields = cart.getCustom();
-        assertThat(customFields).isNotNull();
-        final Integer frequency = customFields.getFieldAsInteger(FREQUENCY_FIELD_KEY);
-        assertThat(frequency).isEqualTo(0);
+        withCart(playJavaSphereClient, cart -> {
+            final Cart newCart = cartService.getOrCreateCart(emptySession()).get(ALLOWED_TIMEOUT);
+            assertThat(cart).isNotNull();
+            assertThat(cart.getLineItems().isEmpty());
+            return newCart;
+        });
     }
 
     @Test
     public void testGetOrCreateCartWithExistingCart() {
-        withCustomType(playJavaSphereClient, type -> {
-            withCart(playJavaSphereClient, cart -> {
-                final Cart existing = cartService.getOrCreateCart(sessionWithCartId(cart.getId())).get(5000);
-                assertThat(existing).isNotNull();
-                return existing;
-            });
-            return type;
+        withCart(playJavaSphereClient, cart -> {
+            final Cart existing = cartService.getOrCreateCart(sessionWithCartId(cart.getId())).get(ALLOWED_TIMEOUT);
+            assertThat(existing).isNotNull();
+            return existing;
         });
     }
 
     @Test
     public void testSetProductToCart() {
-        withCustomType(playJavaSphereClient, type -> {
-            withCart(playJavaSphereClient, cart -> {
-                final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
-                        productProjection.getMasterVariant().getId()), 1).get(ALLOWED_TIMEOUT);
-                assertThat(cartWithProduct.getLineItems().size()).isEqualTo(1);
-                return cartWithProduct;
-            });
-            return type;
+        withCart(playJavaSphereClient, cart -> {
+            final Cart cartWithProduct = cartService.setProductToCart(cart, variantIdentifier(productProjection.getId(),
+                    productProjection.getMasterVariant().getId()), FREQUENCY).get(ALLOWED_TIMEOUT);
+            assertThat(cartWithProduct.getLineItems().size()).isEqualTo(FREQUENCY);
+            return cartWithProduct;
         });
     }
 
-
     @Test
     public void testClearCart() {
-        withCustomType(playJavaSphereClient, type -> {
-            final VariantIdentifier variantIdentifier = VariantIdentifier.of(productProjection.getId(), 1);
-            withCartAndBox(playJavaSphereClient, variantIdentifier, cart -> {
-                final Cart clearedCart = cartService.clearCart(cart).get(5000);
-                assertThat(clearedCart.getLineItems().isEmpty()).isTrue();
-                return clearedCart;
-            });
-            return type;
+        withCartAndBox(playJavaSphereClient, variantIdentifier(productProjection.getId(), FREQUENCY), cart -> {
+            final Cart clearedCart = cartService.clearCart(cart).get(ALLOWED_TIMEOUT);
+            assertThat(clearedCart.getLineItems().isEmpty()).isTrue();
+            return clearedCart;
         });
     }
 
     @Test
     public void testCreateCartWithPactasInfo() {
-        //TODO
+        withCartAndBox(playJavaSphereClient, variantIdentifier(productProjection.getId(), FREQUENCY),
+                cart -> {
+                    final Cart cartWithPactasInfo = cartService.createCartWithPactasInfo(productProjection, CONTRACT,
+                            CUSTOMER).get(ALLOWED_TIMEOUT);
+                    assertThat(cartWithPactasInfo).isNotNull();
+                    assertThat(cartWithPactasInfo.getLineItems().size()).isEqualTo(1);
+                    assertThat(cartWithPactasInfo.getShippingAddress()).isNotNull();
+                    return cartWithPactasInfo;
+                });
     }
 
     private Http.Session emptySession() {
