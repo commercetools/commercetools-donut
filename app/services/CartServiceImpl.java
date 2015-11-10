@@ -19,7 +19,6 @@ import io.sphere.sdk.models.DefaultCurrencyUnits;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.VariantIdentifier;
-import io.sphere.sdk.products.attributes.Attribute;
 import io.sphere.sdk.products.attributes.AttributeAccess;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
@@ -39,8 +38,6 @@ import static java.util.Objects.requireNonNull;
 public class CartServiceImpl extends AbstractShopService implements CartService {
 
     private static final Logger.ALogger LOG = Logger.of(CartServiceImpl.class);
-    private static final String FREQUENCY_TYPE_KEY = "cart-frequency-key";
-    private static final String FREQUENCY_FIELD_KEY = "frequency";
 
     @Inject
     public CartServiceImpl(final PlayJavaSphereClient playJavaSphereClient) {
@@ -75,10 +72,8 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     @Override
     public F.Promise<Cart> clearCart(final Cart cart) {
         requireNonNull(cart);
-        final List<? extends UpdateAction<Cart>> items = cart.getLineItems().stream().map((item) -> {
-            final RemoveLineItem removeLineItem = RemoveLineItem.of(item);
-            return removeLineItem;
-        }).collect(Collectors.toList());
+        final List<? extends UpdateAction<Cart>> items = cart.getLineItems().stream()
+                .map(RemoveLineItem::of).collect(Collectors.toList());
         return playJavaSphereClient().execute(CartUpdateCommand.of(cart, items));
     }
 
@@ -87,8 +82,9 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         requireNonNull(cart);
         requireNonNull(variantIdentifier);
         requireNonNull(frequency);
-        return playJavaSphereClient().execute(CartUpdateCommand.of(cart,
-                AddLineItem.of(variantIdentifier.getProductId(), variantIdentifier.getVariantId(), frequency)));
+        final AddLineItem item = AddLineItem.of(variantIdentifier.getProductId(), variantIdentifier.getVariantId(),
+                frequency);
+        return playJavaSphereClient().execute(CartUpdateCommand.of(cart, item));
     }
 
     @Override
@@ -98,13 +94,15 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override
-    public F.Promise<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer) {
+    public F.Promise<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract,
+                                                    final PactasCustomer customer) {
         requireNonNull(product);
         requireNonNull(contract);
         requireNonNull(customer);
-        final F.Promise<Cart> createdCartPromise = playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
+        final F.Promise<Cart> createdCartPromise =
+                playJavaSphereClient().execute(CartCreateCommand.of(CartDraft.of(DefaultCurrencyUnits.EUR)));
         return createdCartPromise.flatMap(createdCart -> {
-            LOG.debug("Created new Cart with Pactas info[cartId={}] with Pactas info", createdCart.getId());
+            LOG.debug("Created new Cart with Pactas info[cartId={}]", createdCart.getId());
             final ProductVariant variant = getVariantInContract(product, contract);
             final AddLineItem action = AddLineItem.of(product, variant.getId(), 1);
             return playJavaSphereClient().execute(CartUpdateCommand.of(createdCart, action));
@@ -116,30 +114,24 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
 
     private ProductVariant getVariantInContract(final ProductProjection product, final PactasContract contract) {
         final String planVariantId = contract.getPlanVariantId();
+        LOG.debug("Getting variant in Pactas contract, planVariantId={}", planVariantId);
         return variant(product, planVariantId).orElseThrow(() -> new PlanVariantNotFoundException(planVariantId));
     }
 
     private Optional<ProductVariant> variant(final ProductProjection product, final String pactasId) {
         requireNonNull(pactasId);
         return product.getAllVariants().stream().map(variant -> {
-
-                    final String monthly = Optional.<Attribute>ofNullable(variant.getAttribute(PactasKeys.ID_MONTHLY))
-                            .map(attribute -> attribute.getValue(AttributeAccess.ofString()))
-                            .orElseThrow(() -> new RuntimeException(format("Unable to get Attribute '%s'",
-                                    PactasKeys.ID_MONTHLY)));
-
-                    final String twoWeeks = Optional.<Attribute>ofNullable(variant.getAttribute(PactasKeys.ID_TWO_WEEKS))
-                            .map(attribute -> attribute.getValue(AttributeAccess.ofString()))
-                            .orElseThrow(() -> new RuntimeException(format("Unable to get Attribute '%s'",
-                                    PactasKeys.ID_TWO_WEEKS)));
-
-                    final String weekly = Optional.<Attribute>ofNullable(variant.getAttribute(PactasKeys.ID_WEEKLY))
-                            .map(attribute -> attribute.getValue(AttributeAccess.ofString()))
-                            .orElseThrow(() -> new RuntimeException(format("Unable to get Attribute '%s'",
-                                    PactasKeys.ID_WEEKLY)));
-
+                    final String monthly = extractPactasProperty(variant, PactasKeys.ID_MONTHLY);
+                    final String twoWeeks = extractPactasProperty(variant, PactasKeys.ID_TWO_WEEKS);
+                    final String weekly = extractPactasProperty(variant, PactasKeys.ID_WEEKLY);
                     return (pactasId.equals(monthly) || pactasId.equals(twoWeeks) || pactasId.equals(weekly)) ? variant : null;
                 }
         ).findFirst();
+    }
+
+    private String extractPactasProperty(final ProductVariant variant, final String attributeKey) {
+        return Optional.ofNullable(variant.getAttribute(attributeKey))
+                .map(attribute -> attribute.getValue(AttributeAccess.ofString()))
+                .orElseThrow(() -> new RuntimeException(format("Unable to get Attribute '%s'", attributeKey)));
     }
 }
