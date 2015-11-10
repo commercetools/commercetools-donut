@@ -41,7 +41,7 @@ public class ProductController extends BaseController {
 
         final Optional<Integer> selectedVariantId = CartSessionUtils.getSelectedVariantIdFromSession(session());
         if (selectedVariantId.isPresent()) {
-            selectedVariant = Optional.of(productProjection().getVariant(selectedVariantId.get()));
+            selectedVariant = Optional.ofNullable(productProjection().getVariant(selectedVariantId.get()));
         }
         final int selectedFrequency = CartSessionUtils.getSelectedFrequencyFromSession(session());
         final ProductPageData productPageData = new ProductPageData(productProjection(), selectedVariant,
@@ -58,11 +58,14 @@ public class ProductController extends BaseController {
             final int frequency = subscriptionFormData.getHowOften();
             final int variantId = subscriptionFormData.getVariantId();
             LOG.debug("Received form data: frequency={}, variantId={}", frequency, variantId);
-            final ProductVariant selectedVariant = productProjection().getVariant(variantId);
+            final ProductVariant selectedVariant = Optional.ofNullable(productProjection().getVariant(variantId))
+                    .orElseThrow(() -> new RuntimeException(String.format("Unable to get selected variant '%s'",
+                            variantId)));
             final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
             final F.Promise<Cart> clearedCartPromise = currentCartPromise.flatMap(cartService::clearCart);
             final F.Promise<Cart> updatedCartPromise = clearedCartPromise.flatMap(clearedCart -> {
-                final VariantIdentifier variantIdentifier = VariantIdentifier.of(productProjection().getId(), selectedVariant.getId());
+                final VariantIdentifier variantIdentifier = VariantIdentifier.of(productProjection().getId(),
+                        selectedVariant.getId());
                     return cartService.setProductToCart(clearedCart, variantIdentifier, frequency);
             });
 

@@ -23,6 +23,7 @@ public class PactasIntegrationTest extends WithApplication {
         return new GuiceApplicationBuilder().build();
     }
 
+    //TODO contract not found
     @Test(expected = PactasException.class)
     public void fetchesContract() throws Exception {
         final Pactas pactas = app.injector().instanceOf(Pactas.class);
