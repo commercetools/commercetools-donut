@@ -1,4 +1,5 @@
 {
+  "key": "donut-box",
   "name": "Donuts box",
   "description": "A box with delicious donuts",
   "attributes": [
@@ -8,12 +9,12 @@
         "en": "Quantity"
       },
       "isRequired": true,
-      "attributeConstraint": "COMBINATION_UNIQUE",
+      "attributeConstraint": "CombinationUnique",
       "isSearchable": true,
       "type": {
         "name": "number"
       },
-      "inputHint": "SINGLE_LINE"
+      "inputHint": "SingleLine"
     },
     {
       "name": "box",
@@ -21,12 +22,12 @@
         "en": "Box name"
       },
       "isRequired": true,
-      "attributeConstraint": "COMBINATION_UNIQUE",
+      "attributeConstraint": "CombinationUnique",
       "isSearchable": true,
       "type": {
         "name": "text"
       },
-      "inputHint": "SINGLE_LINE"
+      "inputHint": "SingleLine"
     },
     {
       "name": "pactas1",
@@ -34,12 +35,12 @@
         "en": "Pactas ID weekly"
       },
       "isRequired": true,
-      "attributeConstraint": "UNIQUE",
+      "attributeConstraint": "Unique",
       "isSearchable": true,
       "type": {
         "name": "text"
       },
-      "inputHint": "SINGLE_LINE"
+      "inputHint": "SingleLine"
     },
     {
       "name": "pactas2",
@@ -47,12 +48,12 @@
         "en": "Pactas ID two weeks"
       },
       "isRequired": true,
-      "attributeConstraint": "UNIQUE",
+      "attributeConstraint": "Unique",
       "isSearchable": true,
       "type": {
         "name": "text"
       },
-      "inputHint": "SINGLE_LINE"
+      "inputHint": "SingleLine"
     },
     {
       "name": "pactas4",
@@ -60,12 +61,12 @@
         "en": "Pactas ID monthly"
       },
       "isRequired": true,
-      "attributeConstraint": "UNIQUE",
+      "attributeConstraint": "Unique",
       "isSearchable": true,
       "type": {
         "name": "text"
       },
-      "inputHint": "SINGLE_LINE"
+      "inputHint": "SingleLine"
     }
   ]
 }

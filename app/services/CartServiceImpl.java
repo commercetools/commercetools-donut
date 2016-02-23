@@ -20,6 +20,7 @@ import io.sphere.sdk.customobjects.queries.CustomObjectByKeyGet;
 import io.sphere.sdk.models.Address;
 import io.sphere.sdk.models.AddressBuilder;
 import io.sphere.sdk.models.DefaultCurrencyUnits;
+import io.sphere.sdk.products.ByIdVariantIdentifier;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.VariantIdentifier;
@@ -108,7 +109,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     }
 
     @Override
-    public F.Promise<Cart> setProductToCart(final Cart cart, final VariantIdentifier variantIdentifier, int frequency) {
+    public F.Promise<Cart> setProductToCart(final Cart cart, final ByIdVariantIdentifier variantIdentifier, int frequency) {
         requireNonNull(cart);
         requireNonNull(variantIdentifier);
         requireNonNull(frequency);

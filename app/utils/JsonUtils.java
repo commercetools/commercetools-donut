@@ -22,14 +22,6 @@ public final class JsonUtils {
         return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public static <T> String toJson(final T object) {
-        try {
-            return MAPPER.writeValueAsString(object);
-        } catch (final JsonProcessingException e) {
-            throw new JsonException(e);
-        }
-    }
-
     public static <T> T readObjectFromResource(final String resourcePath, final Class<T> clazz) {
         try {
             return MAPPER.readValue(readFromResource(resourcePath), clazz);

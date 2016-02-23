@@ -1,6 +1,7 @@
 package services;
 
 import io.sphere.sdk.carts.Cart;
+import io.sphere.sdk.products.ByIdVariantIdentifier;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.VariantIdentifier;
@@ -44,7 +45,7 @@ public interface CartService {
      * @param variantIdentifier the {@code VariantIdentifier} to add, must not be null
      * @param frequency the selected delivery frequency
      */
-    F.Promise<Cart> setProductToCart(final Cart cart, final VariantIdentifier variantIdentifier,
+    F.Promise<Cart> setProductToCart(final Cart cart, final ByIdVariantIdentifier variantIdentifier,
                                      final int frequency);
 
     /**

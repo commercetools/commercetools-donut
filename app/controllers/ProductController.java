@@ -4,7 +4,6 @@ import forms.SubscriptionFormData;
 import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
-import io.sphere.sdk.products.VariantIdentifier;
 import models.ProductPageData;
 import play.Application;
 import play.Logger;
@@ -61,14 +60,12 @@ public class ProductController extends BaseController {
             final ProductVariant selectedVariant = productProjection().getVariant(variantId);
             final F.Promise<Cart> currentCartPromise = cartService.getOrCreateCart(session());
             final F.Promise<Cart> clearedCartPromise = currentCartPromise.flatMap(cartService::clearCart);
-            final F.Promise<Cart> updatedCartPromise = clearedCartPromise.flatMap(clearedCart -> {
-                final VariantIdentifier variantIdentifier = VariantIdentifier.of(productProjection().getId(), selectedVariant.getId());
-                    return cartService.setProductToCart(clearedCart, variantIdentifier, frequency);
-            });
-
+            final F.Promise<Cart> updatedCartPromise = clearedCartPromise.flatMap(clearedCart ->
+                    cartService.setProductToCart(clearedCart, selectedVariant.getIdentifier(), frequency));
             return updatedCartPromise.map(updatedCart -> {
                 CartSessionUtils.writeCartSessionData(session(), updatedCart.getId(), variantId, frequency);
-                return redirect(routes.OrderController.show());});
+                return redirect(routes.OrderController.show());
+            });
         } else {
             flash("error", "Please select a box and how often you want it.");
             return F.Promise.pure(redirect(routes.ProductController.show()));

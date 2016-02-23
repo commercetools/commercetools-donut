@@ -3,8 +3,6 @@ package inject;
 import com.google.inject.Provider;
 import io.sphere.sdk.client.SphereClient;
 import io.sphere.sdk.client.SphereClientFactory;
-import io.sphere.sdk.http.ApacheHttpClientAdapter;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import play.Configuration;
 import play.Logger;
 
@@ -30,7 +28,7 @@ class SphereClientProvider implements Provider<SphereClient> {
         final String projectKey = requireNonNull(configuration.getString("sphere.project"));
         final String clientId =  requireNonNull(configuration.getString("sphere.clientId"));
         final String clientSecret = requireNonNull(configuration.getString("sphere.clientSecret"));
-        final SphereClientFactory factory = SphereClientFactory.of(() -> ApacheHttpClientAdapter.of(HttpAsyncClients.createDefault()));
+        final SphereClientFactory factory = SphereClientFactory.of();
         final SphereClient sphereClient = factory.createClient(projectKey, clientId, clientSecret);
         LOG.debug("Created SphereClient");
         return sphereClient;
