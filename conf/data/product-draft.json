@@ -1,4 +1,11 @@
 {
+  "productType": {
+    "key": "donut-box"
+  },
+  "taxCategory": {
+    "id": "tax-category-id",
+    "typeId": "tax-category"
+  },
   "name": {
     "en": "Classic box"
   },
@@ -16,7 +23,7 @@
       {
         "value": {
           "currencyCode": "EUR",
-          "amount": 6.99
+          "centAmount": 699
         }
       }
     ],
@@ -73,7 +80,7 @@
         {
           "value": {
             "currencyCode": "EUR",
-            "amount": 12.99
+            "centAmount": 1299
           }
         }
       ],
@@ -129,7 +136,7 @@
         {
           "value": {
             "currencyCode": "EUR",
-            "amount": 23.99
+            "centAmount": 2399
           }
         }
       ],
@@ -185,7 +192,7 @@
         {
           "value": {
             "currencyCode": "EUR",
-            "amount": 34.99
+            "centAmount": 3499
           }
         }
       ],

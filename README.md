@@ -1,4 +1,4 @@
-#SPHERE.IO Donut Store
+SPHERE.IO Donut Store
 =====================
 
 This is not a real **donut** store. This is a _free template_ for subscription ecommerce sites and it's built on top of the APIs of [SPHERE.IO](http://sphere.io), [Pactas](http://www.pactas.com) and [Paymill](https://www.paymill.com).

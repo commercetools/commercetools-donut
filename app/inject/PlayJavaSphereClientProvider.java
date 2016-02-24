@@ -1,6 +1,7 @@
 package inject;
 
 import com.google.inject.Provider;
+import io.sphere.sdk.client.BlockingSphereClient;
 import io.sphere.sdk.client.PlayJavaSphereClient;
 import io.sphere.sdk.client.SphereClient;
 import play.Logger;
@@ -19,7 +20,7 @@ public class PlayJavaSphereClientProvider implements Provider<PlayJavaSphereClie
     private final SphereClient sphereClient;
 
     @Inject
-    public PlayJavaSphereClientProvider(final ApplicationLifecycle applicationLifecycle, final SphereClient sphereClient) {
+    public PlayJavaSphereClientProvider(final ApplicationLifecycle applicationLifecycle, final BlockingSphereClient sphereClient) {
         this.applicationLifecycle = applicationLifecycle;
         this.sphereClient = sphereClient;
     }

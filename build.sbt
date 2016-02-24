@@ -6,16 +6,16 @@ name := "sphere-donut"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.10.6"
 
 libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
   javaWs,
-  "io.sphere.sdk.jvm" % "sphere-models" % "1.0.0-M18" withSources(),
-  "io.sphere.sdk.jvm" % "sphere-java-client-apache-async" % "1.0.0-M18" withSources(),
-  "io.sphere.sdk.jvm" % "sphere-convenience" % "1.0.0-M18" withSources(),
-  "io.sphere.sdk.jvm" %% "sphere-play-2_4-java-client" % "1.0.0-M18" withSources(),
+  "com.commercetools.sdk.jvm.core" % "commercetools-models" % "1.0.0-RC1" withSources(),
+  "com.commercetools.sdk.jvm.core" % "commercetools-java-client" % "1.0.0-RC1" withSources(),
+  "com.commercetools.sdk.jvm.core" % "commercetools-convenience" % "1.0.0-RC1" withSources(),
+  "com.commercetools.sdk.jvm.scala-add-ons" %% "commercetools-play-2_4-java-client" % "1.0.0-RC1" withSources(),
   "org.apache.httpcomponents" % "httpasyncclient" % "4.0.2",
   "com.novocode" % "junit-interface" % "0.11" % "test,it",
   "org.assertj" % "assertj-core" % "3.1.0" % "test,it",
