@@ -19,7 +19,7 @@ import static java.util.Objects.requireNonNull;
 public class ProductProvider implements Provider<ProductProjection> {
 
     private final PlayJavaSphereClient playJavaSphereClient;
-    private static final long ALLOWED_TIMEOUT = 3000;
+    private static final long ALLOWED_TIMEOUT = 10;
 
     @Inject
     public ProductProvider(final PlayJavaSphereClient playJavaSphereClient, final ImportService importService) {
@@ -37,7 +37,7 @@ public class ProductProvider implements Provider<ProductProjection> {
         final F.Promise<PagedQueryResult<ProductProjection>> productProjectionPagedQueryResultPromise =
                 playJavaSphereClient.execute(request);
         //blocking on application startup, fail fast
-        return productProjectionPagedQueryResultPromise.get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS).head()
+        return productProjectionPagedQueryResultPromise.get(ALLOWED_TIMEOUT, TimeUnit.SECONDS).head()
                 .orElseThrow(ProductNotFoundException::new);
     }
 }
