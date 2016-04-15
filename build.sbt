@@ -8,14 +8,16 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.10.6"
 
+lazy val jvmSdkVersion = "1.0.0-RC1"
+
 libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
   javaWs,
-  "com.commercetools.sdk.jvm.core" % "commercetools-models" % "1.0.0-RC1" withSources(),
-  "com.commercetools.sdk.jvm.core" % "commercetools-java-client" % "1.0.0-RC1" withSources(),
-  "com.commercetools.sdk.jvm.core" % "commercetools-convenience" % "1.0.0-RC1" withSources(),
-  "com.commercetools.sdk.jvm.scala-add-ons" %% "commercetools-play-2_4-java-client" % "1.0.0-RC1" withSources(),
+  "com.commercetools.sdk.jvm.core" % "commercetools-models" % jvmSdkVersion withSources(),
+  "com.commercetools.sdk.jvm.core" % "commercetools-java-client" % jvmSdkVersion withSources(),
+  "com.commercetools.sdk.jvm.core" % "commercetools-convenience" % jvmSdkVersion withSources(),
+  "com.commercetools.sdk.jvm.scala-add-ons" %% "commercetools-play-2_4-java-client" % jvmSdkVersion withSources(),
   "org.apache.httpcomponents" % "httpasyncclient" % "4.0.2",
   "com.novocode" % "junit-interface" % "0.11" % "test,it",
   "org.assertj" % "assertj-core" % "3.1.0" % "test,it",
