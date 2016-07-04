@@ -135,7 +135,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     public F.Promise<Integer> getFrequency(final String cartId) {
         requireNonNull(cartId);
         final F.Promise<CustomObject<JsonNode>> customObjectPromise =
-                playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId));
+                playJavaSphereClient().execute(CustomObjectByKeyGet.of(PactasKeys.FREQUENCY, cartId, JsonNode.class));
         return customObjectPromise.map(this::extractFrequency);
     }
 
