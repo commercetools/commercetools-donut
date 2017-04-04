@@ -16,12 +16,3 @@ notifications:
   email:
     on_success: never
     on_failure: change
-deploy:
-  provider: heroku
-  app: sphere-donut-staging
-  api_key:
-    secure: iH6hSoXTRwD2L/2+b892umlnaybyGM00FKJDKtC1jSOQrNcPHqWTGin/NMDtM3CTLQAUw3RvYAxpnoT6hMLfBPd67vxg6GbpJsAFsgGXG8j+J2l9sJOL8x+VPJFG8xMPrXKnGs8FF0/xVVA05hFLAtZFVY5AyJnj1GS30DYFAp0=
-env:
-  global:
-  - secure: ZtjWzbst9A5bYwFdPkTIr/5GN1OP7uFNoIAOhkQBGf3z6M6SPewIkCdFZM/5Qyyk/xQLf3eHJN7RfB+YbuNQbn5cyzN6xh5mPezBQ8+LGYDOH5A2C9zUrk/PvS03YtuS0sMD/mCeiTorjCyK9yX5gTJBq5yzloRageS/Tepqs/Y=
-  - secure: dNIVEf8sEsIrrl80wqzf2PkOK03GINUz11UlFXSv531f7WlWFK4PCqZ9cPzoxRVI7GxBbK8mO5y4U9WfPPnAcvh+rFN7O+VXEreOnmLRV8Efyv59MyM0WdWaNnFlDkZ7XgsIyb1PELnXadWOD0u59bGkU0ZD+LHc266ahsYCCLc=
