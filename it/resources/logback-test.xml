@@ -16,17 +16,16 @@
         </encoder>
     </appender>
 
-    <logger name="play" level="INFO"/>
-    <logger name="application" level="WARN"/>
-    <logger name="controllers" level="WARN"/>
-    <logger name="services" level="WARN"/>
-    <logger name="pactas" level="WARN"/>
-    <logger name="inject" level="WARN"/>
-    <logger name="handler" level="WARN"/>
-    <logger name="pactas.Pactas" level="WARN"/>
+    <logger name="play" level="OFF"/>
+    <logger name="application" level="OFF"/>
+    <logger name="controllers" level="OFF"/>
+    <logger name="services" level="OFF"/>
+    <logger name="pactas" level="OFF"/>
+    <logger name="inject" level="OFF"/>
+    <logger name="handler" level="OFF"/>
+    <logger name="pactas.Pactas" level="OFF"/>
 
-
-    <root level="ERROR">
+    <root level="OFF">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>

@@ -1,46 +1,42 @@
 package pactas;
 
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.test.WithApplication;
-
-import java.util.concurrent.TimeUnit;
+import play.test.WithServer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PactasIntegrationTest extends WithApplication {
 
-    private static final String CUSTOMER_ID = "554b2eb051f45beaec6400b2";
-    private static final String CONTRACT_ID = "554b2eb051f45beaec6400b4";
+    private static final String CUSTOMER_ID = "58e3a4af14aa010f3864eda0";
+    private static final String CONTRACT_ID = "58e3a4af14aa010f3864eda1";
 
-    private static final long ALLOWED_TIMEOUT = 5000;
+    private Pactas pactas;
 
     @Override
     protected Application provideApplication() {
         return new GuiceApplicationBuilder().build();
     }
 
-    @Ignore
-    //FIX ME {"error":"invalid_client","error_description":"unknown client"}
-    @Test(expected = PactasException.class)
+    @Before
+    public void setUp() throws Exception {
+        this.pactas = app.injector().instanceOf(Pactas.class);
+    }
+
+    @Test
     public void fetchesContract() throws Exception {
-        final Pactas pactas = app.injector().instanceOf(Pactas.class);
-        final PactasContract contract = pactas.fetchContract(CONTRACT_ID).get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS);
+        final PactasContract contract = pactas.fetchContract(CONTRACT_ID).toCompletableFuture().get();
         assertThat(contract.getId()).isEqualTo(CONTRACT_ID);
     }
 
-    @Ignore
-    //FIX ME {"error":"invalid_client","error_description":"unknown client"}
-    @Test(expected = PactasException.class)
+    @Test
     public void fetchesCustomer() throws Exception {
-        final Pactas pactas = app.injector().instanceOf(Pactas.class);
-        final PactasCustomer customer = pactas.fetchCustomer(CUSTOMER_ID).get(ALLOWED_TIMEOUT, TimeUnit.MILLISECONDS);
+        final PactasCustomer customer = pactas.fetchCustomer(CUSTOMER_ID).toCompletableFuture().get();
         assertThat(customer.getId()).isEqualTo(CUSTOMER_ID);
     }
-
-
 }

@@ -1,7 +1,7 @@
 package controllers;
 
 import io.sphere.sdk.products.ProductProjection;
-import play.Application;
+import play.Configuration;
 import play.mvc.Controller;
 import utils.CurrencyOperations;
 
@@ -16,9 +16,8 @@ public abstract class BaseController extends Controller {
     private final ProductProjection productProjection;
 
     @Inject
-    public BaseController(final Application application, final ProductProjection productProjection) {
-        final Application app = requireNonNull(application);
-        this.currencyOps = CurrencyOperations.of(requireNonNull(app.configuration()));
+    public BaseController(final Configuration configuration, final ProductProjection productProjection) {
+        this.currencyOps = CurrencyOperations.of(configuration);
         this.productProjection = requireNonNull(productProjection);
     }
 

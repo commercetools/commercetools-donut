@@ -1,16 +1,13 @@
 package controllers;
 
-import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.orders.Order;
 import io.sphere.sdk.products.ProductProjection;
 import pactas.Pactas;
 import pactas.models.PactasContract;
-import pactas.models.PactasCustomer;
 import pactas.models.webhooks.Webhook;
 import pactas.models.webhooks.WebhookAccountCreated;
-import play.Application;
+import play.Configuration;
 import play.Logger;
-import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Result;
 import services.CartService;
@@ -19,8 +16,10 @@ import utils.JsonUtils;
 
 import javax.inject.Inject;
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class PactasWebhookController extends BaseController {
 
@@ -31,46 +30,30 @@ public class PactasWebhookController extends BaseController {
     private final CartService cartService;
 
     @Inject
-    public PactasWebhookController(final Application application, final CartService cartService,
+    public PactasWebhookController(final Configuration configuration, final CartService cartService,
                                    final OrderService orderService, final Pactas pactas,
                                    final ProductProjection productProjection) {
-        super(application, productProjection);
+        super(configuration, productProjection);
         this.cartService = requireNonNull(cartService);
         this.orderService = requireNonNull(orderService);
         this.pactas = requireNonNull(pactas);
     }
 
-    public F.Promise<Result> createOrderFromSubscription() {
+    public CompletionStage<Result> createOrderFromSubscription() {
         LOG.debug("An order request has been received from Pactas...");
         final Optional<String> contractId = parseContractId(request());
         if (contractId.isPresent()) {
-            final F.Promise<PactasContract> pactasContractPromise = pactas.fetchContract(contractId.get());
-
-            return pactasContractPromise.flatMap(pactasContract -> {
-                LOG.debug("Fetched Pactas contract: {}", pactasContract);
-                final F.Promise<PactasCustomer> customerPromise = pactas.fetchCustomer(pactasContract.getCustomerId());
-
-                return customerPromise.flatMap(pactasCustomer -> {
-                    LOG.debug("Fetched Pactas customer: {}", pactasCustomer);
-
-
-                    final F.Promise<Cart> cartPromise = cartService.createCartWithPactasInfo(productProjection(), pactasContract,
-                            pactasCustomer);
-
-                    return cartPromise.flatMap(cart -> {
-                        LOG.debug("Current Cart[cartId={}]", cart.getId());
-
-                        final F.Promise<Order> orderPromise = orderService.createOrder(cart);
-                        return orderPromise.map(order -> {
-                            LOG.debug("Order created: {}", order);
-                            return ok();
-                        });
+            return pactas.fetchContract(contractId.get())
+                    .thenCompose(pactasContract -> {
+                        LOG.debug("Fetched Pactas contract: {}", pactasContract);
+                        return createOrderFromContract(pactasContract)
+                                .thenApply(order -> {
+                                    LOG.debug("Order created: {}", order);
+                                    return ok();
+                                });
                     });
-
-                });
-            });
         }
-        return F.Promise.pure(badRequest());
+        return completedFuture(badRequest());
     }
 
     private Optional<String> parseContractId(final Http.Request request) {
@@ -81,5 +64,17 @@ public class PactasWebhookController extends BaseController {
         } else {
             return Optional.empty();
         }
+    }
+
+    private CompletionStage<Order> createOrderFromContract(final PactasContract pactasContract) {
+        return pactas.fetchCustomer(pactasContract.getCustomerId())
+                .thenCompose(pactasCustomer -> {
+                    LOG.debug("Fetched Pactas customer: {}", pactasCustomer);
+                    return cartService.createCartWithPactasInfo(productProjection(), pactasContract, pactasCustomer)
+                            .thenCompose(cart -> {
+                                LOG.debug("Current Cart[cartId={}]", cart.getId());
+                                return orderService.createOrder(cart);
+                            });
+                });
     }
 }

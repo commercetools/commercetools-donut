@@ -11,6 +11,6 @@ public class WebhookAccountCreatedTest {
     @Test
     public void parsesWebhookInformation() throws Exception {
         final WebhookAccountCreated accountCreated = (WebhookAccountCreated) WEBHOOK;
-        assertThat(accountCreated.getContractId()).isEqualTo("51d970c8eb596a1168df119a");
+        assertThat(accountCreated.getContractId()).isEqualTo("58e3a4af14aa010f3864eda1");
     }
 }

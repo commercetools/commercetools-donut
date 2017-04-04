@@ -1,43 +1,45 @@
 package inject;
 
 import com.google.inject.Provider;
-import exceptions.ProductNotFoundException;
-import io.sphere.sdk.client.PlayJavaSphereClient;
+import io.sphere.sdk.client.BlockingSphereClient;
+import io.sphere.sdk.products.ProductDraft;
+import io.sphere.sdk.products.ProductDraftBuilder;
 import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.products.ProductProjectionType;
+import io.sphere.sdk.products.commands.ProductCreateCommand;
 import io.sphere.sdk.products.queries.ProductProjectionQuery;
-import io.sphere.sdk.queries.PagedQueryResult;
-import play.libs.F;
-import services.ImportService;
+import io.sphere.sdk.taxcategories.TaxCategory;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
 
-import static java.util.Objects.requireNonNull;
+import static io.sphere.sdk.json.SphereJsonUtils.readObjectFromResource;
 
-@Singleton
-public class ProductProvider implements Provider<ProductProjection> {
+class ProductProvider implements Provider<ProductProjection> {
 
-    private final PlayJavaSphereClient playJavaSphereClient;
-    private static final long ALLOWED_TIMEOUT = 10;
+    private final BlockingSphereClient sphereClient;
+    private final TaxCategory taxCategory;
 
     @Inject
-    public ProductProvider(final PlayJavaSphereClient playJavaSphereClient, final ImportService importService) {
-        /*
-        ImportService is necessary here because it needs to be initialized
-        before the Product can be provided via dependency injection to the controllers
-        */
-        requireNonNull(importService);
-        this.playJavaSphereClient = requireNonNull(playJavaSphereClient);
+    public ProductProvider(final BlockingSphereClient sphereClient, final TaxCategory taxCategory) {
+        this.sphereClient = sphereClient;
+        this.taxCategory = taxCategory;
     }
 
     @Override
     public ProductProjection get() {
-        final ProductProjectionQuery request = ProductProjectionQuery.ofCurrent();
-        final F.Promise<PagedQueryResult<ProductProjection>> productProjectionPagedQueryResultPromise =
-                playJavaSphereClient.execute(request);
-        //blocking on application startup, fail fast
-        return productProjectionPagedQueryResultPromise.get(ALLOWED_TIMEOUT, TimeUnit.SECONDS).head()
-                .orElseThrow(ProductNotFoundException::new);
+        return sphereClient.executeBlocking(ProductProjectionQuery.ofCurrent().bySlug(Locale.ENGLISH, "donut-box"))
+                .head()
+                .orElseGet(this::createProduct);
+    }
+
+    private ProductProjection createProduct() {
+        final ProductDraft productDraft = readObjectFromResource("data/product-draft.json", ProductDraft.class);
+        final ProductDraft productDraftWithTaxCategory = ProductDraftBuilder.of(productDraft)
+                .taxCategory(taxCategory)
+                .publish(true)
+                .build();
+        return sphereClient.executeBlocking(ProductCreateCommand.of(productDraftWithTaxCategory))
+                .toProjection(ProductProjectionType.CURRENT);
     }
 }
