@@ -4,13 +4,12 @@ import io.sphere.sdk.carts.Cart;
 import io.sphere.sdk.products.ByIdVariantIdentifier;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
-import io.sphere.sdk.products.VariantIdentifier;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
-import play.libs.F;
 import play.mvc.Http;
 
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 
 /**
  * Business service that provides access to the SPHERE.IO Cart API.
@@ -25,7 +24,7 @@ public interface CartService {
      * @param session the Play session object, must not be null
      * @return the newly created, or fetched {@code Cart} object, must not be null
      */
-    F.Promise<Cart> getOrCreateCart(Http.Session session);
+    CompletionStage<Cart> getOrCreateCart(Http.Session session);
 
     /**
      * Resets an existing {@code Cart}.
@@ -35,7 +34,7 @@ public interface CartService {
      * @param cart the {@code Cart} object to clear, must not be null
      * @return the updated {@code Cart} object as result from the update command to Sphere API, must not be null
      */
-    F.Promise<Cart> clearCart(final Cart cart);
+    CompletionStage<Cart> clearCart(final Cart cart);
 
     /**
      * Adds the user selected {@code ProductVariant} of the {@code ProductProjection} with a given frequency to the
@@ -45,17 +44,16 @@ public interface CartService {
      * @param variantIdentifier the {@code VariantIdentifier} to add, must not be null
      * @param frequency the selected delivery frequency
      */
-    F.Promise<Cart> setProductToCart(final Cart cart, final ByIdVariantIdentifier variantIdentifier,
-                                     final int frequency);
+    CompletionStage<Cart> setProductToCart(final Cart cart, final ByIdVariantIdentifier variantIdentifier, final int frequency);
 
     /**
      * Returns the value of the {@code CustomObject} named PactasKeys.FREQUENCY, that is bound to the {@code Cart}
      * with the given cardId.
      *
-     * @param cartId the identifier of the {@code Cart} object, the {@code CustomObject} is bound to
+     * @param cart the {@code Cart} object, the {@code CustomObject} is bound to
      * @return the value of the {@code CustomObject}. If no {@code CustomObject} found, it returns 0
      */
-    F.Promise<Integer> getFrequency(final String cartId);
+    Optional<Integer> getFrequency(final Cart cart);
 
     /**
      * Gets an optional, selected {@code ProductVariant} from the users {@code Cart}
@@ -73,7 +71,7 @@ public interface CartService {
      * @param customer the {@code PactasCustomer}
      * @return
      */
-    F.Promise<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
+    CompletionStage<Cart> createCartWithPactasInfo(final ProductProjection product, final PactasContract contract, final PactasCustomer customer);
 
-    F.Promise<Cart> deleteCart(final Cart cart);
+    CompletionStage<Cart> deleteCart(final Cart cart);
 }

@@ -2,10 +2,6 @@
   "productType": {
     "key": "donut-box"
   },
-  "taxCategory": {
-    "id": "tax-category-id",
-    "typeId": "tax-category"
-  },
   "name": {
     "en": "Classic box"
   },

@@ -1,6 +1,6 @@
 package services;
 
-public class PactasKeys {
+public final class PactasKeys {
 
     public final static String FREQUENCY = "cart-frequency";
     public final static String ID_MONTHLY = "pactas4";
