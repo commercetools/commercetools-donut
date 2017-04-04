@@ -1,27 +1,32 @@
-before_install:
-- sudo bash -c 'echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections'
-- sudo add-apt-repository -y ppa:webupd8team/java
-- sudo apt-get update
-- sudo apt-get install -y oracle-java8-installer oracle-java8-set-default
+dist: trusty
+sudo: false
+
 language: scala
 scala:
 - 2.10.6
+jdk:
+- oraclejdk8
+
+cache:
+  # md5deep
+  # - https://github.com/travis-ci/travis-ci/issues/3122
+  # - https://github.com/travis-ci/travis-ci/issues/3039
+  branch: md5deep
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
+before_cache:
+  # Tricks to avoid unnecessary cache updates
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
+  - find $HOME/.sbt -name "*.lock" -delete
+
 before_script:
 - "./create_version_info.sh"
+
 script:
-- export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-- echo $JAVA_HOME
-- "./sbt test"
+- sbt compile test it:test
+
 notifications:
   email:
     on_success: never
     on_failure: change
-deploy:
-  provider: heroku
-  app: sphere-donut-staging
-  api_key:
-    secure: iH6hSoXTRwD2L/2+b892umlnaybyGM00FKJDKtC1jSOQrNcPHqWTGin/NMDtM3CTLQAUw3RvYAxpnoT6hMLfBPd67vxg6GbpJsAFsgGXG8j+J2l9sJOL8x+VPJFG8xMPrXKnGs8FF0/xVVA05hFLAtZFVY5AyJnj1GS30DYFAp0=
-env:
-  global:
-  - secure: ZtjWzbst9A5bYwFdPkTIr/5GN1OP7uFNoIAOhkQBGf3z6M6SPewIkCdFZM/5Qyyk/xQLf3eHJN7RfB+YbuNQbn5cyzN6xh5mPezBQ8+LGYDOH5A2C9zUrk/PvS03YtuS0sMD/mCeiTorjCyK9yX5gTJBq5yzloRageS/Tepqs/Y=
-  - secure: dNIVEf8sEsIrrl80wqzf2PkOK03GINUz11UlFXSv531f7WlWFK4PCqZ9cPzoxRVI7GxBbK8mO5y4U9WfPPnAcvh+rFN7O+VXEreOnmLRV8Efyv59MyM0WdWaNnFlDkZ7XgsIyb1PELnXadWOD0u59bGkU0ZD+LHc266ahsYCCLc=
