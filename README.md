@@ -1,6 +1,9 @@
 commercetools platform Donut Store
 =====================
 
+[![Build Status](https://travis-ci.org/commercetools/commercetools-donut.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-donut)
+[![Heroku](http://heroku-badge.herokuapp.com/?app=ct-donut-prod&style=flat&svg=1)](https://ct-donut-prod.herokuapp.com/)
+
 This is not a real **donut** store. This is a _free template_ for subscription ecommerce sites and it's built on top of the APIs of [commercetools platform](http://commercetools.com), [Pactas](http://www.pactas.com) and [Paymill](https://www.paymill.com).
 
 This template is based on the [SPHERE JVM SDK](https://github.com/commercetools/commercetools-jvm-sdk).
@@ -9,7 +12,7 @@ If you are looking for a regular web-shop template using the SPHERE JVM SDK, ple
 ## Live demo
 Visit a live demo of SPHERE-DONUT store at [iwantdonuts.com](http://www.iwantdonuts.com).
 
-## Getting started [![Build Status](https://secure.travis-ci.org/commercetools/commercetools-donut.png?branch=master)](http://travis-ci.org/commercetools/commercetools-donut)
+## Getting started
 
 ### Set it up
 - Install [Play 2.4.3](http://www.playframework.com/documentation/2.4.x/Installing).
