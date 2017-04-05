@@ -2,7 +2,7 @@ import play.sbt.PlayImport
 
 organization := "io.sphere.shop"
 
-name := "sphere-donut"
+name := "commercetools-donut"
 
 version := "1.0-SNAPSHOT"
 

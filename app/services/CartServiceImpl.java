@@ -65,7 +65,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
                 }))
                 .orElseGet(() -> {
                     final CartDraft cartDraft = CartDraft.of(DefaultCurrencyUnits.EUR)
-                            .withCustom(CustomFieldsDraft.ofTypeIdAndObjects(cartType.getId(), singletonMap(FREQUENCY_FIELD_KEY, String.valueOf(0))));
+                            .withCustom(CustomFieldsDraft.ofTypeIdAndObjects(cartType.getId(), singletonMap(FREQUENCY_FIELD_KEY, 0)));
                     return sphereClient().execute(CartCreateCommand.of(cartDraft))
                             .thenApply(cart -> {
                                 LOG.debug("Created new Cart[cartId={}, items={}, custom={}]",
@@ -80,7 +80,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
         final List<UpdateAction<Cart>> updateActions = cart.getLineItems().stream()
                 .map(RemoveLineItem::of)
                 .collect(Collectors.toList());
-        updateActions.add(SetCustomField.ofObject(FREQUENCY_FIELD_KEY, "0"));
+        updateActions.add(SetCustomField.ofObject(FREQUENCY_FIELD_KEY, 0));
         return sphereClient().execute(CartUpdateCommand.of(cart, updateActions))
                 .whenComplete((clearedCart, throwable) -> LOG.debug("Cleared Cart: items={}, custom={}", clearedCart.getLineItems(), clearedCart.getCustom()));
     }
@@ -89,7 +89,7 @@ public class CartServiceImpl extends AbstractShopService implements CartService 
     public CompletionStage<Cart> setProductToCart(final Cart cart, final ByIdVariantIdentifier variantIdentifier, int frequency) {
         requireNonNull(variantIdentifier);
         final List<UpdateAction<Cart>> cartUpdateActions = Arrays.asList(
-                SetCustomField.ofObject(FREQUENCY_FIELD_KEY, String.valueOf(frequency)),
+                SetCustomField.ofObject(FREQUENCY_FIELD_KEY, frequency),
                 AddLineItem.of(variantIdentifier.getProductId(), variantIdentifier.getVariantId(), 1));
         return sphereClient().execute(CartUpdateCommand.of(cart, cartUpdateActions))
                 .whenComplete((updatedCart, throwable) -> LOG.debug("Updated Cart: items={}, custom={}", updatedCart.getLineItems(), updatedCart.getCustom()));
