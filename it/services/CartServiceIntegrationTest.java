@@ -6,8 +6,6 @@ import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.types.CustomFields;
 import org.junit.Before;
 import org.junit.Test;
-import play.Application;
-import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
 
 import static java.util.Collections.emptyMap;
@@ -20,11 +18,6 @@ public class CartServiceIntegrationTest extends WithSphereClient {
 
     private CartService cartService;
     private ProductProjection product;
-
-    @Override
-    protected Application provideApplication() {
-        return new GuiceApplicationBuilder().build();
-    }
 
     @Before
     public void setUp() throws Exception {

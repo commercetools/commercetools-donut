@@ -29,7 +29,7 @@ public abstract class WithSphereClient extends WithApplication {
                 .overrides(new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(SphereClient.class).toInstance(sphereClient);
+                        bind(BlockingSphereClient.class).toInstance(sphereClient);
                     }
                 }).build();
     }

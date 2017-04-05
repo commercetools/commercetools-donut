@@ -4,24 +4,16 @@ import org.junit.Before;
 import org.junit.Test;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
-import play.Application;
-import play.inject.guice.GuiceApplicationBuilder;
-import play.test.WithApplication;
-import play.test.WithServer;
+import services.WithSphereClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PactasIntegrationTest extends WithApplication {
+public class PactasIntegrationTest extends WithSphereClient {
 
     private static final String CUSTOMER_ID = "58e3a4af14aa010f3864eda0";
     private static final String CONTRACT_ID = "58e3a4af14aa010f3864eda1";
 
     private Pactas pactas;
-
-    @Override
-    protected Application provideApplication() {
-        return new GuiceApplicationBuilder().build();
-    }
 
     @Before
     public void setUp() throws Exception {
