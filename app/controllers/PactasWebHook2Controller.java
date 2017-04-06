@@ -15,14 +15,14 @@ import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
-public class PactasWebHookController extends Controller {
+public class PactasWebHook2Controller extends Controller {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PactasWebHookController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PactasWebHook2Controller.class);
 
     private final PactasWebHookControllerAction pactasWebHookControllerAction;
 
     @Inject
-    public PactasWebHookController(final PactasWebHookControllerAction pactasWebHookControllerAction) {
+    public PactasWebHook2Controller(final PactasWebHookControllerAction pactasWebHookControllerAction) {
         this.pactasWebHookControllerAction = pactasWebHookControllerAction;
     }
 
