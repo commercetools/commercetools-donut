@@ -51,6 +51,10 @@
       "description": "The Auth URL you want to use at Pactas.",
       "value": "https://sandbox.pactas.com/oauth/token/",
       "required": false
+    },
+    "APPLICATION_SECRET": {
+      "description": "The secret key is used to secure cryptographics functions. Anyone that can get access to the application secret will be able to generate any session they please, effectively allowing them to log in to your system as any user they please. If you deploy your application to several instances be sure to use the same key.",
+      "generator": "secret"
     }
   }
 }
