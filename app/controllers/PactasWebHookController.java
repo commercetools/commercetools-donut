@@ -29,7 +29,7 @@ public class PactasWebHookController extends Controller {
     public CompletionStage<Result> createOrderFromSubscription() {
         LOGGER.debug("An order request has been received from Pactas...");
         return parseWebHookAccountCreatedFromRequest()
-                .map(contractId -> pactasWebHookControllerAction.placeOrder(contractId)
+                .map(webhookAccountCreated -> pactasWebHookControllerAction.placeOrder(webhookAccountCreated)
                         .thenApply(order -> {
                             LOGGER.debug("Order created: {}", order);
                             return (Result) ok();

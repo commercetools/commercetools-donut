@@ -1,23 +1,43 @@
 package pactas;
 
+import com.google.inject.AbstractModule;
+import io.sphere.sdk.client.BlockingSphereClient;
+import io.sphere.sdk.products.ProductProjection;
 import org.junit.Before;
 import org.junit.Test;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
-import services.WithSphereClient;
+import play.Application;
+import play.inject.guice.GuiceApplicationBuilder;
+import play.test.WithApplication;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class PactasIntegrationTest extends WithSphereClient {
+public class PactasIntegrationTest extends WithApplication {
 
     private static final String CUSTOMER_ID = "58e3a4af14aa010f3864eda0";
     private static final String CONTRACT_ID = "58e3a4af14aa010f3864eda1";
 
+    private final ProductProjection product = mock(ProductProjection.class);
+    private final BlockingSphereClient sphereClient = mock(BlockingSphereClient.class);
     private Pactas pactas;
 
     @Before
     public void setUp() throws Exception {
         this.pactas = app.injector().instanceOf(Pactas.class);
+    }
+
+    @Override
+    protected Application provideApplication() {
+        return new GuiceApplicationBuilder()
+                .overrides(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(ProductProjection.class).toInstance(product);
+                        bind(BlockingSphereClient.class).toInstance(sphereClient);
+                    }
+                }).build();
     }
 
     @Test

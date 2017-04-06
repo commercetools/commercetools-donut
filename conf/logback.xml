@@ -22,10 +22,6 @@
     <logger name="services" level="DEBUG"/>
     <logger name="pactas" level="DEBUG"/>
     <logger name="inject" level="DEBUG"/>
-    <logger name="handler" level="DEBUG"/>
-    <logger name="pactas.Pactas" level="DEBUG"/>
-    <logger name="inject.BlockingSphereClientProvider" level="DEBUG"/>
-
 
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
