@@ -1,8 +1,9 @@
 package forms;
 
+import io.sphere.sdk.models.Base;
 import play.data.validation.Constraints;
 
-public class SubscriptionFormData {
+public class SubscriptionFormData extends Base {
 
     @Constraints.Required(message = "Product required")
     private int variantId;

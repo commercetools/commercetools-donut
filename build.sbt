@@ -36,6 +36,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-v")
 javaSource in IntegrationTest := baseDirectory.value / "it"
 scalaSource in IntegrationTest := baseDirectory.value / "it"
 resourceDirectory in IntegrationTest := baseDirectory.value / "it/resources"
+parallelExecution in Test := false
 
 includeFilter in (Assets, LessKeys.less) := "*.less"
 excludeFilter in (Assets, LessKeys.less) := "colors.less"  | "mixins.less"  | "order.less"  | "product.less"

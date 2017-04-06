@@ -1,27 +1,24 @@
 package services;
 
 import com.google.inject.AbstractModule;
+import inject.CartTypeProvider;
+import inject.ProductProvider;
+import inject.ProductTypeProvider;
+import inject.TaxCategoryProvider;
 import io.sphere.sdk.client.BlockingSphereClient;
-import io.sphere.sdk.client.SphereAsyncHttpClientFactory;
-import io.sphere.sdk.client.SphereClient;
-import io.sphere.sdk.client.SphereClientFactory;
+import io.sphere.sdk.products.ProductProjection;
+import io.sphere.sdk.types.Type;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.test.WithApplication;
 
-import java.time.Duration;
-import java.util.Optional;
-
 public abstract class WithSphereClient extends WithApplication {
 
-    private static final String IT_PREFIX = "DONUT_IT_";
-    private static final String IT_CTP_PROJECT_KEY = IT_PREFIX + "CTP_PROJECT_KEY";
-    private static final String IT_CTP_CLIENT_SECRET = IT_PREFIX + "CTP_CLIENT_SECRET";
-    private static final String IT_CTP_CLIENT_ID = IT_PREFIX + "CTP_CLIENT_ID";
-
-    protected static BlockingSphereClient sphereClient;
+    protected static TestableSphereClient sphereClient;
+    protected static ProductProjection product;
+    protected static Type cartType;
 
     @Override
     protected Application provideApplication() {
@@ -34,43 +31,28 @@ public abstract class WithSphereClient extends WithApplication {
                 }).build();
     }
 
-    protected static BlockingSphereClient provideSphereClient() {
-        final SphereClient client = SphereClientFactory.of(SphereAsyncHttpClientFactory::create)
-                .createClient(projectKey(), clientId(), clientSecret());
-        return BlockingSphereClient.of(client, Duration.ofSeconds(20));
+    protected static TestableSphereClient provideSphereClient() {
+        return new TestableSphereClient();
     }
 
     @BeforeClass
     public static void startSphereClient() {
         sphereClient = provideSphereClient();
+        final TaxCategoryProvider taxCategoryProvider = new TaxCategoryProvider(sphereClient);
+        final ProductTypeProvider productTypeProvider = new ProductTypeProvider(sphereClient);
+        product = new ProductProvider(sphereClient, taxCategoryProvider, productTypeProvider).get();
+        cartType = new CartTypeProvider(sphereClient).get();
+        System.out.println("Started sphereclient %%%%%");
     }
 
     @AfterClass
     public static void stopSphereClient() {
+        System.out.println("Stopped sphereclient %%%%%%");
         if (sphereClient != null) {
             sphereClient.close();
             sphereClient = null;
         }
-    }
-
-    protected static String projectKey() {
-        return getValueForEnvVar(IT_CTP_PROJECT_KEY);
-    }
-
-    protected static String clientId() {
-        return getValueForEnvVar(IT_CTP_CLIENT_ID);
-    }
-
-    protected static String clientSecret() {
-        return getValueForEnvVar(IT_CTP_CLIENT_SECRET);
-    }
-
-    protected static String getValueForEnvVar(final String key) {
-        return Optional.ofNullable(System.getenv(key))
-                .orElseThrow(() -> new RuntimeException(
-                        "Missing environment variable " + key + ", please provide the following environment variables for the integration test:\n" +
-                                "export " + IT_CTP_PROJECT_KEY + "=\"Your CTP project key\"\n" +
-                                "export " + IT_CTP_CLIENT_ID + "=\"Your CTP client ID\"\n" +
-                                "export " + IT_CTP_CLIENT_SECRET + "=\"Your CTP client secret\"\n"));
+        product = null;
+        cartType = null;
     }
 }

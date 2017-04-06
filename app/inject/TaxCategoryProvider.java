@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import static io.sphere.sdk.json.SphereJsonUtils.readObjectFromResource;
 
-class TaxCategoryProvider implements Provider<TaxCategory> {
+public class TaxCategoryProvider implements Provider<TaxCategory> {
 
     private final BlockingSphereClient sphereClient;
 

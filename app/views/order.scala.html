@@ -1,4 +1,4 @@
-@(data: OrderPageData, pactasPublicKey: String)
+@(data: OrderPageData)
 
 @scripts = {
     <script type="text/javascript" src="https://sandbox.pactas.com/selfService/iterojs"></script>
@@ -17,20 +17,20 @@
                 </div>
                 <div class="body">
                     <div class="variant-smallest">
-                        @partials.variantDetail(data.selectedVariant)
+                        @partials.variantDetail(data.subscription)
                     </div>
                     <div class="often">How often: <span class="value">@data.frequencyName</span></div>
-                    <div class="total">Total price: <span class="value">@data.totalPrice</span></div>
+                    <div class="total">Total price: <span class="value">@data.subscription.price</span></div>
                 </div>
             </div>
         </div>
     </section>
 
     <form id="form-checkout" method="post" action="@routes.OrderController.submit()">
-        <input type="hidden" id="pactas-public-key" value="@pactasPublicKey"/>
+        <input type="hidden" id="pactas-public-key" value="@data.pactasPublicKey()"/>
         <input type="hidden" id="pactas-variant" value="@data.pactasVariantId">
-        <input type="hidden" id="transaction-form-currency" value="@data.currency">
-        <input type="hidden" id="transaction-form-amount" value="@data.priceAmount" />
+        <input type="hidden" id="transaction-form-currency" value="@data.subscription.currency">
+        <input type="hidden" id="transaction-form-amount" value="@data.subscription.priceAmount" />
 
         <section id="order-shipping">
             <div class="space">
@@ -78,7 +78,6 @@
     </form>
 
     <div class="bottom"></div>
-    <a id="clear-order" href="@routes.OrderController.clear()">Clear order</a>
 }{
 
 }

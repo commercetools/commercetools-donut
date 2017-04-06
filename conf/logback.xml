@@ -16,14 +16,15 @@
         </encoder>
     </appender>
 
-    <logger name="play" level="INFO"/>
-    <logger name="application" level="WARN"/>
-    <logger name="controllers" level="WARN"/>
-    <logger name="services" level="WARN"/>
-    <logger name="pactas" level="WARN"/>
-    <logger name="inject" level="WARN"/>
-    <logger name="handler" level="WARN"/>
-    <logger name="pactas.Pactas" level="WARN"/>
+    <logger name="play" level="DEBUG"/>
+    <logger name="application" level="DEBUG"/>
+    <logger name="controllers" level="DEBUG"/>
+    <logger name="services" level="DEBUG"/>
+    <logger name="pactas" level="DEBUG"/>
+    <logger name="inject" level="DEBUG"/>
+    <logger name="handler" level="DEBUG"/>
+    <logger name="pactas.Pactas" level="DEBUG"/>
+    <logger name="inject.BlockingSphereClientProvider" level="DEBUG"/>
 
 
     <root level="ERROR">

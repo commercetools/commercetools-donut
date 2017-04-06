@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import static io.sphere.sdk.json.SphereJsonUtils.readObjectFromResource;
 
-class CartTypeProvider implements Provider<Type> {
+public class CartTypeProvider implements Provider<Type> {
 
     private final BlockingSphereClient sphereClient;
 

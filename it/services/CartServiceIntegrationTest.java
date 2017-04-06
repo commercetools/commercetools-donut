@@ -2,9 +2,7 @@ package services;
 
 
 import io.sphere.sdk.carts.Cart;
-import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.types.CustomFields;
-import org.junit.Before;
 import org.junit.Test;
 import play.mvc.Http;
 
@@ -16,17 +14,9 @@ public class CartServiceIntegrationTest extends WithSphereClient {
 
     private static final int FREQUENCY = 1;
 
-    private CartService cartService;
-    private ProductProjection product;
-
-    @Before
-    public void setUp() throws Exception {
-        this.cartService = app.injector().instanceOf(CartService.class);
-        this.product = app.injector().instanceOf(ProductProjection.class);
-    }
-
     @Test
     public void testSetProductToCart() throws Exception {
+        final CartService cartService = new PactasWebHookActionControllerImpl(sphereClient, cartType);
         final Cart cart = cartService.getOrCreateCart(emptySession()).toCompletableFuture().get();
         final CustomFields customFields = cart.getCustom();
         assertThat(customFields).isNotNull();
