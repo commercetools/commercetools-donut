@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 import static play.mvc.Http.Status.OK;
 import static utils.JsonUtils.readJsonFromResource;
 
-public class PactasWebHook2ControllerIntegrationTest extends WithServer {
+public class PactasWebHookControllerIntegrationTest extends WithServer {
 
     private static final JsonNode WEBHOOK = readJsonFromResource("pactas-webhook-account.json");
 
