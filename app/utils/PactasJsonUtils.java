@@ -11,13 +11,14 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-public final class JsonUtils {
+public final class PactasJsonUtils {
+
     private static final ObjectMapper MAPPER = newObjectMapper();
 
-    private JsonUtils() {
+    private PactasJsonUtils() {
     }
 
-    public static ObjectMapper newObjectMapper() {
+    private static ObjectMapper newObjectMapper() {
         return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 

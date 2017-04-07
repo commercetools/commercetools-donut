@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static play.mvc.Http.Status.OK;
-import static utils.JsonUtils.readJsonFromResource;
+import static utils.PactasJsonUtils.readJsonFromResource;
 
 
 public class PactasWebHookControllerIntegrationTest extends WithServer {

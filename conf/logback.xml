@@ -16,8 +16,8 @@
         </encoder>
     </appender>
 
-    <logger name="play" level="DEBUG"/>
-    <logger name="application" level="DEBUG"/>
+    <logger name="play" level="TRACE"/>
+    <logger name="application" level="TRACE"/>
     <logger name="controllers" level="DEBUG"/>
     <logger name="services" level="DEBUG"/>
     <logger name="pactas" level="DEBUG"/>

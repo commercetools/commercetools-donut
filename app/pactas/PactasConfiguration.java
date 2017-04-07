@@ -17,7 +17,7 @@ public class PactasConfiguration {
     private final String clientSecret;
 
     @Inject
-    private PactasConfiguration(final Configuration configuration) {
+    public PactasConfiguration(final Configuration configuration) {
         this.authUrl = configuration.getString("pactas.auth", DEFAULT_AUTH_URL);
         this.apiUrl = configuration.getString("pactas.api", DEFAULT_API_URL);
         this.publicKey = Optional.ofNullable(configuration.getString("pactas.publicKey"))
@@ -26,14 +26,6 @@ public class PactasConfiguration {
                 .orElseThrow(() ->  new IllegalArgumentException("Missing Pactas client ID"));
         this.clientSecret = Optional.ofNullable(configuration.getString("pactas.clientSecret"))
                 .orElseThrow(() -> new IllegalArgumentException("Missing Pactas client secret"));
-    }
-
-    public PactasConfiguration(final String authUrl, final String apiUrl, final String publicKey, final String clientId, final String clientSecret) {
-        this.authUrl = authUrl;
-        this.apiUrl = apiUrl;
-        this.publicKey = publicKey;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
     }
 
     public String getPublicKey() {

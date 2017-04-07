@@ -5,10 +5,11 @@ import org.junit.Test;
 
 import static com.neovisionaries.i18n.CountryCode.DE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static utils.JsonUtils.readObjectFromResource;
+import static utils.PactasJsonUtils.readObjectFromResource;
 
 public class PactasCustomerTest {
-    public static final PactasCustomer CUSTOMER = readObjectFromResource("pactas-customer.json", PactasCustomer.class);
+
+    private static final PactasCustomer CUSTOMER = readObjectFromResource("pactas-customer.json", PactasCustomer.class);
 
     @Test
     public void parsesCustomerInformation() throws Exception {

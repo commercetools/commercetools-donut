@@ -9,7 +9,7 @@ import pactas.models.PactasCustomer;
 import play.libs.ws.WSAPI;
 import play.libs.ws.WSAuthScheme;
 import play.mvc.Http;
-import utils.JsonUtils;
+import utils.PactasJsonUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -62,7 +62,7 @@ public class PactasImpl implements Pactas {
                 .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authorization.getAccessToken())
                 .get().thenApply(response -> {
                     if (response.getStatus() == Http.Status.OK) {
-                        return JsonUtils.readObject(clazz, response.getBody());
+                        return PactasJsonUtils.readObject(clazz, response.getBody());
                     } else {
                         throw new PactasException(response.getStatus(), response.getBody());
                     }
@@ -80,7 +80,7 @@ public class PactasImpl implements Pactas {
                 .setAuth(configuration.getClientId(), configuration.getClientSecret(), WSAuthScheme.BASIC)
                 .post("grant_type=client_credentials").thenApply(response -> {
                     if (response.getStatus() == Http.Status.OK) {
-                        final Authorization authorization = JsonUtils.readObject(Authorization.class, response.getBody());
+                        final Authorization authorization = PactasJsonUtils.readObject(Authorization.class, response.getBody());
                         LOGGER.debug("Pactas token received {}", authorization);
                         return authorization;
                     } else {

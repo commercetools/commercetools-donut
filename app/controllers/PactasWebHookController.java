@@ -7,7 +7,7 @@ import pactas.models.webhooks.WebhookAccountCreated;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.PactasWebHookControllerAction;
-import utils.JsonUtils;
+import utils.PactasJsonUtils;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public class PactasWebHookController extends Controller {
 
     private Optional<WebhookAccountCreated> parseWebHookAccountCreatedFromRequest() {
         LOGGER.debug("Pactas webhook: " + request().body().asText());
-        final Webhook webhook = JsonUtils.readObject(Webhook.class, request().body().asText());
+        final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, request().body().asText());
         if (webhook instanceof WebhookAccountCreated) {
             return Optional.of(((WebhookAccountCreated) webhook));
         } else {
