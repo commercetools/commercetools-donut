@@ -8,13 +8,15 @@
         </encoder>
     </appender>
 
-    <logger name="play" level="INFO" />
-    <logger name="application" level="DEBUG" />
+    <logger name="play" level="OFF" />
+    <logger name="application" level="OFF" />
 
-    <logger name="donut" level="DEBUG"/>
-    <logger name="pactas" level="DEBUG"/>
+    <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
 
-    <root level="WARN">
+    <logger name="donut" level="OFF"/>
+    <logger name="pactas" level="OFF"/>
+
+    <root level="OFF">
         <appender-ref ref="STDOUT" />
     </root>
 

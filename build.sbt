@@ -19,10 +19,6 @@ libraryDependencies ++= Seq(
   "com.commercetools.sdk.jvm.core" % "commercetools-convenience" % jvmSdkVersion withSources()
 )
 
-dependencyOverrides ++= Set (
-  "junit" % "junit" % "4.12"
-)
-
 includeFilter in (Assets, LessKeys.less) := "*.less"
 excludeFilter in (Assets, LessKeys.less) := "colors.less"  | "mixins.less"  | "order.less"  | "product.less"
 LessKeys.compress in Assets := true
