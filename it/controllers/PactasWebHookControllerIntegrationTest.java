@@ -6,6 +6,7 @@ import io.sphere.sdk.client.BlockingSphereClient;
 import io.sphere.sdk.products.ProductProjection;
 import org.junit.Before;
 import org.junit.Test;
+import pactas.Pactas;
 import pactas.models.webhooks.WebhookAccountCreated;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
@@ -30,6 +31,7 @@ public class PactasWebHookControllerIntegrationTest extends WithServer {
     private static final ProductProjection PRODUCT = readObjectFromResource("product.json", ProductProjection.class);
 
     private final BlockingSphereClient sphereClient = mock(BlockingSphereClient.class);
+    private final Pactas pactas = mock(Pactas.class);
     private final PactasWebHookControllerAction controllerAction = mock(PactasWebHookControllerAction.class);
 
     @Before
@@ -45,6 +47,7 @@ public class PactasWebHookControllerIntegrationTest extends WithServer {
                     protected void configure() {
                         bind(ProductProjection.class).toInstance(PRODUCT);
                         bind(BlockingSphereClient.class).toInstance(sphereClient);
+                        bind(Pactas.class).toInstance(pactas);
                         bind(PactasWebHookControllerAction.class).toInstance(controllerAction);
                     }
                 }).build();

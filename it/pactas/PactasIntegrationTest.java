@@ -8,13 +8,13 @@ import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
-import play.test.WithServer;
+import play.test.WithApplication;
 
 import static io.sphere.sdk.json.SphereJsonUtils.readObjectFromResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class PactasIntegrationTest extends WithServer {
+public class PactasIntegrationTest extends WithApplication {
 
     private static final String CUSTOMER_ID = "58e3a4af14aa010f3864eda0";
     private static final String CONTRACT_ID = "58e3a4af14aa010f3864eda1";
