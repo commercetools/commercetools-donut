@@ -42,13 +42,9 @@ public class PactasIntegrationTest extends WithApplication {
     }
 
     @Test
-    public void fetchesContract() throws Exception {
+    public void fetchesContractAndCustomer() throws Exception {
         final PactasContract contract = pactas.fetchContract(CONTRACT_ID).toCompletableFuture().get();
         assertThat(contract.getId()).isEqualTo(CONTRACT_ID);
-    }
-
-    @Test
-    public void fetchesCustomer() throws Exception {
         final PactasCustomer customer = pactas.fetchCustomer(CUSTOMER_ID).toCompletableFuture().get();
         assertThat(customer.getId()).isEqualTo(CUSTOMER_ID);
     }

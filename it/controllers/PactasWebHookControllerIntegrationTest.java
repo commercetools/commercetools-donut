@@ -53,7 +53,8 @@ public class PactasWebHookControllerIntegrationTest extends WithServer {
     @Test
     public void testCreateOrderFromSubscription() throws Exception {
         try (final WSClient wsClient = WS.newClient(testServer.port())) {
-            final WSResponse wsResponse = wsClient.url("/order/execute")
+            final WSResponse wsResponse = wsClient
+                    .url("/order/execute")
                     .post(WEBHOOK.toString())
                     .toCompletableFuture().get();
             assertThat(wsResponse.getStatus()).isEqualTo(OK);

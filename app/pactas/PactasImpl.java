@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import pactas.models.Authorization;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
-import play.Configuration;
 import play.libs.ws.WSAPI;
 import play.libs.ws.WSAuthScheme;
 import play.mvc.Http;
@@ -20,24 +19,15 @@ import java.util.concurrent.CompletionStage;
 public class PactasImpl implements Pactas {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pactas.class);
+    private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
-    public static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
-
-    private final String authUrl;
-    private final String clientId;
-    private final String clientSecret;
-    private final String customerEndpoint;
-    private final String contractEndpoint;
+    private final PactasConfiguration configuration;
     private final WSAPI wsApi;
     private final CompletionStage<Authorization> authorizationPromise;
 
     @Inject
-    public PactasImpl(final Configuration configuration, final WSAPI wsApi) {
-        this.authUrl = configuration.getString("pactas.auth");
-        this.clientId = configuration.getString("pactas.clientId");
-        this.clientSecret = configuration.getString("pactas.clientSecret");
-        this.customerEndpoint = configuration.getString("pactas.api.customers");
-        this.contractEndpoint = configuration.getString("pactas.api.contracts");
+    public PactasImpl(final PactasConfiguration configuration, final WSAPI wsApi) {
+        this.configuration = configuration;
         this.wsApi = wsApi;
         authorizationPromise = authenticate();
     }
@@ -48,13 +38,13 @@ public class PactasImpl implements Pactas {
 
     @Override
     public CompletionStage<PactasContract> fetchContract(final String contractId) {
-        String endpointUrl = contractEndpoint + contractId;
+        String endpointUrl = configuration.getApiUrl() + "/contracts/" +  contractId;
         return executeRequest(endpointUrl, PactasContract.class);
     }
 
     @Override
     public CompletionStage<PactasCustomer> fetchCustomer(final String customerId) {
-        String endpointUrl = customerEndpoint + customerId;
+        String endpointUrl = configuration.getApiUrl() + "/customers/" + customerId;
         return executeRequest(endpointUrl, PactasCustomer.class);
     }
 
@@ -85,9 +75,9 @@ public class PactasImpl implements Pactas {
      */
     private CompletionStage<Authorization> authenticate() {
         LOGGER.debug("Fetching pactas access token");
-        return wsApi.url(authUrl)
+        return wsApi.url(configuration.getAuthUrl())
                 .setContentType(CONTENT_TYPE)
-                .setAuth(clientId, clientSecret, WSAuthScheme.BASIC)
+                .setAuth(configuration.getClientId(), configuration.getClientSecret(), WSAuthScheme.BASIC)
                 .post("grant_type=client_credentials").thenApply(response -> {
                     if (response.getStatus() == Http.Status.OK) {
                         final Authorization authorization = JsonUtils.readObject(Authorization.class, response.getBody());
