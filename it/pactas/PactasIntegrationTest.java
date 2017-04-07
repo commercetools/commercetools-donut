@@ -11,6 +11,7 @@ import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.test.WithApplication;
 
+import static io.sphere.sdk.json.SphereJsonUtils.readObjectFromResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -18,8 +19,8 @@ public class PactasIntegrationTest extends WithApplication {
 
     private static final String CUSTOMER_ID = "58e3a4af14aa010f3864eda0";
     private static final String CONTRACT_ID = "58e3a4af14aa010f3864eda1";
+    private static final ProductProjection PRODUCT = readObjectFromResource("product.json", ProductProjection.class);
 
-    private final ProductProjection product = mock(ProductProjection.class);
     private final BlockingSphereClient sphereClient = mock(BlockingSphereClient.class);
     private Pactas pactas;
 
@@ -34,7 +35,7 @@ public class PactasIntegrationTest extends WithApplication {
                 .overrides(new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(ProductProjection.class).toInstance(product);
+                        bind(ProductProjection.class).toInstance(PRODUCT);
                         bind(BlockingSphereClient.class).toInstance(sphereClient);
                     }
                 }).build();

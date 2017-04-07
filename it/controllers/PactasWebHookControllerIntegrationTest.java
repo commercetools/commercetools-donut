@@ -15,6 +15,7 @@ import play.libs.ws.WSResponse;
 import play.test.WithServer;
 import services.PactasWebHookControllerAction;
 
+import static io.sphere.sdk.json.SphereJsonUtils.readObjectFromResource;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.assertj.core.api.StrictAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,11 +23,12 @@ import static org.mockito.Mockito.*;
 import static play.mvc.Http.Status.OK;
 import static utils.JsonUtils.readJsonFromResource;
 
+
 public class PactasWebHookControllerIntegrationTest extends WithServer {
 
     private static final JsonNode WEBHOOK = readJsonFromResource("pactas-webhook-account.json");
+    private static final ProductProjection PRODUCT = readObjectFromResource("product.json", ProductProjection.class);
 
-    private final ProductProjection product = mock(ProductProjection.class);
     private final BlockingSphereClient sphereClient = mock(BlockingSphereClient.class);
     private final PactasWebHookControllerAction controllerAction = mock(PactasWebHookControllerAction.class);
 
@@ -41,7 +43,7 @@ public class PactasWebHookControllerIntegrationTest extends WithServer {
                 .overrides(new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(ProductProjection.class).toInstance(product);
+                        bind(ProductProjection.class).toInstance(PRODUCT);
                         bind(BlockingSphereClient.class).toInstance(sphereClient);
                         bind(PactasWebHookControllerAction.class).toInstance(controllerAction);
                     }
