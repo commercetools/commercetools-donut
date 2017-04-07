@@ -3,7 +3,6 @@ package pactas;
 import com.google.inject.AbstractModule;
 import io.sphere.sdk.client.BlockingSphereClient;
 import io.sphere.sdk.products.ProductProjection;
-import org.junit.Before;
 import org.junit.Test;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
@@ -22,12 +21,6 @@ public class PactasIntegrationTest extends WithApplication {
     private static final ProductProjection PRODUCT = readObjectFromResource("product.json", ProductProjection.class);
 
     private final BlockingSphereClient sphereClient = mock(BlockingSphereClient.class);
-    private Pactas pactas;
-
-    @Before
-    public void setUp() throws Exception {
-        this.pactas = app.injector().instanceOf(Pactas.class);
-    }
 
     @Override
     protected Application provideApplication() {
@@ -43,6 +36,7 @@ public class PactasIntegrationTest extends WithApplication {
 
     @Test
     public void fetchesContractAndCustomer() throws Exception {
+        final Pactas pactas = app.injector().instanceOf(Pactas.class);
         final PactasContract contract = pactas.fetchContract(CONTRACT_ID).toCompletableFuture().get();
         assertThat(contract.getId()).isEqualTo(CONTRACT_ID);
         final PactasCustomer customer = pactas.fetchCustomer(CUSTOMER_ID).toCompletableFuture().get();

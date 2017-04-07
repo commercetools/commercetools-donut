@@ -17,7 +17,7 @@ import services.PactasWebHookControllerAction;
 
 import static io.sphere.sdk.json.SphereJsonUtils.readObjectFromResource;
 import static java.util.concurrent.CompletableFuture.completedFuture;
-import static org.assertj.core.api.StrictAssertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static play.mvc.Http.Status.OK;
