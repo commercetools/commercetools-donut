@@ -1,4 +1,4 @@
-package services;
+package donut.services;
 
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;

@@ -2,9 +2,9 @@ package controllers;
 
 import models.OrderPageData;
 import models.OrderPageDataFactory;
+import donut.services.SubscriptionInSession;
 import play.mvc.Controller;
 import play.mvc.Result;
-import services.SubscriptionInSession;
 import views.html.order;
 import views.html.success;
 

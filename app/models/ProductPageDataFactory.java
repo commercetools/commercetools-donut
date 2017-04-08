@@ -3,7 +3,7 @@ package models;
 import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
-import services.SubscriptionInSession;
+import donut.services.SubscriptionInSession;
 
 import javax.inject.Inject;
 

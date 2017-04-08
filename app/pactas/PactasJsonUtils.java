@@ -1,9 +1,9 @@
-package utils;
+package pactas;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import exceptions.JsonException;
+import pactas.exceptions.PactasJsonException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ public final class PactasJsonUtils {
         try {
             return MAPPER.readValue(readFromResource(resourcePath), clazz);
         } catch (IOException e) {
-            throw new JsonException(e);
+            throw new PactasJsonException(e);
         }
     }
 
@@ -34,7 +34,7 @@ public final class PactasJsonUtils {
         try {
             return MAPPER.readValue(input, clazz);
         } catch (IOException e) {
-            throw new JsonException(input, e);
+            throw new PactasJsonException(input, e);
         }
     }
 
@@ -43,7 +43,7 @@ public final class PactasJsonUtils {
             final InputStreamReader r = readFromResource(input);
             return MAPPER.readTree(r);
         } catch (IOException e) {
-            throw new JsonException(input, e);
+            throw new PactasJsonException(input, e);
         }
     }
 

@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.Currency;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static utils.PactasJsonUtils.readObjectFromResource;
+import static pactas.PactasJsonUtils.readObjectFromResource;
 
 public class PactasContractTest {
 

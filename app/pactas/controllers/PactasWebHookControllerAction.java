@@ -1,4 +1,4 @@
-package services;
+package pactas.controllers;
 
 import com.google.inject.ImplementedBy;
 import io.sphere.sdk.orders.Order;

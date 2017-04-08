@@ -1,4 +1,4 @@
-package exceptions;
+package donut.exceptions;
 
 public class PlanVariantNotFoundException extends RuntimeException {
 

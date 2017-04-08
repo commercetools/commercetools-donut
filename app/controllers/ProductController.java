@@ -1,12 +1,12 @@
 package controllers;
 
-import forms.SubscriptionFormData;
+import donut.forms.SubscriptionFormData;
 import models.ProductPageDataFactory;
+import donut.services.SubscriptionInSession;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
-import services.SubscriptionInSession;
 import views.html.index;
 
 import javax.inject.Inject;

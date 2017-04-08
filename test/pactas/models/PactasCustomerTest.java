@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static com.neovisionaries.i18n.CountryCode.DE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static utils.PactasJsonUtils.readObjectFromResource;
+import static pactas.PactasJsonUtils.readObjectFromResource;
 
 public class PactasCustomerTest {
 

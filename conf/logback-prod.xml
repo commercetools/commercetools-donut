@@ -25,6 +25,8 @@
 
     <logger name="play" level="INFO" />
     <logger name="application" level="INFO" />
+    <logger name="controllers" level="INFO" />
+    <logger name="models" level="INFO" />
 
     <logger name="donut" level="INFO"/>
     <logger name="pactas" level="INFO"/>

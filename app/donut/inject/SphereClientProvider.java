@@ -1,4 +1,4 @@
-package inject;
+package donut.inject;
 
 import com.google.inject.Provider;
 import io.sphere.sdk.client.SphereClient;
@@ -9,10 +9,12 @@ import play.Configuration;
 import play.inject.ApplicationLifecycle;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+@Singleton
 public class SphereClientProvider implements Provider<SphereClient> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SphereClientProvider.class);

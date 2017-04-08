@@ -1,6 +1,6 @@
 package models;
 
-import exceptions.PlanVariantNotFoundException;
+import donut.exceptions.PlanVariantNotFoundException;
 import io.sphere.sdk.models.Base;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.Attribute;

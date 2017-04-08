@@ -3,20 +3,20 @@ package pactas;
 import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pactas.exceptions.PactasException;
 import pactas.models.Authorization;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
 import play.libs.ws.WSAPI;
 import play.libs.ws.WSAuthScheme;
 import play.mvc.Http;
-import utils.PactasJsonUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.concurrent.CompletionStage;
 
 @Singleton
-public class PactasImpl implements Pactas {
+class PactasImpl implements Pactas {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pactas.class);
     private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";

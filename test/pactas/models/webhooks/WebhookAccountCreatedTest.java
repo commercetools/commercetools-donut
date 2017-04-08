@@ -3,7 +3,7 @@ package pactas.models.webhooks;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static utils.PactasJsonUtils.readObjectFromResource;
+import static pactas.PactasJsonUtils.readObjectFromResource;
 
 public class WebhookAccountCreatedTest {
 

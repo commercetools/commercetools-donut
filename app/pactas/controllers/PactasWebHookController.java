@@ -1,13 +1,13 @@
-package controllers;
+package pactas.controllers;
 
+import pactas.exceptions.PactasJsonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pactas.models.webhooks.Webhook;
 import pactas.models.webhooks.WebhookAccountCreated;
 import play.mvc.Controller;
 import play.mvc.Result;
-import services.PactasWebHookControllerAction;
-import utils.PactasJsonUtils;
+import pactas.PactasJsonUtils;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -42,10 +42,15 @@ public class PactasWebHookController extends Controller {
 
     private Optional<WebhookAccountCreated> parseWebHookAccountCreatedFromRequest() {
         LOGGER.debug("Pactas webhook: " + request().body().asText());
-        final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, request().body().asText());
-        if (webhook instanceof WebhookAccountCreated) {
-            return Optional.of(((WebhookAccountCreated) webhook));
-        } else {
+        try {
+            final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, request().body().asText());
+            if (webhook instanceof WebhookAccountCreated) {
+                return Optional.of(((WebhookAccountCreated) webhook));
+            } else {
+                return Optional.empty();
+            }
+        } catch (PactasJsonException e) {
+            LOGGER.error("Could not parse Pactas webhook", e);
             return Optional.empty();
         }
     }
