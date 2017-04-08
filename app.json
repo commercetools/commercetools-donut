@@ -1,20 +1,20 @@
 {
-  "name": "SPHERE.IO Donut",
-  "description": "Create your own webshop in minutes with SPHERE.IO and our template 'sphere-donut'",
+  "name": "commercetools Donut",
+  "description": "Create your own webshop in minutes with commercetools and our template 'sphere-donut'",
   "repository": "https://github.com/commercetools/sphere-donut",
   "logo": "http://www.commercetools.com/assets/img/ct_logo_farbe.gif",
-  "keywords": ["sphere", "ecommerce", "shopping", "subscription"],
+  "keywords": ["commercetools", "ecommerce", "shopping", "subscription"],
   "env": {
     "SPHERE_DONUT_PROJECT": {
-      "description": "The project Key for your SPHERE.IO project.",
+      "description": "The project Key for your CTP project.",
       "required": true
     },
     "SPHERE_DONUT_CLIENT_ID": {
-      "description": "The clientId of your SPHERE.IO project.",
+      "description": "The clientId of your CTP project.",
       "required": true
     },
     "SPHERE_DONUT_CLIENT_SECRET": {
-      "description": "The clientSecret of your SPHERE.IO project.",
+      "description": "The clientSecret of your CTP project.",
       "required": true
     },
     "PACTAS_PUBLIC_KEY": {

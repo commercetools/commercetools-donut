@@ -1,6 +1,6 @@
 import play.sbt.PlayImport
 import play.sbt.PlayImport.javaWs
-import sbt.Keys._
+import sbt.Keys.{javaOptions, _}
 import sbt._
 
 object TestCommon {
@@ -22,11 +22,15 @@ object TestCommon {
   def configCommonTestSettings(scopes: String) = Seq(
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v"),
     javaOptions in Test += "-Dlogger.resource=logback-test.xml",
+    testOptions in IntegrationTest += Tests.Setup(() =>
+      if (System.getProperty("logger.resource") == null)
+        System.setProperty("logger.resource", "logback-test.xml")
+    ),
     libraryDependencies ++= Seq (
       "org.assertj" % "assertj-core" % "3.0.0" % scopes,
       "com.commercetools.sdk.jvm.core" % "commercetools-test-lib" % "1.0.0-RC2" % scopes,
       "org.mockito" % "mockito-core" % "2.7.9" % scopes,
-        PlayImport.component("play-test") % scopes
+      PlayImport.component("play-test") % scopes
     ),
     dependencyOverrides ++= Set (
       "junit" % "junit" % "4.12" % scopes
