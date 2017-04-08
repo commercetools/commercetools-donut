@@ -1,4 +1,4 @@
-commercetools platform Donut Store
+commercetools Donut Store
 =====================
 
 [![Build Status](https://travis-ci.org/commercetools/commercetools-donut.svg?branch=master)](https://travis-ci.org/commercetools/commercetools-donut)
