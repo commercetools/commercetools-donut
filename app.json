@@ -7,17 +7,14 @@
   "env": {
     "SPHERE_DONUT_PROJECT": {
       "description": "The project Key for your SPHERE.IO project.",
-      "value": "your SPHERE.IO projectKey",
       "required": true
     },
     "SPHERE_DONUT_CLIENT_ID": {
       "description": "The clientId of your SPHERE.IO project.",
-      "value": "your SPHERE.IO clientId",
       "required": true
     },
     "SPHERE_DONUT_CLIENT_SECRET": {
       "description": "The clientSecret of your SPHERE.IO project.",
-      "value": "your SPHERE.IO clientSecret",
       "required": true
     },
     "PACTAS_PUBLIC_KEY": {
@@ -32,24 +29,14 @@
       "description": "The clientSecret of your Pactas App.",
       "required": true
     },
-    "PACTAS_API_CONTRACTS": {
-      "description": "The API URL at Pactas you want to use for the Contracts endpoint.",
-      "value": "https://sandbox.pactas.com/api/v1/contracts/",
-      "required": false
-    },
-    "PACTAS_API_INVOICES": {
-      "description": "The API URL at Pactas you want to use for the Invoices endpoint.",
-      "value": "https://sandbox.pactas.com/api/v1/invoices/",
-      "required": false
-    },
-    "PACTAS_API_CUSTOMERS": {
-      "description": "The API URL at Pactas you want to use for the Customers endpoint.",
-      "value": "https://sandbox.pactas.com/api/v1/customers/",
+    "PACTAS_API_URL": {
+      "description": "The API URL you want to use at Pactas.",
+      "value": "https://sandbox.pactas.com/api/v1",
       "required": false
     },
     "PACTAS_AUTH_URL": {
       "description": "The Auth URL you want to use at Pactas.",
-      "value": "https://sandbox.pactas.com/oauth/token/",
+      "value": "https://sandbox.pactas.com/oauth/token",
       "required": false
     },
     "APPLICATION_SECRET": {
