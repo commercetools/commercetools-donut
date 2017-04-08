@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,
         property = "Event")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = WebhookAccountCreated.class, name = "AccountCreated")})
+        @JsonSubTypes.Type(value = WebhookContractCreated.class, name = "ContractCreated")})
 
 public interface Webhook {
 }

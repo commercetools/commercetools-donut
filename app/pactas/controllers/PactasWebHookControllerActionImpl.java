@@ -18,7 +18,7 @@ import io.sphere.sdk.products.attributes.Attribute;
 import pactas.Pactas;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
-import pactas.models.webhooks.WebhookAccountCreated;
+import pactas.models.webhooks.WebhookContractCreated;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -45,8 +45,8 @@ class PactasWebHookControllerActionImpl implements PactasWebHookControllerAction
     }
 
     @Override
-    public CompletionStage<Order> placeOrder(final WebhookAccountCreated webhookAccountCreated) {
-        return pactas.fetchContract(webhookAccountCreated.getContractId())
+    public CompletionStage<Order> placeOrder(final WebhookContractCreated webhookContractCreated) {
+        return pactas.fetchContract(webhookContractCreated.getContractId())
                 .thenCompose(pactasContract -> pactas.fetchCustomer(pactasContract.getCustomerId())
                         .thenCompose(pactasCustomer -> createCart(pactasContract, pactasCustomer)
                                 .thenCompose(this::createOrder)));

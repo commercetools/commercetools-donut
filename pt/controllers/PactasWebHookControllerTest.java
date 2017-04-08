@@ -5,7 +5,7 @@ import com.google.inject.AbstractModule;
 import pactas.controllers.PactasWebHookControllerAction;
 import io.sphere.sdk.products.ProductProjection;
 import org.junit.Test;
-import pactas.models.webhooks.WebhookAccountCreated;
+import pactas.models.webhooks.WebhookContractCreated;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.libs.ws.WS;
@@ -25,7 +25,7 @@ import static play.mvc.Http.Status.OK;
 
 public class PactasWebHookControllerTest extends WithServer {
 
-    private static final JsonNode WEBHOOK = readJsonFromResource("pactas-webhook-account.json");
+    private static final JsonNode WEBHOOK = readJsonFromResource("pactas-webhook-contract.json");
     private static final ProductProjection PRODUCT = readObjectFromResource("product.json", ProductProjection.class);
 
     private final PactasWebHookControllerAction controllerAction = mock(PactasWebHookControllerAction.class);
@@ -63,7 +63,7 @@ public class PactasWebHookControllerTest extends WithServer {
                     .post(WEBHOOK.toString())
                     .toCompletableFuture().get();
             assertThat(wsResponse.getStatus()).isEqualTo(OK);
-            verify(controllerAction).placeOrder(new WebhookAccountCreated("58e3a4af14aa010f3864eda1"));
+            verify(controllerAction).placeOrder(new WebhookContractCreated("58e3a4af14aa010f3864eda1"));
         }
     }
 }
