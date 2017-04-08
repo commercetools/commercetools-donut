@@ -43,17 +43,19 @@ public class PactasWebHookController extends Controller {
 
     private Optional<WebhookContractCreated> parseWebHookContractCreatedFromRequest() {
         final JsonNode webhookAsJson = request().body().asJson();
-        LOGGER.debug("Pactas webhook: " + webhookAsJson);
-        try {
-            final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, webhookAsJson.toString());
-            if (webhook instanceof WebhookContractCreated) {
-                return Optional.of(((WebhookContractCreated) webhook));
-            } else {
-                return Optional.empty();
+        if (webhookAsJson != null) {
+            LOGGER.debug("Pactas webhook: " + webhookAsJson);
+            try {
+                final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, webhookAsJson.toString());
+                if (webhook instanceof WebhookContractCreated) {
+                    return Optional.of(((WebhookContractCreated) webhook));
+                } else {
+                    return Optional.empty();
+                }
+            } catch (PactasJsonException e) {
+                LOGGER.error("Could not parse Pactas webhook", e);
             }
-        } catch (PactasJsonException e) {
-            LOGGER.error("Could not parse Pactas webhook", e);
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 }
