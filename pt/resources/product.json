@@ -1,0 +1,243 @@
+{
+  "productType": {
+    "key": "donut-box"
+  },
+  "name": {
+    "en": "Classic box"
+  },
+  "description": {
+    "en": "Box with classic flavours."
+  },
+  "categories": [],
+  "categoryOrderHints": {},
+  "slug": {
+    "en": "donut-box"
+  },
+  "masterVariant": {
+    "sku": "box6",
+    "prices": [
+      {
+        "value": {
+          "currencyCode": "EUR",
+          "centAmount": 699
+        }
+      }
+    ],
+    "images": [
+      {
+        "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
+        "dimensions": {
+          "w": 264,
+          "h": 190
+        }
+      },
+      {
+        "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-green.png",
+        "dimensions": {
+          "w": 404,
+          "h": 800
+        }
+      },
+      {
+        "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-green.png",
+        "dimensions": {
+          "w": 213,
+          "h": 100
+        }
+      }
+    ],
+    "attributes": [
+      {
+        "name": "quantity",
+        "value": 6
+      },
+      {
+        "name": "box",
+        "value": "Small box"
+      },
+      {
+        "name": "pactas1",
+        "value": "5231dfec1d8dd00f389dc547"
+      },
+      {
+        "name": "pactas2",
+        "value": "5232c8731d8dd00f38c5adbc"
+      },
+      {
+        "name": "pactas4",
+        "value": "5232c8821d8dd00f38c5adbd"
+      }
+    ]
+  },
+  "variants": [
+    {
+      "sku": "box12",
+      "prices": [
+        {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 1299
+          }
+        }
+      ],
+      "images": [
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
+          "dimensions": {
+            "w": 264,
+            "h": 190
+          }
+        },
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-brown.png",
+          "dimensions": {
+            "w": 404,
+            "h": 800
+          }
+        },
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-brown.png",
+          "dimensions": {
+            "w": 213,
+            "h": 100
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "quantity",
+          "value": 12
+        },
+        {
+          "name": "box",
+          "value": "Medium box"
+        },
+        {
+          "name": "pactas4",
+          "value": "5232c9be1d8dd00f38c5addd"
+        },
+        {
+          "name": "pactas2",
+          "value": "5232c9b51d8dd00f38c5addc"
+        },
+        {
+          "name": "pactas1",
+          "value": "5232c9981d8dd00f38c5addb"
+        }
+      ]
+    },
+    {
+      "sku": "box24",
+      "prices": [
+        {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 2399
+          }
+        }
+      ],
+      "images": [
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
+          "dimensions": {
+            "w": 264,
+            "h": 190
+          }
+        },
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-pink.png",
+          "dimensions": {
+            "w": 404,
+            "h": 800
+          }
+        },
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-pink.png",
+          "dimensions": {
+            "w": 213,
+            "h": 100
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "quantity",
+          "value": 24
+        },
+        {
+          "name": "box",
+          "value": "Large box"
+        },
+        {
+          "name": "pactas4",
+          "value": "5232c9621d8dd00f38c5adcb"
+        },
+        {
+          "name": "pactas2",
+          "value": "5232c9571d8dd00f38c5adc9"
+        },
+        {
+          "name": "pactas1",
+          "value": "5232c93d1d8dd00f38c5adc7"
+        }
+      ]
+    },
+    {
+      "sku": "box36",
+      "prices": [
+        {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 3499
+          }
+        }
+      ],
+      "images": [
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/donuts.png",
+          "dimensions": {
+            "w": 264,
+            "h": 190
+          }
+        },
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/stamp-gold.png",
+          "dimensions": {
+            "w": 404,
+            "h": 800
+          }
+        },
+        {
+          "url": "https://s3-eu-west-1.amazonaws.com/commercetools-donut/save-gold.png",
+          "dimensions": {
+            "w": 213,
+            "h": 100
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "quantity",
+          "value": 36
+        },
+        {
+          "name": "box",
+          "value": "Huge box"
+        },
+        {
+          "name": "pactas4",
+          "value": "5232c90b1d8dd00f38c5adc4"
+        },
+        {
+          "name": "pactas2",
+          "value": "5232c8ca1d8dd00f38c5adc1"
+        },
+        {
+          "name": "pactas1",
+          "value": "5232c8a81d8dd00f38c5adbf"
+        }
+      ]
+    }
+  ],
+  "searchKeywords": {}
+}

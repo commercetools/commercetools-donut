@@ -1,41 +1,42 @@
 package models;
 
 import io.sphere.sdk.models.Base;
-import io.sphere.sdk.products.ProductProjection;
 import io.sphere.sdk.products.ProductVariant;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class ProductPageData extends Base {
 
-    private final Optional<ProductVariant> selectedVariant;
-    private final ProductProjection product;
-    private final int selectedFrequency;
+    private final List<ProductVariant> variants;
+    @Nullable
+    private final ProductVariant variant;
+    @Nullable
+    private final Integer frequency;
 
-    public ProductPageData(final ProductProjection product, final Optional<ProductVariant> selectedVariant,
-                           final int selectedFrequency) {
-        this.selectedVariant = selectedVariant;
-        this.selectedFrequency = selectedFrequency;
-        this.product = product;
+    ProductPageData(final List<ProductVariant> variants, @Nullable final ProductVariant variant, @Nullable final Integer frequency) {
+        this.variants = variants;
+
+        this.variant = variant;
+        this.frequency = frequency;
     }
 
-    public Optional<VariantData> selectedVariant() {
-        if (selectedVariant.isPresent()) {
-            return Optional.of(new VariantData(selectedVariant.get()));
-        } else {
-            return Optional.empty();
-        }
+    public Optional<SubscriptionViewModel> selectedVariant() {
+        return Optional.ofNullable(variant)
+                .map(SubscriptionViewModel::new);
     }
 
-    public int selectedFrequency() {
-        return selectedFrequency;
+    @Nullable
+    public Integer selectedFrequency() {
+        return frequency;
     }
 
-    public List<VariantData> allVariants() {
-        final List<VariantData> variantDataList = product.getAllVariants().stream().map(VariantData::new)
-                .collect(Collectors.toList());
-        return variantDataList;
+    public List<SubscriptionViewModel> allVariants() {
+        return variants.stream()
+                .map(SubscriptionViewModel::new)
+                .collect(toList());
     }
 }

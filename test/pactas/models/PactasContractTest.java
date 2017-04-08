@@ -5,11 +5,12 @@ import org.junit.Test;
 import java.util.Currency;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static utils.JsonUtils.readObjectFromResource;
+import static pactas.PactasJsonUtils.readObjectFromResource;
 
 public class PactasContractTest {
-    public static final PactasContract CONTRACT = readObjectFromResource("pactas-contract.json", PactasContract.class);
-    public static final Currency EUR = Currency.getInstance("EUR");
+
+    private static final PactasContract CONTRACT = readObjectFromResource("pactas-contract.json", PactasContract.class);
+    private static final Currency EUR = Currency.getInstance("EUR");
 
     @Test
     public void parsesContractInformation() throws Exception {

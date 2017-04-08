@@ -1,37 +1,31 @@
 package models;
 
+import donut.exceptions.PlanVariantNotFoundException;
 import io.sphere.sdk.models.Base;
-import io.sphere.sdk.products.Price;
 import io.sphere.sdk.products.ProductVariant;
 import io.sphere.sdk.products.attributes.Attribute;
-import io.sphere.sdk.products.attributes.AttributeAccess;
-import utils.PriceUtils;
 
 import java.util.Optional;
 
-import static java.util.Objects.requireNonNull;
-
 public class OrderPageData extends Base {
 
-    private final ProductVariant selectedVariant;
-    private final int selectedFrequency;
+    private final ProductVariant variant;
+    private final int frequency;
+    private final String pactasPublicKey;
 
-    public OrderPageData(final ProductVariant selectedVariant, final int selectedFrequency) {
-        this.selectedVariant = requireNonNull(selectedVariant);
-        this.selectedFrequency = requireNonNull(selectedFrequency);
+    OrderPageData(final ProductVariant variant, final int frequency, final String pactasPublicKey) {
+        this.variant = variant;
+        this.frequency = frequency;
+        this.pactasPublicKey = pactasPublicKey;
     }
 
-    public VariantData selectedVariant() {
-        return new VariantData(selectedVariant);
-    }
-
-    public String totalPrice() {
-        return PriceUtils.format(selectedVariant.getPrices().get(0));
+    public SubscriptionViewModel subscription() {
+        return new SubscriptionViewModel(variant);
     }
 
     public String frequencyName() {
         final String name;
-        switch (selectedFrequency) {
+        switch (frequency) {
             case 1: name = "ONCE A MONTH";
                 break;
             case 2: name = "EVERY TWO WEEKS";
@@ -44,23 +38,13 @@ public class OrderPageData extends Base {
     }
 
     public String pactasVariantId() {
-        final Attribute attribute = selectedVariant.getAttribute("pactas" + selectedFrequency);
-        if(attribute == null) {
-            throw new RuntimeException("Unable to access Pactas frequency Attribute");
-        }
-        final String pactasId = attribute.getValue(AttributeAccess.ofString());
-        return pactasId;
+        final String planId = "pactas" + frequency;
+        return Optional.ofNullable(variant.getAttribute(planId))
+                .map(Attribute::getValueAsString)
+                .orElseThrow(() -> new PlanVariantNotFoundException(planId));
     }
 
-    public String currency() {
-        return PriceUtils.currencyCode(price()).orElse("");
-    }
-
-    public double priceAmount() {
-        return PriceUtils.monetaryAmount(price()).orElse(0d);
-    }
-
-    private Optional<Price> price() {
-        return Optional.ofNullable(selectedVariant.getPrices().get(0));
+    public String pactasPublicKey() {
+        return pactasPublicKey;
     }
 }

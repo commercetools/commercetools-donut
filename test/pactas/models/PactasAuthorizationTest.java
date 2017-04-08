@@ -3,10 +3,11 @@ package pactas.models;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static utils.JsonUtils.readObjectFromResource;
+import static pactas.PactasJsonUtils.readObjectFromResource;
 
 public class PactasAuthorizationTest {
-    public static final Authorization AUTHORIZATION = readObjectFromResource("pactas-authorization.json", Authorization.class);
+
+    private static final Authorization AUTHORIZATION = readObjectFromResource("pactas-authorization.json", Authorization.class);
 
     @Test
     public void parsesAuthorizationInformation() throws Exception {

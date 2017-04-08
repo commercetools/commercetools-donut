@@ -3,7 +3,7 @@ sudo: false
 
 language: scala
 scala:
-- 2.10.6
+- 2.11.8
 jdk:
 - oraclejdk8
 
@@ -24,7 +24,7 @@ before_script:
 - "./create_version_info.sh"
 
 script:
-- sbt compile test it:test
+- sbt compile test pt:test it:test
 
 notifications:
   email:

@@ -1,5 +1,7 @@
 package pactas;
 
+import com.google.inject.ImplementedBy;
+import pactas.exceptions.PactasException;
 import pactas.models.Authorization;
 import pactas.models.PactasContract;
 import pactas.models.PactasCustomer;
@@ -9,6 +11,7 @@ import java.util.concurrent.CompletionStage;
 /**
  * Provides an interface to communicate with the Pactas platform.
  */
+@ImplementedBy(PactasImpl.class)
 public interface Pactas {
 
     /**

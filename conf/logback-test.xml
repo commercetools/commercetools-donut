@@ -8,15 +8,7 @@
         </encoder>
     </appender>
 
-    <logger name="play" level="DEBUG" />
-    <logger name="application" level="DEBUG" />
-    <logger name="controllers" level="DEBUG" />
-    <logger name="models" level="DEBUG" />
-
-    <logger name="donut" level="DEBUG"/>
-    <logger name="pactas" level="DEBUG"/>
-
-    <root level="WARN">
+    <root level="OFF">
         <appender-ref ref="STDOUT" />
     </root>
 
