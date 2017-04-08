@@ -3,10 +3,11 @@ package pactas.models.webhooks;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.sphere.sdk.models.Base;
 
-public class WebhookAccountCreated extends Base implements Webhook {
+public class WebhookContractCreated extends Base implements Webhook {
+
     private final String contractId;
 
-    public WebhookAccountCreated(@JsonProperty("ContractId") String contractId) {
+    public WebhookContractCreated(@JsonProperty("ContractId") String contractId) {
         this.contractId = contractId;
     }
 
@@ -16,7 +17,7 @@ public class WebhookAccountCreated extends Base implements Webhook {
 
     @Override
     public String toString() {
-        return "WebhookAccountCreated{" +
+        return "WebhookContractCreated{" +
                 "contractId='" + contractId + '\'' +
                 '}';
     }

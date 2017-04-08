@@ -4,7 +4,7 @@ import pactas.exceptions.PactasJsonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pactas.models.webhooks.Webhook;
-import pactas.models.webhooks.WebhookAccountCreated;
+import pactas.models.webhooks.WebhookContractCreated;
 import play.mvc.Controller;
 import play.mvc.Result;
 import pactas.PactasJsonUtils;
@@ -40,12 +40,12 @@ public class PactasWebHookController extends Controller {
                 .orElseGet(() -> completedFuture(badRequest()));
     }
 
-    private Optional<WebhookAccountCreated> parseWebHookAccountCreatedFromRequest() {
+    private Optional<WebhookContractCreated> parseWebHookAccountCreatedFromRequest() {
         LOGGER.debug("Pactas webhook: " + request().body().asText());
         try {
             final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, request().body().asText());
-            if (webhook instanceof WebhookAccountCreated) {
-                return Optional.of(((WebhookAccountCreated) webhook));
+            if (webhook instanceof WebhookContractCreated) {
+                return Optional.of(((WebhookContractCreated) webhook));
             } else {
                 return Optional.empty();
             }
