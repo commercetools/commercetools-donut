@@ -24,7 +24,7 @@ before_script:
 - "./create_version_info.sh"
 
 script:
-- sbt compile test it:test
+- sbt compile test pt:test it:test
 
 notifications:
   email:
