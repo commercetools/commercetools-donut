@@ -60,7 +60,7 @@ public class PactasWebHookControllerTest extends WithServer {
         try (final WSClient wsClient = WS.newClient(testServer.port())) {
             final WSResponse wsResponse = wsClient
                     .url("/order/execute")
-                    .post(WEBHOOK.toString())
+                    .post(WEBHOOK)
                     .toCompletableFuture().get();
             assertThat(wsResponse.getStatus()).isEqualTo(OK);
             verify(controllerAction).placeOrder(new WebhookContractCreated("58e3a4af14aa010f3864eda1"));

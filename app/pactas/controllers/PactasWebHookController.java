@@ -1,5 +1,6 @@
 package pactas.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import pactas.exceptions.PactasJsonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class PactasWebHookController extends Controller {
 
     public CompletionStage<Result> createOrderFromSubscription() {
         LOGGER.debug("An order request has been received from Pactas...");
-        return parseWebHookAccountCreatedFromRequest()
+        return parseWebHookContractCreatedFromRequest()
                 .map(webhookAccountCreated -> pactasWebHookControllerAction.placeOrder(webhookAccountCreated)
                         .thenApply(order -> {
                             LOGGER.debug("Order created: {}", order);
@@ -40,10 +41,11 @@ public class PactasWebHookController extends Controller {
                 .orElseGet(() -> completedFuture(badRequest()));
     }
 
-    private Optional<WebhookContractCreated> parseWebHookAccountCreatedFromRequest() {
-        LOGGER.debug("Pactas webhook: " + request().body().asText());
+    private Optional<WebhookContractCreated> parseWebHookContractCreatedFromRequest() {
+        final JsonNode webhookAsJson = request().body().asJson();
+        LOGGER.debug("Pactas webhook: " + webhookAsJson);
         try {
-            final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, request().body().asText());
+            final Webhook webhook = PactasJsonUtils.readObject(Webhook.class, webhookAsJson.toString());
             if (webhook instanceof WebhookContractCreated) {
                 return Optional.of(((WebhookContractCreated) webhook));
             } else {
