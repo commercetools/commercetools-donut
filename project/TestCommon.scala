@@ -21,14 +21,13 @@ object TestCommon {
 
   def configCommonTestSettings(scopes: String) = Seq(
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v"),
-    javaOptions in Test += "-Dlogger.resource=logback-test.xml",
+    javaOptions in PlayTest += "-Dlogger.resource=logback-test.xml",
     testOptions in IntegrationTest += Tests.Setup(() =>
-      if (System.getProperty("logger.resource") == null)
-        System.setProperty("logger.resource", "logback-test.xml")
+      if (sys.props.get("logger.resource").isEmpty)
+        sys.props.put("logger.resource", "logback-test.xml")
     ),
     libraryDependencies ++= Seq (
-      "org.assertj" % "assertj-core" % "3.0.0" % scopes,
-      "com.commercetools.sdk.jvm.core" % "commercetools-test-lib" % "1.0.0-RC2" % scopes,
+      "org.assertj" % "assertj-core" % "3.6.2" % scopes,
       "org.mockito" % "mockito-core" % "2.7.9" % scopes,
       PlayImport.component("play-test") % scopes
     ),
